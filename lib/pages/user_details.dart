@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gogs_app/app_globals.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/models/user_details_mode.dart';
+import 'package:gogs_app/models/user_model.dart';
 import 'package:gogs_app/pages/organizations.dart';
 import 'package:gogs_app/pages/repo/repositories.dart';
 import 'package:gogs_app/pages/settinngs.dart';
@@ -146,7 +146,7 @@ class UserDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<UserDetailsModel>().user;
+    final user = context.watch<UserModel>().user;
     final iconColor = context.colorScheme.outline;
     // 是否为自己
     final isMe = user.id == AppGlobal.instance.userInfo?.id;

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
 import 'package:gogs_app/models/repo_model.dart';
-import 'package:gogs_app/models/user_details_mode.dart';
+import 'package:gogs_app/models/user_model.dart';
 import 'package:gogs_app/pages/repo/repo_details.dart';
 import 'package:gogs_app/pages/user_details.dart';
 import 'package:gogs_app/utils/build_context_helper.dart';
@@ -79,8 +79,8 @@ class Routes {
       {required PageData? data, bool useModal = true}) {
     return routes.pushPage(
         context: context,
-        ChangeNotifierProvider<UserDetailsModel>(
-          create: (_) => UserDetailsModel(user),
+        ChangeNotifierProvider<UserModel>(
+          create: (_) => UserModel(user),
           child: const UserDetailsPage(),
         ),
         data: data,
