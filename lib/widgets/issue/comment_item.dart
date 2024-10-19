@@ -4,7 +4,6 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:gogs_app/app_globals.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
 import 'package:gogs_app/pages/issue/create_issue_comment.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
 import 'package:gogs_app/utils/message_box.dart';
 import 'package:gogs_app/utils/utils.dart';
 import 'package:gogs_app/widgets/adaptive_widgets.dart';

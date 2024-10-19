@@ -9,7 +9,6 @@ import 'package:gogs_app/utils/app_config.dart';
 import 'package:gogs_app/utils/build_context_helper.dart';
 import 'package:gogs_app/utils/global_navigator.dart';
 import 'package:gogs_app/utils/utils.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 import 'navigation.dart';

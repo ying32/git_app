@@ -6,7 +6,6 @@ import 'package:gogs_app/pages/login.dart';
 
 import 'package:gogs_app/pages/home.dart';
 import 'package:gogs_app/pages/activity.dart';
-import 'package:gogs_app/pages/settinngs.dart';
 import 'package:gogs_app/utils/build_context_helper.dart';
 
 import 'app_globals.dart';
@@ -23,23 +22,12 @@ class _NavPage {
 }
 
 final _pages = <_NavPage>[
-  _NavPage(
-      title: '主页',
-      icon: Icons.home,
-      page: const HomePage(
-        title: '主页',
-      )),
+  _NavPage(title: '主页', icon: Icons.home, page: const HomePage()),
   _NavPage(
       title: '最近活动',
       icon: Icons.notifications_none,
-      page: const ActivityPage(
-        title: '最近活动',
-      )),
-  _NavPage(
-      title: '发现',
-      icon: Icons.search,
-      // icon: Icons.search,
-      page: const ExplorePage()),
+      page: const ActivityPage()),
+  _NavPage(title: '发现', icon: Icons.search, page: const ExplorePage()),
 ];
 
 class NavigationPage extends StatefulWidget {
@@ -142,7 +130,6 @@ class _NavigationPageState extends State<NavigationPage>
         ),
       );
 
-  // 每次状态改变，都会重新执行
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<LoginState>(

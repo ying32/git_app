@@ -12,20 +12,6 @@ class ExplorePage extends StatefulWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-  //late final TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    //_controller = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    //_controller.dispose();
-    super.dispose();
-  }
-
   Future<void> _onSubmitted(String? value) async {
     if (value != null && value.isNotEmpty) {
       final res = await AppGlobal.cli.repos.search(value);
@@ -43,7 +29,6 @@ class _ExplorePageState extends State<ExplorePage> {
       ),
       cupertinoSliverNavigationBar: () => const CupertinoSliverNavigationBar(
         largeTitle: Text('发现'),
-        // previousPageTitle: context.previousPageTitle,
         border: null,
       ),
       topBar: Padding(
@@ -53,7 +38,8 @@ class _ExplorePageState extends State<ExplorePage> {
           onSubmitted: _onSubmitted,
         ),
       ),
-      children: [],
+      //todo: 还没做呢，他这结果搜索回来是空的
+      children: const [],
     );
   }
 }

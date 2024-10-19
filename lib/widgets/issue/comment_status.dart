@@ -42,24 +42,24 @@ class CommentStatus extends StatelessWidget {
 
   static const _defaultTextStyle = TextStyle(fontSize: 13);
 
-  static final _regEx =
-      RegExp(r'<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>', caseSensitive: false);
+  // static final _regEx =
+  //     RegExp(r'<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>', caseSensitive: false);
 
-  Widget _buildALabel() {
-    final match = _regEx.firstMatch(comment.body);
-    return Padding(
-      padding: const EdgeInsets.only(right: 15),
-      child: Text(
-        match?.group(2) ?? '',
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: _defaultTextStyle.copyWith(
-          color: Colors.blue,
-          decoration: TextDecoration.underline,
-        ),
-      ),
-    );
-  }
+  // Widget _buildALabel() {
+  //   final match = _regEx.firstMatch(comment.body);
+  //   return Padding(
+  //     padding: const EdgeInsets.only(right: 15),
+  //     child: Text(
+  //       match?.group(2) ?? '',
+  //       maxLines: 1,
+  //       overflow: TextOverflow.ellipsis,
+  //       style: _defaultTextStyle.copyWith(
+  //         color: Colors.blue,
+  //         decoration: TextDecoration.underline,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildTextBody(String afterText) {
     Widget child = Text.rich(

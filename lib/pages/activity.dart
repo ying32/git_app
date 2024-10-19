@@ -10,13 +10,7 @@ import 'package:gogs_app/widgets/platform_page_scaffold.dart';
 import 'package:gogs_app/widgets/activity_item.dart';
 
 class ActivityPage extends StatefulWidget {
-  const ActivityPage({
-    super.key,
-    required this.title,
-  });
-
-  /// 标题
-  final String title;
+  const ActivityPage({super.key});
 
   @override
   State<ActivityPage> createState() => _ActivityPageState();
@@ -60,11 +54,11 @@ class _ActivityPageState extends State<ActivityPage> {
       reqRefreshCallback: _init,
       reqPullUpLoadCallback: _loadMore,
       materialAppBar: () => AppBar(
-        title: Text(widget.title),
+        title: const Text('最近活动'),
       ),
-      cupertinoSliverNavigationBar: () => CupertinoSliverNavigationBar(
+      cupertinoSliverNavigationBar: () => const CupertinoSliverNavigationBar(
         // border: null,
-        largeTitle: Text(widget.title),
+        largeTitle: Text('最近活动'),
         // stretch: true,
       ),
       emptyItemHint: Center(

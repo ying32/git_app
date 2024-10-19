@@ -21,12 +21,7 @@ import 'package:gogs_app/widgets/platform_page_scaffold.dart';
 import 'package:gogs_app/widgets/list_section.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    super.key,
-    required this.title,
-  });
-
-  final String title;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -34,6 +29,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   static const _headImageSize = 45.0;
+  static const _title = '主页';
 
   Future<void> _init(_, bool? force) async {
     final res = await AppGlobal.instance.updateMyInfo(force);
@@ -47,7 +43,7 @@ class _HomePageState extends State<HomePage> {
         title: '我的仓库',
       ),
       context: context,
-      data: PageData(previousPageTitle: widget.title),
+      data: const PageData(previousPageTitle: _title),
     );
   }
 
@@ -58,14 +54,14 @@ class _HomePageState extends State<HomePage> {
         user: AppGlobal.instance.userInfo!,
       ),
       context: context,
-      data: PageData(previousPageTitle: widget.title),
+      data: const PageData(previousPageTitle: _title),
     );
   }
 
   Widget _buildHeadImage() => UserHeadImage(
         size: _headImageSize,
         user: AppGlobal.instance.userInfo!,
-        previousPageTitle: widget.title,
+        previousPageTitle: _title,
       );
 
   void _doTapEdit() {
@@ -96,7 +92,7 @@ class _HomePageState extends State<HomePage> {
               routes.pushRepositoryDetailsPage(
                 context,
                 repo,
-                data: PageData(previousPageTitle: widget.title),
+                data: const PageData(previousPageTitle: _title),
               );
             },
           );
@@ -122,7 +118,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           border: null,
-          largeTitle: Text(widget.title),
+          largeTitle: const Text(_title),
           // stretch: true,
         ),
         children: [
@@ -145,15 +141,15 @@ class _HomePageState extends State<HomePage> {
                 ),
                 title: '问题',
                 onTap: () {
-                  //todo: 没有API可用
-                  //showToast('没有API可用');
+                  //todo: API不完善可用
+
                   routes.pushPage(
                       const IssuesPage(
                         category: IssuesCategory.issues,
                         title: '问题',
                       ),
                       context: context,
-                      data: PageData(previousPageTitle: widget.title));
+                      data: const PageData(previousPageTitle: _title));
                 },
               ),
               // const ListTileDivider(),

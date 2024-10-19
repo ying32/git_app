@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-/// 磁面数据
+/// 页面数据
 class PageData {
   const PageData({
     this.previousPageTitle,
@@ -9,12 +9,8 @@ class PageData {
   /// [previousPageTitle]： ios下可用，用于传递当页面给[CupertinoNavigationBar.previousPageTitle]
   final String? previousPageTitle;
 
-  PageData copyWith(
-          {String? previousPageTitle /*, Repository? repo, Issue? issue*/}) =>
-      PageData(
+  PageData copyWith({String? previousPageTitle}) => PageData(
         previousPageTitle: previousPageTitle ?? this.previousPageTitle,
-        // repo: repo ?? this.repo,
-        // issue: issue ?? this.issue,
       );
 }
 
