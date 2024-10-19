@@ -5,8 +5,8 @@ class GogsClientBase {
 
   final GogsRESTClient client;
 
-  /// 当前issues的基本路径
-  String _reposPath(Repository repo, String path) =>
+  /// 仓库基础路径
+  String _baseRepoPath(Repository repo, String path) =>
       "/repos/${repo.owner.username}/${repo.name}$path";
 }
 

@@ -9,7 +9,7 @@ class GogsRepoContent extends GogsClientBase {
   /// 获取指定[path]的列表
   FutureRESTResult<ContentList?> getAll(Repository repo, String path,
           {String? ref, bool? force}) =>
-      client.get<ContentList>(_reposPath(repo, "/contents/$path"),
+      client.get<ContentList>(_baseRepoPath(repo, "/contents/$path"),
           queryParameters: ref != null ? {"ref": ref} : null,
           force: force,
           decoder: (data) => Content.fromJsonList(data));
@@ -19,7 +19,7 @@ class GogsRepoContent extends GogsClientBase {
   /// 原生内容
   FutureRESTResult<List<int>?> raw(Repository repo, String ref, String path,
           {bool? force, bool? nocache}) =>
-      client.get<List<int>>(_reposPath(repo, "/raw/$ref/$path"),
+      client.get<List<int>>(_baseRepoPath(repo, "/raw/$ref/$path"),
           force: force,
           options: Options(
               responseType: ResponseType.bytes, extra: {"nocache": nocache}));
@@ -33,7 +33,7 @@ class GogsRepoBranch extends GogsClientBase {
   ///
   /// 获取指定仓库的分支列表信息
   FutureRESTResult<BranchList?> getAll(Repository repo, {bool? force}) =>
-      client.get<BranchList>(_reposPath(repo, "/branches"),
+      client.get<BranchList>(_baseRepoPath(repo, "/branches"),
           force: force, decoder: (data) => Branch.fromJsonList(data));
 
   /// GET /repos/:owner/:repo/branches/:branch
@@ -41,7 +41,7 @@ class GogsRepoBranch extends GogsClientBase {
   /// 获取指定分支信息
   FutureRESTResult<Branch?> branch(Repository repo, String branchName,
           {bool? force}) =>
-      client.get<Branch>(_reposPath(repo, "/branches/$branchName"),
+      client.get<Branch>(_baseRepoPath(repo, "/branches/$branchName"),
           force: force, decoder: (data) => Branch.fromJson(data));
 }
 
@@ -55,7 +55,7 @@ class GogsRepoCommit extends GogsClientBase {
   /// 获取指定仓库提交记录信息。注：他这个API不完善，不能做分页
   FutureRESTResult<CommitList?> getAll(Repository repo,
           {int? pageSize, bool? force}) =>
-      client.get<CommitList>(_reposPath(repo, "/commits"),
+      client.get<CommitList>(_baseRepoPath(repo, "/commits"),
           queryParameters: pageSize != null ? {'pagesize': pageSize} : null,
           force: force,
           decoder: (data) => Commit.fromJsonList(data));
@@ -74,7 +74,7 @@ class GogsRepoLabel extends GogsClientBase {
   ///
   /// 获取这个仓库的标签信息，这个指的是issues上的标签
   FutureRESTResult<IssueLabelList?> getAll(Repository repo, {bool? force}) =>
-      client.get<IssueLabelList>(_reposPath(repo, "/labels"),
+      client.get<IssueLabelList>(_baseRepoPath(repo, "/labels"),
           force: force, decoder: (data) => IssueLabel.fromJsonList(data));
 }
 
@@ -102,7 +102,7 @@ class GogsRepos extends GogsClientBase {
   ///
   /// 获取一个仓库信息
   FutureRESTResult<Repository> repo(Repository repo, {bool? force}) =>
-      client.get<Repository>(_reposPath(repo, ""),
+      client.get<Repository>(_baseRepoPath(repo, ""),
           force: force, decoder: (data) => Repository.fromJson(data));
 
   /// GET /users/:username/repos
@@ -123,7 +123,7 @@ class GogsRepos extends GogsClientBase {
   ///
   /// 获取fork这个仓库的用户？
   FutureRESTResult<RepositoryList?> forks(Repository repo, {bool? force}) =>
-      client.get<RepositoryList>(_reposPath(repo, "/forks"),
+      client.get<RepositoryList>(_baseRepoPath(repo, "/forks"),
           force: force, decoder: (data) => Repository.fromJsonList(data));
 
   /// GET /repos/search

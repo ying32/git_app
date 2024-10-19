@@ -56,7 +56,7 @@ class GogsIssuesComment extends GogsClientBase {
   FutureRESTResult<IssueCommentList?> getAll(Repository repo, Issue issue,
           {bool? force}) =>
       client.get<IssueCommentList>(
-          _reposPath(repo, "/issues/${issue.number}/comments"),
+          _baseRepoPath(repo, "/issues/${issue.number}/comments"),
           force: force,
           decoder: (data) => IssueComment.fromJsonList(data));
 
@@ -66,7 +66,7 @@ class GogsIssuesComment extends GogsClientBase {
   FutureRESTResult<IssueComment?> create(
           Repository repo, Issue issue, String body) =>
       client.post<IssueComment>(
-          _reposPath(repo, "/issues/${issue.number}/comments"),
+          _baseRepoPath(repo, "/issues/${issue.number}/comments"),
           data: {"body": body},
           decoder: (data) => IssueComment.fromJson(data));
 
@@ -76,7 +76,7 @@ class GogsIssuesComment extends GogsClientBase {
   FutureRESTResult<IssueComment?> edit(
           Repository repo, Issue issue, int id, String body) =>
       client.patch<IssueComment>(
-          _reposPath(repo, "/issues/${issue.number}/comments/$id"),
+          _baseRepoPath(repo, "/issues/${issue.number}/comments/$id"),
           data: {"body": body},
           decoder: (data) => IssueComment.fromJson(data));
 }
@@ -93,7 +93,7 @@ class GogsIssues extends GogsClientBase {
   /// 获取指定仓库的issue列表
   FutureRESTResult<IssueList?> getAll(Repository repo,
           {int? page, bool? isClosed, bool? force}) =>
-      client.get<IssueList>(_reposPath(repo, "/issues"),
+      client.get<IssueList>(_baseRepoPath(repo, "/issues"),
           queryParameters: {
             if (isClosed ?? false) "state": "closed",
             if (page != null) "page": page,
@@ -108,7 +108,7 @@ class GogsIssues extends GogsClientBase {
   /// [index]：这个参数指的不是id而是他的number，也就是显示的 #xxx 这样的，但有的又要传id奇怪的很？
   FutureRESTResult<Issue?> getIssue(Repository repo, int index,
           {bool? force}) =>
-      client.get<Issue>(_reposPath(repo, "/issues/$index"),
+      client.get<Issue>(_baseRepoPath(repo, "/issues/$index"),
           force: force, decoder: (data) => Issue.fromJson(data));
 
   /// PATCH /repos/:owner/:repo/issues/:index
@@ -117,7 +117,7 @@ class GogsIssues extends GogsClientBase {
   ///
   /// 创建一个新的issue
   FutureRESTResult<Issue?> create(Repository repo, CreateIssue issue) =>
-      client.post<Issue>(_reposPath(repo, "/issues"),
+      client.post<Issue>(_baseRepoPath(repo, "/issues"),
           data: issue.toJson(), decoder: (data) => Issue.fromJson(data));
 
   /// PATCH /repos/:owner/:repo/issues/:index
@@ -134,7 +134,7 @@ class GogsIssues extends GogsClientBase {
     int? milestone,
     bool? isOpen,
   }) =>
-      client.patch<Issue>(_reposPath(repo, "/issues/${issue.number}"),
+      client.patch<Issue>(_baseRepoPath(repo, "/issues/${issue.number}"),
           data: {
             if (title != null) "title": title,
             if (body != null) "body": body,
