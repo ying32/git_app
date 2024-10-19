@@ -21,7 +21,7 @@ import (
 
 type FeedAction struct {
 	Id         int64           `json:"id"`
-	OpType     int             `json:"op_type"`    // 操作类型
+	OpType     string          `json:"op_type"`    // 操作类型
 	Committer  *User           `json:"committer"`  // 提交者
 	RepoOwner  *User           `json:"repo_owner"` // 仓库所有者
 	Repo       *api.Repository `json:"repo"`
@@ -32,6 +32,56 @@ type FeedAction struct {
 	IssueId    int             `json:"issue_id"`    // issues的id
 	IssueTitle string          `json:"issue_title"` // issue标题
 
+}
+
+func actionToString(opType database.ActionType) string {
+	switch opType {
+	case database.ActionCreateRepo:
+		return "create_repo"
+	case database.ActionRenameRepo:
+		return "rename_repo"
+	case database.ActionStarRepo:
+		return "star_repo"
+	case database.ActionWatchRepo:
+		return "watch_repo"
+	case database.ActionCommitRepo:
+		return "commit_repo"
+	case database.ActionCreateIssue:
+		return "create_issue"
+	case database.ActionCreatePullRequest:
+		return "create_pull_request"
+	case database.ActionTransferRepo:
+		return "transfer_repo"
+	case database.ActionPushTag:
+		return "push_tag"
+	case database.ActionCommentIssue:
+		return "comment_issue"
+	case database.ActionMergePullRequest:
+		return "merge_pull_request"
+	case database.ActionCloseIssue:
+		return "close_issue"
+	case database.ActionReopenIssue:
+		return "reopen_issue"
+	case database.ActionClosePullRequest:
+		return "close_pull_request"
+	case database.ActionReopenPullRequest:
+		return "reopen_pull_request"
+	case database.ActionCreateBranch:
+		return "create_branch"
+	case database.ActionDeleteBranch:
+		return "delete_branch"
+	case database.ActionDeleteTag:
+		return "delete_tag"
+	case database.ActionForkRepo:
+		return "fork_repo"
+	case database.ActionMirrorSyncPush:
+		return "mirror_sync_push"
+	case database.ActionMirrorSyncCreate:
+		return "mirror_sync_create"
+	case database.ActionMirrorSyncDelete:
+		return "mirror_sync_delete"
+	}
+	return ""
 }
 
 // GetRetrieveFeeds 修改自 internal/route/user/home.go
@@ -106,7 +156,7 @@ func GetRetrieveFeeds(c *context.APIContext) {
 
 		feedAct := &FeedAction{
 			Id:     act.ID,
-			OpType: int(act.OpType),
+			OpType: actionToString(act.OpType),
 			//Committer: actUser.APIFormat(),
 			//RepoOwner: repoUser.APIFormat(),
 			Committer: fromUser(actUser),

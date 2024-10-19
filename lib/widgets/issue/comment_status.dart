@@ -6,7 +6,8 @@ import 'package:html/dom.dart' as dom;
 import 'package:remixicon/remixicon.dart';
 
 /// 评论的类型
-enum _CommentType {
+
+enum IssueCommentType {
   unknown,
   comment,
   reopen,
@@ -15,18 +16,29 @@ enum _CommentType {
   commitRef,
   commentRef,
   pullRef,
+  // gitea，不知道还有些啥状态，没去看他的源码
+  assignees,
+  changeIssueRef,
+  label,
+  changeTitle
 }
 
-_CommentType _commentTypeFromString(String text) {
+IssueCommentType issueCommentTypeFromString(String text) {
   return switch (text) {
-    "comment" => _CommentType.comment,
-    "reopen" => _CommentType.reopen,
-    "closed" => _CommentType.closed,
-    "issue_ref" => _CommentType.issueRef,
-    "commit_ref" => _CommentType.commitRef,
-    "comment_ref" => _CommentType.commentRef,
-    "pull_ref" => _CommentType.pullRef,
-    _ => _CommentType.unknown,
+    "comment" => IssueCommentType.comment,
+    "reopen" => IssueCommentType.reopen,
+    //gitea | close
+    "closed" || "close" => IssueCommentType.closed,
+    "issue_ref" => IssueCommentType.issueRef,
+    "commit_ref" => IssueCommentType.commitRef,
+    "comment_ref" => IssueCommentType.commentRef,
+    "pull_ref" => IssueCommentType.pullRef,
+    // gitea
+    "assignees" => IssueCommentType.assignees,
+    "change_issue_ref" => IssueCommentType.changeIssueRef,
+    "label" => IssueCommentType.label,
+    "change_title" => IssueCommentType.changeTitle,
+    _ => IssueCommentType.unknown,
   };
 }
 
@@ -147,37 +159,63 @@ class CommentStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var type = _commentTypeFromString(comment.type);
+    var type = issueCommentTypeFromString(comment.type);
     // 因为没打补丁，所以这里当为未知的时候做个简单判断，虽然不能知道是啥，但好歹能显示些
-    if (type == _CommentType.unknown) {
+    if (type == IssueCommentType.unknown) {
       if (comment.body.isNotEmpty) {
         if (_bodyIsHtml) {
-          type = _CommentType.commitRef;
+          type = IssueCommentType.commitRef;
         } else {
-          type = _CommentType.comment;
+          type = IssueCommentType.comment;
         }
       }
     }
     late Widget child;
     switch (type) {
-      case _CommentType.closed:
+      case IssueCommentType.closed:
         child = _buildBody(
           icon: Remix.forbid_2_line,
           iconColor: Colors.red,
           afterText: '关闭',
         );
-      case _CommentType.reopen:
+      case IssueCommentType.reopen:
         child = _buildBody(
           icon: Remix.circle_fill,
           iconColor: Colors.green,
           afterText: '重新开启',
         );
-      case _CommentType.commitRef:
+      case IssueCommentType.commitRef:
         child = _buildBody(
           icon: Remix.git_commit_line,
           iconColor: Colors.green,
           afterText: '提交',
         );
+      case IssueCommentType.assignees:
+        child = _buildBody(
+          icon: Remix.account_circle_line,
+          iconColor: Colors.grey,
+          afterText: '指派给',
+        );
+      case IssueCommentType.changeIssueRef:
+        child = _buildBody(
+          icon: Remix.git_merge_line,
+          iconColor: Colors.grey,
+          afterText: '添加了引用',
+        );
+      case IssueCommentType.changeTitle:
+        child = _buildBody(
+          icon: Remix.edit_line,
+          iconColor: Colors.grey,
+          afterText: '修改标题',
+        );
+      // 这个要优化，要合并起来为一条
+      case IssueCommentType.label:
+        child = _buildBody(
+          icon: Remix.price_tag_3_line,
+          iconColor: Colors.grey,
+          afterText: '添加了标签',
+        );
+
       default:
         child = SizedBox(
           child: Text(

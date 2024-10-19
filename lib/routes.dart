@@ -75,6 +75,7 @@ class Routes {
         useModal: useModal);
   }
 
+  /// 压入用户详情页
   Future<T?> pushUserDetailsPage<T>(BuildContext context, User user,
       {required PageData? data, bool useModal = true}) {
     return routes.pushPage(
@@ -86,21 +87,4 @@ class Routes {
         data: data,
         useModal: useModal);
   }
-
-  /// 压入issues页
-  // Future<T?> pushIssuesPage<T>(
-  //   BuildContext context,
-  //   Repository repo, {
-  //   required String title,
-  //   required PageData? data,
-  //   required IssuesCategory category,
-  //   bool useModal = true,
-  // }) {
-  //   return routes.pushPage(
-  //     context: context,
-  //     IssuesPage(repo: repo, title: title, category: category),
-  //     data: data,
-  //     useModal: useModal,
-  //   );
-  // }
 }

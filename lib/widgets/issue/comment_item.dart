@@ -57,6 +57,13 @@ class CommentModel extends ChangeNotifier {
     }
   }
 
+  void updateCommentByIndex(int index, IssueComment newComment) {
+    if (index >= 0 && index < _comments.length) {
+      _comments[index] = _comments[index].copyWith(comment: newComment);
+      notifyListeners();
+    }
+  }
+
   /// 当前仓库
   late Repository repo;
 }
@@ -89,11 +96,7 @@ class CommentItem extends StatelessWidget {
         },
       );
     }
-    return Builder(
-      builder: (BuildContext context) {
-        return MarkdownBlockPlus(data: text);
-      },
-    );
+    return MarkdownBlockPlus(data: text);
   }
 
   /// 编辑评论
@@ -108,22 +111,24 @@ class CommentItem extends StatelessWidget {
       }
       showToast('回复失败:${res.statusMessage}');
     } else {
-      //todo: 这里的状态还要处理啊
       final res =
           await AppGlobal.cli.issues.edit(model.repo, model.issue, body: value);
-      if (res.succeed) {
+      if (res.succeed && res.data != null) {
         model.issue = model.issue.copyWith(
-          body: res.data?.body,
+          body: res.data!.body,
           updatedAt: res.data?.updatedAt,
         );
+        //todo: 不是啥好方法，嗯，还得优化
+        model.updateCommentByIndex(
+            0,
+            IssueComment(
+              id: 0,
+              user: res.data!.user,
+              body: res.data!.body,
+              createdAt: res.data!.createdAt,
+              updatedAt: res.data!.updatedAt,
+            ));
 
-        // setState(() {
-        //   _issue = issue.copyWith(
-
-        //   );
-        //   _comment =
-        //       comment.copyWith(body: issue.body, updatedAt: issue.updatedAt);
-        // });
         return true;
       }
       showToast('编辑失败:${res.statusMessage}');

@@ -79,6 +79,20 @@ class GogsIssuesComment extends GogsClientBase {
           _baseRepoPath(repo, "/issues/${issue.number}/comments/$id"),
           data: {"body": body},
           decoder: (data) => IssueComment.fromJson(data));
+
+  /// GET /repos/{owner}/{repo}/issues/{index}/timeline
+  ///
+  /// gitea，他返回的数据很多，这里我只取一部分吧。
+  FutureRESTResult<IssueCommentList?> timeline(Repository repo, Issue issue,
+          {DateTime? since,
+          int? page,
+          int? limit,
+          DateTime? before,
+          bool? force}) =>
+      client.get<IssueCommentList>(
+          _baseRepoPath(repo, "/issues/${issue.number}/timeline"),
+          force: force,
+          decoder: (data) => IssueComment.fromJsonList(data));
 }
 
 /// issues操作

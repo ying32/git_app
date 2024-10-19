@@ -27,6 +27,7 @@ class IssueComment {
         updatedAt: json["updated_at"] == null
             ? null
             : DateTime.parse(json["updated_at"]),
+        // 补丁或者gitea
         type: json["type"] ?? '',
       );
 
@@ -61,3 +62,6 @@ class IssueComment {
 }
 
 typedef IssueCommentList = List<IssueComment>;
+
+//todo: 待处理
+class IssueCommentTimeline {}

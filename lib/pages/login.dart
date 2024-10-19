@@ -81,11 +81,15 @@ class _LoginPageState extends State<LoginPage> {
     final value = _histories[key];
     if (value == null) return const SizedBox();
     final u = Uri.tryParse('$value');
+    var title = u?.host ?? value;
+    if (u?.port != null && u!.port != 80) {
+      title = "$title:${u.port}";
+    }
     return SizedBox(
       height: 30,
       child: AdaptiveButton.outlined(
           padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: Text(u?.host ?? value),
+          child: Text(title),
           onPressed: () {
             // token or userName
             _userController.text = key;

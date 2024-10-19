@@ -6,7 +6,6 @@ class FeedAction {
     required this.opType,
     required this.committer,
     required this.repo,
-    required this.repoOwner,
     required this.refName,
     required this.isPrivate,
     required this.createdAt,
@@ -16,9 +15,8 @@ class FeedAction {
   });
 
   final int id;
-  final int opType;
+  final String opType;
   final User committer;
-  final User repoOwner;
   final Repository repo;
   final String refName;
   final bool isPrivate;
@@ -38,18 +36,41 @@ class FeedAction {
     return _jsonContent;
   }
 
+  static int _parseIssueId(String? text) {
+    if (text != null) {
+      final idx = text.indexOf("|");
+      if (idx != -1) {
+        return int.tryParse(text.substring(0, idx)) ?? 0;
+      }
+    }
+    return 0;
+  }
+
+  static String _getContent(String? text) {
+    if (text != null) {
+      final idx = text.indexOf("|");
+      if (idx != -1) {
+        return text.substring(idx + 1);
+      }
+    }
+    return text ?? '';
+  }
+
   factory FeedAction.fromJson(Map<String, dynamic> json) => FeedAction(
         id: json["id"] ?? 0,
-        opType: json["op_type"] ?? -1,
-        committer: User.fromJson(json["committer"] ?? {}),
-        repoOwner: User.fromJson(json["repo_owner"] ?? {}),
+        opType: json["op_type"] ?? '', // ?? -1,
+        // gitea: act_user
+        committer: User.fromJson(json["committer"] ?? json['act_user'] ?? {}),
         repo: Repository.fromJson(json["repo"] ?? {}),
         refName: json["ref_name"] ?? '',
         isPrivate: json["is_private"] ?? false,
-        createdAt: DateTime.parse(json["created_at"]),
-        content: json["content"] ?? '',
+        // gitea: created
+        createdAt: DateTime.parse(json["created_at"] ?? json['created']),
+        // gitea: content 1|
+        content: _getContent(json["content"]),
         issueTitle: json["issue_title"] ?? '',
-        issueId: json['issue_id'] ?? 0,
+        // gitea: content 1|
+        issueId: json['issue_id'] ?? _parseIssueId(json["content"]),
       );
 
   // Map<String, dynamic> toJson() => {

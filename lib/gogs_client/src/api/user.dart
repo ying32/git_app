@@ -25,10 +25,27 @@ class GogsUser extends GogsClientBase {
 
   /// GET /users/feeds
   ///
-  /// 获取当前登录用户的“最近活动”信息列表
+  /// 获取当前登录用户的“最近活动”信息列表，这个需要打补丁的，gogs不支持
   FutureRESTResult<FeedActionList> feeds({int? afterId, bool? force}) =>
       client.get<FeedActionList>("/user/feeds",
           queryParameters: afterId != null ? {"after_id": afterId} : null,
+          force: force,
+          decoder: (data) => FeedAction.fromJsonList(data));
+
+  /// GET /users/{username}/activities/feeds
+  ///
+  /// gitea的API，跟我自己打的补丁功能差不多
+  FutureRESTResult<FeedActionList> activitiesFeeds(User user,
+          {bool? onlyPerformedBy,
+          int? page,
+          int? limit /*String? date */,
+          bool? force}) =>
+      client.get<FeedActionList>("/users/${user.username}/activities/feeds",
+          queryParameters: {
+            if (onlyPerformedBy != null) "only-performed-by": onlyPerformedBy,
+            if (page != null) "page": page,
+            if (limit != null) "limit": limit,
+          },
           force: force,
           decoder: (data) => FeedAction.fromJsonList(data));
 

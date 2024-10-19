@@ -98,7 +98,9 @@ class Repository {
             ? null
             : RepositoryPermissions.fromJson(json["permissions"]),
         // new
-        openPullsCount: json["open_pulls_count"] ?? 0,
+        // open_pulls_count是我打的补丁，open_pr_counter 这个是gitea的
+        openPullsCount:
+            json["open_pulls_count"] ?? json['open_pr_counter'] ?? 0,
         isWatching: json["is_watching"] ?? false,
         isStaring: json["is_staring"] ?? false,
         branchCount: json["branch_count"] ?? 0,

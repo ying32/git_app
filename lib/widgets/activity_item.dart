@@ -13,30 +13,31 @@ import 'package:gogs_app/utils/utils.dart';
 import 'cached_image.dart';
 import 'markdown.dart';
 
-const _actionCreateRepo = 1;
-const _actionRenameRepo = 2;
-const _actionStarRepo = 3;
-const _actionWatchRepo = 4;
-const _actionCommitRepo = 5;
-const _actionCreateIssue = 6;
-const _actionCreatePullRequest = 7;
-const _actionTransferRepo = 8;
-const _actionPushTag = 9;
-const _actionCommentIssue = 10;
-const _actionMergePullRequest = 11;
-const _actionCloseIssue = 12;
-const _actionReopenIssue = 13;
-const _actionClosePullRequest = 14;
-const _actionReopenPullRequest = 15;
-const _actionCreateBranch = 16;
-const _actionDeleteBranch = 17;
-const _actionDeleteTag = 18;
-const _actionForkRepo = 19;
-// const _actionMirrorSyncPush = 20;
-// const _actionMirrorSyncCreate = 21;
-// const _actionMirrorSyncDelete = 22;
+///note: 本为偷下懒用int的，现在为了与gitea统一，所以改为string类型了
+const _actionCreateRepo = 'create_repo';
+const _actionRenameRepo = 'rename_repo';
+const _actionStarRepo = 'star_repo';
+const _actionWatchRepo = 'watch_repo';
+const _actionCommitRepo = 'commit_repo';
+const _actionCreateIssue = 'create_issue';
+const _actionCreatePullRequest = 'create_pull_request';
+const _actionTransferRepo = 'transfer_repo';
+const _actionPushTag = 'push_tag';
+const _actionCommentIssue = 'comment_issue';
+const _actionMergePullRequest = 'merge_pull_request';
+const _actionCloseIssue = 'close_issue';
+const _actionReopenIssue = 'reopen_issue';
+const _actionClosePullRequest = 'close_pull_request';
+const _actionReopenPullRequest = 'reopen_pull_request';
+const _actionCreateBranch = 'create_branch';
+const _actionDeleteBranch = 'delete_branch';
+const _actionDeleteTag = 'delete_tag';
+const _actionForkRepo = 'fork_repo';
+// const _actionMirrorSyncPush = 'mirror_sync_push';
+// const _actionMirrorSyncCreate = 'mirror_sync_create';
+// const _actionMirrorSyncDelete = 'mirror_sync_delete';
 
-String _opTypeToStr(int opType) => switch (opType) {
+String _opTypeToStr(String opType) => switch (opType) {
       _actionCreateRepo => '创建了仓库',
       _actionRenameRepo => '重命名仓库',
       _actionStarRepo => '点赞了仓库',
@@ -75,7 +76,7 @@ class _Icon extends StatelessWidget {
   Widget build(BuildContext context) => Icon(icon, size: 22, color: color);
 }
 
-_Icon? _opTypeToIcon(int opType) => switch (opType) {
+_Icon? _opTypeToIcon(String opType) => switch (opType) {
       _actionCreateRepo =>
         const _Icon(Remix.git_repository_line, color: Colors.blue),
       _actionRenameRepo => null,
@@ -120,14 +121,38 @@ class ActivityItem extends StatelessWidget {
   Widget _buildContentCommit(ContentCommit commit) {
     return Text.rich(
       TextSpan(children: [
-        TextSpan(
-          text: commit.sha1.substring(0, 10),
-          style: const TextStyle(color: Colors.blue, fontSize: 12),
-          recognizer: TapGestureRecognizer()
-            ..onTap = () {
-              showToast('没弄呢');
-            },
+        WidgetSpan(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 2, bottom: 2, left: 15),
+            child: GestureDetector(
+              onTap: () {
+                showToast('没弄呢');
+              },
+              child: Container(
+                constraints: const BoxConstraints(minWidth: 80),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                // todo: 这里还要优化，要对齐
+                child: Text(
+                  commit.sha1.substring(0, 10),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+            ),
+          ),
         ),
+        // TextSpan(
+        //   text: commit.sha1.substring(0, 10),
+        //   style: const TextStyle(color: Colors.blue, fontSize: 12),
+        //   recognizer: TapGestureRecognizer()
+        //     ..onTap = () {
+        //       showToast('没弄呢');
+        //     },
+        // ),
         const TextSpan(text: ' '),
         TextSpan(
           text: commit.message,
@@ -204,7 +229,7 @@ class ActivityItem extends StatelessWidget {
         TextSpan(text: ' ${_opTypeToStr(item.opType)} '),
         if (item.opType == _actionCommitRepo) ...[
           TextSpan(
-            text: item.refName,
+            text: item.refName.split("/").last,
             style: const TextStyle(color: Colors.blue),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
@@ -214,7 +239,7 @@ class ActivityItem extends StatelessWidget {
           const TextSpan(text: ' 分支的代码到 '),
         ],
         TextSpan(
-          text: '${item.repoOwner.username}/${item.repo.name}',
+          text: '${item.repo.owner.username}/${item.repo.name}',
           style: const TextStyle(color: Colors.blue),
           children: [
             if (item.issueId > 0) TextSpan(text: '#${item.issueId}'),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gogs_app/app_globals.dart';
+import 'package:gogs_app/gogs_client/gogs_client.dart';
 import 'package:gogs_app/utils/build_context_helper.dart';
 import 'package:gogs_app/utils/message_box.dart';
 import 'package:gogs_app/widgets/adaptive_widgets.dart';
@@ -58,65 +59,70 @@ class CommentIssueInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<CommentModel>();
-    final color = model.issue.isOpen ? Colors.green : Colors.red;
     return BackgroundContainer(
       child: Padding(
         padding: const EdgeInsets.all(15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+        child: Selector<CommentModel, Issue>(
+          selector: (_, CommentModel model) => model.issue,
+          builder: (_, Issue issue, __) {
+            final color = issue.isOpen ? Colors.green : Colors.red;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                UserHeadImage(
-                    size: 22,
-                    user: model.issue.user,
-                    // imageURL: model.issue.user.avatarUrl,
-                    radius: 2,
-                    padding: const EdgeInsets.all(1)),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: Text.rich(TextSpan(
-                    text: model.repo.fullName,
-                    children: [
-                      TextSpan(
-                          text: " #${model.issue.number}",
-                          style: const TextStyle(color: Colors.grey)),
-                    ],
-                  )),
-                ),
+                Row(
+                  children: [
+                    UserHeadImage(
+                        size: 22,
+                        user: issue.user,
+                        // imageURL: model.issue.user.avatarUrl,
+                        radius: 2,
+                        padding: const EdgeInsets.all(1)),
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: Text.rich(TextSpan(
+                        text: context.read<CommentModel>().repo.fullName,
+                        children: [
+                          TextSpan(
+                              text: " #${issue.number}",
+                              style: const TextStyle(color: Colors.grey)),
+                        ],
+                      )),
+                    ),
 
-                /// 显示编辑
-                if (model.issue.user.username ==
-                    AppGlobal.instance.userInfo?.username)
-                  AdaptiveIconButton(
-                      //icon: Icon(Icons.adaptive.more),
-                      icon: const Icon(Remix.edit_2_line, size: 20),
-                      onPressed: () => _doTapMore(context)),
+                    /// 显示编辑
+                    if (issue.user.username ==
+                        AppGlobal.instance.userInfo?.username)
+                      AdaptiveIconButton(
+                          //icon: Icon(Icons.adaptive.more),
+                          icon: const Icon(Remix.edit_2_line, size: 20),
+                          onPressed: () => _doTapMore(context)),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(issue.title,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    color: color.withAlpha(100),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.info_outlined, size: 16, color: color),
+                      const SizedBox(width: 5),
+                      Text(issue.isOpen ? '开启中' : '已关闭',
+                          style: TextStyle(color: color))
+                    ],
+                  ),
+                ),
               ],
-            ),
-            const SizedBox(height: 10),
-            Text(model.issue.title,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                color: color.withAlpha(100),
-                borderRadius: BorderRadius.circular(3),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.info_outlined, size: 16, color: color),
-                  const SizedBox(width: 5),
-                  Text(model.issue.isOpen ? '开启中' : '已关闭',
-                      style: TextStyle(color: color))
-                ],
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );

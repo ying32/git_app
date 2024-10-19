@@ -53,7 +53,8 @@ class User {
         website: json["website"] ?? '',
         followersCount: json["followers_count"] ?? 0,
         followingCount: json["following_count"] ?? 0,
-        starCount: json["star_count"] ?? 0,
+        // gitea: starred_repos_count
+        starCount: json["star_count"] ?? json['starred_repos_count'] ?? 0,
         reposCount: json["repos_count"] ?? 0,
         teamsCount: json["teams_count"] ?? 0,
         membersCount: json["members_count"] ?? 0,

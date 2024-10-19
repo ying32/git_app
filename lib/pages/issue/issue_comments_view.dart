@@ -17,30 +17,6 @@ import 'package:provider/provider.dart';
 
 import 'issue_comment_more.dart';
 
-enum _CommentType {
-  unknown,
-  comment,
-  reopen,
-  closed,
-  issueRef,
-  commitRef,
-  commentRef,
-  pullRef,
-}
-
-_CommentType _commentTypeFromString(String text) {
-  return switch (text) {
-    "comment" => _CommentType.comment,
-    "reopen" => _CommentType.reopen,
-    "closed" => _CommentType.closed,
-    "issue_ref" => _CommentType.issueRef,
-    "commit_ref" => _CommentType.commitRef,
-    "comment_ref" => _CommentType.commentRef,
-    "pull_ref" => _CommentType.pullRef,
-    _ => _CommentType.unknown,
-  };
-}
-
 class IssuesCommentsViewPage extends StatefulWidget {
   const IssuesCommentsViewPage({
     super.key,
@@ -101,8 +77,13 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
     // }
 
     model.comments.clear();
-    final resComments = await AppGlobal.cli.issues.comment
+    var resComments = await AppGlobal.cli.issues.comment
         .getAll(model.repo, issue, force: force);
+    if (!resComments.succeed) {
+      //todo: 这个时间线要另处理
+      //resComments = await AppGlobal.cli.issues.comment
+      //    .timeline(model.repo, issue, force: force);
+    }
     if (resComments.succeed) {
       // 添加默认项目到列表
 
@@ -128,18 +109,18 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
     CommentItemData? item;
     comments?.forEach((e) {
       // 因为没打补丁，所以这里当为未知的时候做个简单判断，虽然不能知道是啥，但好歹能显示些
-      var type = _commentTypeFromString(e.type);
-      if (type == _CommentType.unknown) {
+      var type = issueCommentTypeFromString(e.type);
+      if (type == IssueCommentType.unknown) {
         if (e.body.isNotEmpty) {
           if (e.bodyIsHtml) {
-            type = _CommentType.commitRef;
+            type = IssueCommentType.commitRef;
           } else {
-            type = _CommentType.comment;
+            type = IssueCommentType.comment;
           }
         }
       }
 
-      if (type == _CommentType.comment) {
+      if (type == IssueCommentType.comment) {
         item = CommentItemData(e, comment == e);
         model.addComment(item!);
       } else {
