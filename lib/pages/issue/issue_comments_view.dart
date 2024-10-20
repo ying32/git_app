@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
+import 'package:gogs_app/models/issue_comment_model.dart';
 import 'package:gogs_app/pages/issue/create_issue_comment.dart';
 import 'package:gogs_app/utils/build_context_helper.dart';
 import 'package:gogs_app/utils/message_box.dart';
 import 'package:gogs_app/widgets/adaptive_widgets.dart';
 import 'package:gogs_app/widgets/background_container.dart';
+import 'package:gogs_app/widgets/bottom_divider.dart';
 import 'package:gogs_app/widgets/issue/comment_issue_info.dart';
 import 'package:gogs_app/widgets/issue/comment_item.dart';
-import 'package:gogs_app/widgets/issue/comment_status.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:gogs_app/app_globals.dart';
@@ -62,7 +63,7 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
     super.dispose();
   }
 
-  CommentModel get model => context.read<CommentModel>();
+  IssueCommentModel get model => context.read<IssueCommentModel>();
   Issue get issue => model.issue;
 
   Future _init(_, bool? force) async {
@@ -86,84 +87,23 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
     }
     if (resComments.succeed) {
       // 添加默认项目到列表
-
-      _processComments(resComments.data);
-      //if (mounted) setState(() {});
+      model.addAllComment(resComments.data!);
     }
-  }
-
-  IssueComment _insertDefaultComment(IssueCommentList? comments) {
-    final comment = IssueComment(
-        id: issue.id,
-        user: issue.user,
-        body: issue.body,
-        createdAt: issue.createdAt,
-        updatedAt: issue.updatedAt,
-        type: "comment");
-    comments?.insert(0, comment);
-    return comment;
-  }
-
-  void _processComments(IssueCommentList? comments) {
-    final comment = _insertDefaultComment(comments);
-    CommentItemData? item;
-    comments?.forEach((e) {
-      // 因为没打补丁，所以这里当为未知的时候做个简单判断，虽然不能知道是啥，但好歹能显示些
-      var type = issueCommentTypeFromString(e.type);
-      if (type == IssueCommentType.unknown) {
-        if (e.body.isNotEmpty) {
-          if (e.bodyIsHtml) {
-            type = IssueCommentType.commitRef;
-          } else {
-            type = IssueCommentType.comment;
-          }
-        }
-      }
-
-      if (type == IssueCommentType.comment) {
-        item = CommentItemData(e, comment == e);
-        model.addComment(item!);
-      } else {
-        item?.subStatus.add(e);
-      }
-    });
-  }
-
-  Widget _buildComment(CommentItemData comment) {
-    Widget child = CommentItem(
-      comment: comment.comment,
-      isIssue: comment.isIssue,
-    );
-    if (comment.subStatus.isNotEmpty) {
-      final list =
-          comment.subStatus.map((e) => CommentStatus(comment: e)).toList();
-      child = Container(
-        color: Colors.grey.withAlpha(20),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [child, ...list]),
-      );
-    }
-    return child;
   }
 
   /// 创建评论
   Future<bool?> _doSendComment(String? value) async {
-    if (value == null) return null;
-    // 创建成功会返回一个IssueComment
-    final res =
-        await AppGlobal.cli.issues.comment.create(model.repo, issue, value);
-    if (res.succeed && res.data != null) {
-      // setState(() {
-      model.addComment(CommentItemData(res.data!));
-      // });
-      if (_controller.hasClients) {
-        _controller.jumpTo(_controller.position.maxScrollExtent);
+    if (value != null) {
+      final res = await commitNewComment(model, value);
+      if (res == null) {
+        if (_controller.hasClients) {
+          _controller.jumpTo(_controller.position.maxScrollExtent);
+        }
+        return true;
       }
-      return true;
-    } else {
-      showToast(res.statusMessage ?? '提交评论失败，错误：${res.statusMessage}');
+      showToast('提交评论失败，错误：$res');
     }
+
     return null;
   }
 
@@ -240,7 +180,7 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
       expand: false,
       backgroundColor: context.theme.scaffoldBackgroundColor,
       context: context,
-      builder: (context) => ChangeNotifierProvider<CommentModel>.value(
+      builder: (context) => ChangeNotifierProvider<IssueCommentModel>.value(
         value: model,
         child: const IssueCommentMorePage(),
       ),
@@ -252,7 +192,7 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
     final title =
         Text(issue.title, maxLines: 1, overflow: TextOverflow.ellipsis);
 
-    final comments = context.watch<CommentModel>().comments;
+    final comments = context.watch<IssueCommentModel>().comments;
     return BackgroundContainer(
       child: PlatformPageScaffold(
         controller: _controller,
@@ -265,17 +205,22 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
         ),
         emptyItemHint: const Center(child: Text('没有数据哦')),
         itemBuilder: (BuildContext context, int index) {
-          if (index == 0) {
-            return const Padding(
-              padding: EdgeInsets.only(bottom: 15),
-              child: CommentIssueInfo(),
-            );
-          }
-          return _buildComment(comments[index - 1]);
+          return switch (index) {
+            0 => const BottomDivider(child: CommentIssueInfo()),
+            1 => BottomDivider(
+                child: Container(
+                  height: 15,
+                  padding: const EdgeInsets.only(left: 40), // 这个后面再调整吧，有点不准哈
+                  child: const VerticalDivider(width: 1),
+                ),
+              ),
+            2 => const BottomDivider(child: FirstCommentItem()),
+            _ => CommentItem(comment: comments[index - 3])
+          };
         },
         bottomBar: _buildBottomBar(),
-        useSeparator: true,
-        itemCount: comments.length + 1,
+        // useSeparator: true,
+        itemCount: comments.length + 3,
       ),
       // ),
     );

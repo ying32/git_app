@@ -49,11 +49,13 @@ class IssueComment {
     String? type,
   }) =>
       IssueComment(
-          id: id ?? this.id,
-          user: user ?? this.user,
-          body: body ?? this.body,
-          createdAt: createdAt ?? this.createdAt,
-          updatedAt: updatedAt ?? this.updatedAt);
+        id: id ?? this.id,
+        user: user ?? this.user,
+        body: body ?? this.body,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        type: type ?? this.type,
+      );
 
   bool get bodyIsHtml => body.startsWith('<a');
 

@@ -1,71 +1,36 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:gogs_app/app_globals.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
+import 'package:gogs_app/models/issue_comment_model.dart';
 import 'package:gogs_app/pages/issue/create_issue_comment.dart';
 import 'package:gogs_app/utils/message_box.dart';
 import 'package:gogs_app/utils/utils.dart';
 import 'package:gogs_app/widgets/adaptive_widgets.dart';
 import 'package:gogs_app/widgets/background_container.dart';
+import 'package:gogs_app/widgets/bottom_divider.dart';
 import 'package:gogs_app/widgets/cached_image.dart';
 import 'package:gogs_app/widgets/markdown.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
 
-class CommentItemData {
-  CommentItemData(this.comment, [this.isIssue = false]);
-  final IssueComment comment;
-  final IssueCommentList subStatus = [];
-  final bool isIssue;
+import 'comment_status.dart';
 
-  CommentItemData copyWith(
-      {IssueComment? comment, IssueCommentList? subStatus, bool? isIssue}) {
-    final res = CommentItemData(
-      comment ?? this.comment,
-      isIssue ?? this.isIssue,
-    );
-    if (subStatus != null) res.subStatus.addAll(subStatus);
-    return res;
+/// 提交一个新的评论，如果返回null，则表示成功，否则返回错误消息
+Future<String?> commitNewComment(IssueCommentModel model, String value) async {
+  final res =
+      await AppGlobal.cli.issues.comment.create(model.repo, model.issue, value);
+  // 创建成功会返回一个IssueComment
+  if (res.succeed) {
+    // 没有类型返回，所以这里添加个
+    model.addComment(res.data!.copyWith(type: 'comment'));
+    return null;
   }
-}
-
-/// 评论数据模型
-class CommentModel extends ChangeNotifier {
-  /// 当前issue
-  late Issue _issue;
-  Issue get issue => _issue;
-  set issue(Issue value) {
-    _issue = value;
-    notifyListeners();
-  }
-
-  /// 评论列表
-  final List<CommentItemData> _comments = [];
-  List<CommentItemData> get comments => _comments;
-  void addComment(CommentItemData data) {
-    _comments.add(data);
-    notifyListeners();
-  }
-
-  void updateComment(int id, IssueComment newComment) {
-    final idx = _comments.indexWhere((e) => e.comment.id == id);
-    if (idx != -1) {
-      _comments[idx] = _comments[idx].copyWith(comment: newComment);
-      notifyListeners();
-    }
-  }
-
-  void updateCommentByIndex(int index, IssueComment newComment) {
-    if (index >= 0 && index < _comments.length) {
-      _comments[index] = _comments[index].copyWith(comment: newComment);
-      notifyListeners();
-    }
-  }
-
-  /// 当前仓库
-  late Repository repo;
+  return res.statusMessage;
 }
 
 /// 每条评论信息
@@ -73,11 +38,102 @@ class CommentItem extends StatelessWidget {
   const CommentItem({
     super.key,
     required this.comment,
-    required this.isIssue,
   });
 
   final IssueComment comment;
-  final bool isIssue;
+
+  Future<bool?> _onEdited(IssueCommentModel model, String? value) async {
+    if (value == null) return null;
+    final res = await AppGlobal.cli.issues.comment
+        .edit(model.repo, model.issue, comment.id, value);
+    if (res.succeed) {
+      model.updateComment(comment.id, res.data!);
+      return true;
+    }
+    showToast('修改失败:${res.statusMessage}');
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (issueCommentTypeFromString(comment.type) != IssueCommentType.comment) {
+      return CommentStatus(comment: comment);
+    }
+    return Selector<IssueCommentModel, List<IssueComment>>(
+      selector: (_, IssueCommentModel model) => model.comments,
+      builder: (_, value, __) {
+        return BottomDivider(
+          child: _CommentItem(
+              key: key,
+              user: comment.user,
+              body: comment.body,
+              updatedAt: comment.updatedAt,
+              createdAt: comment.createdAt,
+              canDelete: comment.user.username ==
+                  AppGlobal.instance.userInfo?.username,
+              onEdited: (value) =>
+                  _onEdited(context.read<IssueCommentModel>(), value)),
+        );
+      },
+    );
+  }
+}
+
+/// 首条评论，这个首条评论是来自来issue中的，而不是评论列表中的
+class FirstCommentItem extends StatelessWidget {
+  const FirstCommentItem({super.key});
+
+  Future<bool?> _onEdited(IssueCommentModel model, String? value) async {
+    if (value == null) return null;
+    final res =
+        await AppGlobal.cli.issues.edit(model.repo, model.issue, body: value);
+    if (res.succeed && res.data != null) {
+      model.issue = model.issue.copyWith(
+        body: res.data!.body,
+        updatedAt: res.data?.updatedAt,
+      );
+      return true;
+    }
+    showToast('修改失败:${res.statusMessage}');
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<IssueCommentModel, Issue>(
+      selector: (_, IssueCommentModel model) => model.issue,
+      builder: (_, value, __) {
+        return _CommentItem(
+            key: key,
+            user: value.user,
+            body: value.body,
+            updatedAt: value.updatedAt,
+            createdAt: value.createdAt,
+            canDelete: false,
+            onEdited: (value) =>
+                _onEdited(context.read<IssueCommentModel>(), value));
+      },
+    );
+  }
+}
+
+class _CommentItem extends StatelessWidget {
+  const _CommentItem({
+    super.key,
+    required this.user,
+    required this.body,
+    required this.updatedAt,
+    required this.createdAt,
+    required this.canDelete,
+    required this.onEdited,
+  });
+
+  final User user;
+  final String body;
+  final DateTime? updatedAt;
+  final DateTime? createdAt;
+  final bool canDelete;
+  final CommentInputSendCallback<String?> onEdited;
 
   Widget _buildContentBody(String text) {
     final bodyIsEmpty = text.isEmpty;
@@ -99,96 +155,51 @@ class CommentItem extends StatelessWidget {
     return MarkdownBlockPlus(data: text);
   }
 
-  /// 编辑评论
-  Future<bool?> _doSendEditComment(CommentModel model, String? value) async {
-    if (value == null) return null;
-    if (!isIssue) {
-      final res = await AppGlobal.cli.issues.comment
-          .edit(model.repo, model.issue, comment.id, value);
-      if (res.succeed) {
-        model.updateComment(comment.id, res.data!);
-        return true;
-      }
-      showToast('回复失败:${res.statusMessage}');
-    } else {
-      final res =
-          await AppGlobal.cli.issues.edit(model.repo, model.issue, body: value);
-      if (res.succeed && res.data != null) {
-        model.issue = model.issue.copyWith(
-          body: res.data!.body,
-          updatedAt: res.data?.updatedAt,
-        );
-        //todo: 不是啥好方法，嗯，还得优化
-        model.updateCommentByIndex(
-            0,
-            IssueComment(
-              id: 0,
-              user: res.data!.user,
-              body: res.data!.body,
-              createdAt: res.data!.createdAt,
-              updatedAt: res.data!.updatedAt,
-            ));
-
-        return true;
-      }
-      showToast('编辑失败:${res.statusMessage}');
-    }
-
-    return null;
-  }
-
   /// 创建新的评论
-  Future<bool?> _doSendNewComment(CommentModel model, String? value) async {
-    if (value == null) return null;
-
-    final res = await AppGlobal.cli.issues.comment
-        .create(model.repo, model.issue, value);
-    if (res.succeed) {
-      model.addComment(CommentItemData(res.data!));
-      return true;
+  Future<bool?> _doSendQuoteReply(
+      IssueCommentModel model, String? value) async {
+    if (value != null) {
+      final res = await commitNewComment(model, value);
+      if (res == null) return true;
+      showToast('评论失败:$res');
     }
-    showToast('编辑失败:${res.statusMessage}');
-
     return null;
   }
 
   void _doTapBodyEdit(BuildContext context) {
-    final model = context.read<CommentModel>();
+    //final model = context.read<CommentModel>();
     Navigator.of(context).pop();
     showCupertinoModalBottomSheet(
         expand: true,
         context: context,
-        builder: (context) => CommentInputPage(
-            defaultContent: comment.body,
-            onSend: (value) => _doSendEditComment(model, value)));
+        builder: (_) =>
+            CommentInputPage(defaultContent: body, onSend: onEdited));
   }
 
   void _doTapDelete(BuildContext context) {}
 
   void _doTapQuoteReply(BuildContext context) {
-    final model = context.read<CommentModel>();
+    final model = context.read<IssueCommentModel>();
     Navigator.of(context).pop();
 
     // 这里要使用新建的
     showCupertinoModalBottomSheet(
         expand: true,
         context: context,
-        builder: (context) => CommentInputPage(
-            defaultContent: '> ${comment.body}   \n\n',
-            onSend: (value) => _doSendNewComment(model, value)));
+        builder: (_) => CommentInputPage(
+            defaultContent: '> $body   \n\n',
+            onSend: (value) => _doSendQuoteReply(model, value)));
   }
 
   void _doTapMore(BuildContext context) {
-    final modal = context.read<CommentModel>();
     showCupertinoModalPopup<void>(
       context: context,
       builder: (_) => CupertinoActionSheet(
         // message: const Text(' '),
         actions: [
-          if (AppGlobal.instance.userInfo?.username ==
-              comment.user.username) ...[
+          if (AppGlobal.instance.userInfo?.username == user.username) ...[
             // 评论是自己创建的或者这个仓库的所有者是自己才能删除
-            if (!isIssue && comment.user.username == modal.repo.owner.username)
+            if (canDelete)
               CupertinoActionSheetAction(
                 onPressed: () => _doTapDelete(context),
                 child: const Row(
@@ -242,7 +253,7 @@ class CommentItem extends StatelessWidget {
                 children: [
                   UserHeadImage(
                       size: 22,
-                      user: comment.user,
+                      user: user,
                       // imageURL: comment.user.avatarUrl,
                       radius: 2,
                       padding: const EdgeInsets.all(1)),
@@ -252,17 +263,17 @@ class CommentItem extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(comment.user.username),
+                        Text(user.username),
                         const SizedBox(height: 5),
-                        Text(timeToLabel(comment.updatedAt),
+                        Text(timeToLabel(updatedAt),
                             style: const TextStyle(color: Colors.grey)),
                       ],
                     ),
                   ),
                   // 是否已经编辑
-                  if (comment.createdAt != null &&
-                      comment.updatedAt != null &&
-                      comment.createdAt!.compareTo(comment.updatedAt!) < 0)
+                  if (createdAt != null &&
+                      updatedAt != null &&
+                      createdAt!.compareTo(updatedAt!) < 0)
                     const Text('已编辑',
                         style: TextStyle(color: Colors.grey, fontSize: 13)),
                   // 为issues的这个评论不显示那些东西
@@ -291,7 +302,7 @@ class CommentItem extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              _buildContentBody(comment.body),
+              _buildContentBody(body),
             ],
           )),
     );

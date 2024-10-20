@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gogs_app/app_globals.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
+import 'package:gogs_app/models/issue_comment_model.dart';
 import 'package:gogs_app/utils/build_context_helper.dart';
 import 'package:gogs_app/utils/message_box.dart';
 import 'package:gogs_app/widgets/adaptive_widgets.dart';
 import 'package:gogs_app/widgets/background_container.dart';
 import 'package:gogs_app/widgets/cached_image.dart';
-import 'package:gogs_app/widgets/issue/comment_item.dart';
 import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
 
@@ -14,7 +14,7 @@ class CommentIssueInfo extends StatelessWidget {
   const CommentIssueInfo({super.key});
 
   Future<void> _doTapMore(BuildContext context) async {
-    final model = context.read<CommentModel>();
+    final model = context.read<IssueCommentModel>();
     final controller = TextEditingController(text: model.issue.title);
     try {
       final res = await showAdaptiveDialog(
@@ -62,8 +62,8 @@ class CommentIssueInfo extends StatelessWidget {
     return BackgroundContainer(
       child: Padding(
         padding: const EdgeInsets.all(15),
-        child: Selector<CommentModel, Issue>(
-          selector: (_, CommentModel model) => model.issue,
+        child: Selector<IssueCommentModel, Issue>(
+          selector: (_, IssueCommentModel model) => model.issue,
           builder: (_, Issue issue, __) {
             final color = issue.isOpen ? Colors.green : Colors.red;
             return Column(
@@ -80,7 +80,7 @@ class CommentIssueInfo extends StatelessWidget {
                     const SizedBox(width: 5),
                     Expanded(
                       child: Text.rich(TextSpan(
-                        text: context.read<CommentModel>().repo.fullName,
+                        text: context.read<IssueCommentModel>().repo.fullName,
                         children: [
                           TextSpan(
                               text: " #${issue.number}",

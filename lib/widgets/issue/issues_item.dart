@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
+import 'package:gogs_app/models/issue_comment_model.dart';
 import 'package:gogs_app/routes.dart';
 import 'package:gogs_app/utils/build_context_helper.dart';
 
@@ -8,7 +9,6 @@ import 'package:gogs_app/utils/message_box.dart';
 import 'package:gogs_app/utils/utils.dart';
 import 'package:provider/provider.dart';
 
-import 'comment_item.dart';
 import 'labels.dart';
 
 class IssuesItem extends StatelessWidget {
@@ -82,9 +82,9 @@ class IssuesItem extends StatelessWidget {
           return;
         }
         routes.pushPage(
-            ChangeNotifierProvider<CommentModel>(
+            ChangeNotifierProvider<IssueCommentModel>(
                 create: (_) {
-                  final model = CommentModel();
+                  final model = IssueCommentModel();
                   model.issue = item;
                   model.repo = repo!;
                   return model;

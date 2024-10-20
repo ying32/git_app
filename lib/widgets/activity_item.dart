@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
+import 'package:gogs_app/models/issue_comment_model.dart';
 import 'package:gogs_app/routes.dart';
 import 'package:gogs_app/utils/message_box.dart';
-import 'package:gogs_app/widgets/issue/comment_item.dart';
 import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
 
@@ -186,9 +186,9 @@ class ActivityItem extends StatelessWidget {
       //     data: null);
 
       routes.pushPage(
-          ChangeNotifierProvider<CommentModel>(
+          ChangeNotifierProvider<IssueCommentModel>(
               create: (_) {
-                final model = CommentModel();
+                final model = IssueCommentModel();
                 model.issue = Issue.newEmptyFromId(item.issueId);
                 model.repo = item.repo;
                 return model;

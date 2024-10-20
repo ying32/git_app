@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gogs_app/app_globals.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
+import 'package:gogs_app/models/issue_comment_model.dart';
 import 'package:gogs_app/utils/message_box.dart';
 import 'package:gogs_app/widgets/adaptive_widgets.dart';
-import 'package:gogs_app/widgets/issue/comment_item.dart';
 import 'package:gogs_app/widgets/list_section.dart';
 import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
@@ -12,7 +12,7 @@ class IssueCommentMorePage extends StatelessWidget {
   const IssueCommentMorePage({super.key});
 
   void _doCloseIssue(BuildContext context) {
-    final model = context.read<CommentModel>();
+    final model = context.read<IssueCommentModel>();
 
     AppGlobal.cli.issues
         .edit(model.repo, model.issue, isOpen: !model.issue.isOpen)
@@ -22,7 +22,7 @@ class IssueCommentMorePage extends StatelessWidget {
         // closed
         // reopen
         // 最后一个的
-        model.comments.lastOrNull?.subStatus.add(IssueComment(
+        model.addComment(IssueComment(
             id: 0,
             user: value.data!.user, // 这个user对不对？
             body: '',
@@ -91,7 +91,7 @@ class IssueCommentMorePage extends StatelessWidget {
           ]),
       const ListTileDivider(left: 20),
       // Consumer<CommentModel>(
-      Selector<CommentModel, Issue>(
+      Selector<IssueCommentModel, Issue>(
         builder: (_, Issue value, __) {
           return ListTileNav(
             leading: value.isOpen

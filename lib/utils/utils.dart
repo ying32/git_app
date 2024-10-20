@@ -27,6 +27,7 @@ String timeToLabel(DateTime? dateTime) {
       dateTime.millisecondsSinceEpoch ~/ 1000;
 
   return switch (seconds) {
+    0 => '刚刚',
     < minute => '$seconds秒前',
     < hour => '${seconds ~/ minute}分钟前',
     < day => '${seconds ~/ hour}小时前',
