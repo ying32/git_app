@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:gogs_app/app_globals.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
 import 'package:gogs_app/utils/utils.dart';
+import 'package:gogs_app/widgets/issue/labels.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:remixicon/remixicon.dart';
 
@@ -73,7 +75,7 @@ class CommentStatus extends StatelessWidget {
   //   );
   // }
 
-  Widget _buildTextBody(String afterText) {
+  Widget _buildTextBody(InlineSpan afterText) {
     Widget child = Text.rich(
       TextSpan(
         children: [
@@ -81,8 +83,10 @@ class CommentStatus extends StatelessWidget {
           TextSpan(text: comment.user.username),
           const TextSpan(text: ' 于 ', style: TextStyle(color: Colors.grey)),
           TextSpan(text: timeToLabel(comment.updatedAt)),
-          TextSpan(
-              text: ' $afterText', style: const TextStyle(color: Colors.grey)),
+          const TextSpan(text: ' '),
+          afterText,
+          //TextSpan(
+          //    text: ' $afterText', style: const TextStyle(color: Colors.grey)),
           if (_bodyIsHtml) const TextSpan(text: " 并引用了该问题"),
         ],
         style: _defaultTextStyle,
@@ -136,7 +140,7 @@ class CommentStatus extends StatelessWidget {
   Widget _buildBody({
     required IconData icon,
     required Color iconColor,
-    required String afterText,
+    required InlineSpan afterText,
   }) {
     return IntrinsicHeight(
       child: Padding(
@@ -176,44 +180,70 @@ class CommentStatus extends StatelessWidget {
         child = _buildBody(
           icon: Remix.forbid_2_line,
           iconColor: Colors.red,
-          afterText: '关闭',
+          afterText: const TextSpan(text: '关闭了此问题'),
         );
       case IssueCommentType.reopen:
         child = _buildBody(
           icon: Remix.circle_fill,
           iconColor: Colors.green,
-          afterText: '重新开启',
+          afterText: const TextSpan(text: '重新开启了此问题'),
         );
       case IssueCommentType.commitRef:
         child = _buildBody(
-          icon: Remix.git_commit_line,
+          icon: Remix.git_branch_line,
           iconColor: Colors.green,
-          afterText: '提交',
+          afterText: const TextSpan(text: '提交'),
         );
       case IssueCommentType.assignees:
         child = _buildBody(
           icon: Remix.account_circle_line,
           iconColor: Colors.grey,
-          afterText: '指派给',
+          afterText: TextSpan(text: '指派给', children: [
+            if (comment.assignee != null)
+              TextSpan(
+                  text: AppGlobal.instance.userInfo?.id == comment.assignee!.id
+                      ? '自己'
+                      : comment.assignee!.username),
+          ]),
         );
       case IssueCommentType.changeIssueRef:
         child = _buildBody(
           icon: Remix.git_merge_line,
           iconColor: Colors.grey,
-          afterText: '添加了引用',
+          afterText: TextSpan(text: '添加了引用 ', children: [
+            TextSpan(
+                text: comment.timeline?.newRef,
+                style: const TextStyle(fontWeight: FontWeight.bold))
+          ]),
         );
       case IssueCommentType.changeTitle:
         child = _buildBody(
           icon: Remix.edit_line,
           iconColor: Colors.grey,
-          afterText: '修改标题',
+          afterText: TextSpan(text: '修改标题 ', children: [
+            TextSpan(
+                text: comment.timeline?.oldTitle,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.lineThrough,
+                )),
+            const TextSpan(text: ' 为 '),
+            TextSpan(
+                text: comment.timeline?.newTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+          ]),
         );
       // 这个要优化，要合并起来为一条
       case IssueCommentType.label:
+        final isDelete = comment.body != '1';
         child = _buildBody(
           icon: Remix.price_tag_3_line,
           iconColor: Colors.grey,
-          afterText: '添加了标签',
+          afterText: TextSpan(text: '${isDelete ? '删除' : '添加'}了标签 ', children: [
+            if (comment.timeline?.label != null)
+              WidgetSpan(
+                  child: IssueLabelWidget(label: comment.timeline!.label!))
+          ]),
         );
 
       default:

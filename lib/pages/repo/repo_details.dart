@@ -460,8 +460,7 @@ class RepositoryDetailsPage extends StatelessWidget {
         //   builder: (_, value, __) {},
         //   selector: (_, RepositoryModel model) => model.readMeContent,
         // ),
-
-        // 这里是一个markdown解析的页面，一般解析README.md，如果为null说明没打补丁
+        // todo: 这里状态管理要另处理下
         if (model.readMeContent != null && model.readMeContent!.isNotEmpty)
           TopDivider(child: _buildREADME(model, iconColor)),
       ],

@@ -78,12 +78,12 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
     // }
 
     model.comments.clear();
+    //todo: 这个时间线要另处理
     var resComments = await AppGlobal.cli.issues.comment
-        .getAll(model.repo, issue, force: force);
+        .timeline(model.repo, issue, force: force);
     if (!resComments.succeed) {
-      //todo: 这个时间线要另处理
-      //resComments = await AppGlobal.cli.issues.comment
-      //    .timeline(model.repo, issue, force: force);
+      resComments = await AppGlobal.cli.issues.comment
+          .getAll(model.repo, issue, force: force);
     }
     if (resComments.succeed) {
       // 添加默认项目到列表

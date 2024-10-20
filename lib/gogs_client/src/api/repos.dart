@@ -31,6 +31,14 @@ class GogsRepoContent extends GogsClientBase {
           {bool? force}) => // 先固定个README吧
       client.get<List<int>>(_baseRepoPath(repo, "/raw/$ref/README.md"),
           force: force, options: Options(responseType: ResponseType.bytes));
+
+  /// GET /repos/:username/:reponame/raw/:ref/LICENSE
+  ///
+  /// 读一个LICENSE文件
+  FutureRESTResult<List<int>?> licenseFile(Repository repo, String ref,
+          {bool? force}) =>
+      client.get<List<int>>(_baseRepoPath(repo, "/raw/$ref/LICENSE"),
+          force: force, options: Options(responseType: ResponseType.bytes));
 }
 
 /// 仓库分支
