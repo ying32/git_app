@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/models/repo_model.dart';
-import 'package:gogs_app/models/user_model.dart';
-import 'package:gogs_app/pages/repo/repo_details.dart';
-import 'package:gogs_app/pages/user_details.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
-import 'package:gogs_app/utils/global_navigator.dart';
-import 'package:gogs_app/utils/page_data.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/models/repo_model.dart';
+import 'package:git_app/models/user_model.dart';
+import 'package:git_app/pages/repo/repo_details.dart';
+import 'package:git_app/pages/user_details.dart';
+import 'package:git_app/utils/build_context_helper.dart';
+import 'package:git_app/utils/global_navigator.dart';
+import 'package:git_app/utils/page_data.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 

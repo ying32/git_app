@@ -5,16 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
-import 'package:gogs_app/utils/collection_mgr.dart';
-import 'package:gogs_app/utils/message_box.dart';
+import 'package:git_app/utils/build_context_helper.dart';
+import 'package:git_app/utils/collection_mgr.dart';
+import 'package:git_app/utils/message_box.dart';
 
 import 'package:remixicon/remixicon.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:gogs_app/app_globals.dart';
-import 'package:gogs_app/widgets/adaptive_widgets.dart';
-import 'package:gogs_app/widgets/platform_page_scaffold.dart';
+import 'package:git_app/app_globals.dart';
+import 'package:git_app/widgets/adaptive_widgets.dart';
+import 'package:git_app/widgets/platform_page_scaffold.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

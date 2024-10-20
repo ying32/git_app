@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
 
-import 'package:gogs_app/app_globals.dart';
-import 'package:gogs_app/routes.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
-import 'package:gogs_app/utils/page_data.dart';
-import 'package:gogs_app/widgets/cached_image.dart';
-import 'package:gogs_app/widgets/platform_page_scaffold.dart';
-import 'package:gogs_app/widgets/list_section.dart';
+import 'package:git_app/app_globals.dart';
+import 'package:git_app/routes.dart';
+import 'package:git_app/utils/build_context_helper.dart';
+import 'package:git_app/utils/page_data.dart';
+import 'package:git_app/widgets/cached_image.dart';
+import 'package:git_app/widgets/platform_page_scaffold.dart';
+import 'package:git_app/widgets/list_section.dart';
 
 class OrganizationsPage extends StatefulWidget {
   const OrganizationsPage({

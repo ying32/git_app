@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/utils/utils.dart';
+import 'package:git_app/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfig {

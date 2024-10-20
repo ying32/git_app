@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:gogs_app/widgets/editor_page.dart';
+import 'package:git_app/widgets/editor_page.dart';
 
 typedef CommentInputSendCallback<T> = Future<bool?> Function(String?);
 

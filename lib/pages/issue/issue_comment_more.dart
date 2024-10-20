@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gogs_app/app_globals.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/models/issue_comment_model.dart';
-import 'package:gogs_app/utils/message_box.dart';
-import 'package:gogs_app/widgets/adaptive_widgets.dart';
-import 'package:gogs_app/widgets/list_section.dart';
+import 'package:git_app/app_globals.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/models/issue_comment_model.dart';
+import 'package:git_app/utils/message_box.dart';
+import 'package:git_app/widgets/adaptive_widgets.dart';
+import 'package:git_app/widgets/list_section.dart';
 import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
 

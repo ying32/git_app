@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
 
 // class CommentItemData {
 //   CommentItemData(this.comment, [this.isIssue = false]);

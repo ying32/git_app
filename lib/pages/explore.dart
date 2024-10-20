@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/app_globals.dart';
+import 'package:git_app/app_globals.dart';
 
-import 'package:gogs_app/widgets/platform_page_scaffold.dart';
+import 'package:git_app/widgets/platform_page_scaffold.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});

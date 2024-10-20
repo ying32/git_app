@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/models/issue_comment_model.dart';
-import 'package:gogs_app/routes.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/models/issue_comment_model.dart';
+import 'package:git_app/routes.dart';
+import 'package:git_app/utils/build_context_helper.dart';
 
-import 'package:gogs_app/pages/issue/issue_comments_view.dart';
-import 'package:gogs_app/utils/message_box.dart';
-import 'package:gogs_app/utils/utils.dart';
+import 'package:git_app/pages/issue/issue_comments_view.dart';
+import 'package:git_app/utils/message_box.dart';
+import 'package:git_app/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 import 'labels.dart';

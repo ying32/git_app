@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/app_globals.dart';
-import 'package:gogs_app/models/app_model.dart';
-import 'package:gogs_app/utils/app_config.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
-import 'package:gogs_app/utils/message_box.dart';
-import 'package:gogs_app/widgets/list_section.dart';
+import 'package:git_app/app_globals.dart';
+import 'package:git_app/models/app_model.dart';
+import 'package:git_app/utils/app_config.dart';
+import 'package:git_app/utils/build_context_helper.dart';
+import 'package:git_app/utils/message_box.dart';
+import 'package:git_app/widgets/list_section.dart';
 
-import 'package:gogs_app/widgets/platform_page_scaffold.dart';
+import 'package:git_app/widgets/platform_page_scaffold.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {

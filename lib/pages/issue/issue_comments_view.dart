@@ -1,19 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/models/issue_comment_model.dart';
-import 'package:gogs_app/pages/issue/create_issue_comment.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
-import 'package:gogs_app/utils/message_box.dart';
-import 'package:gogs_app/widgets/adaptive_widgets.dart';
-import 'package:gogs_app/widgets/background_container.dart';
-import 'package:gogs_app/widgets/divider_plus.dart';
-import 'package:gogs_app/widgets/issue/comment_issue_info.dart';
-import 'package:gogs_app/widgets/issue/comment_item.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/models/issue_comment_model.dart';
+import 'package:git_app/pages/issue/create_issue_comment.dart';
+import 'package:git_app/utils/build_context_helper.dart';
+import 'package:git_app/utils/message_box.dart';
+import 'package:git_app/widgets/adaptive_widgets.dart';
+import 'package:git_app/widgets/background_container.dart';
+import 'package:git_app/widgets/divider_plus.dart';
+import 'package:git_app/widgets/issue/comment_issue_info.dart';
+import 'package:git_app/widgets/issue/comment_item.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
-import 'package:gogs_app/app_globals.dart';
-import 'package:gogs_app/widgets/platform_page_scaffold.dart';
+import 'package:git_app/app_globals.dart';
+import 'package:git_app/widgets/platform_page_scaffold.dart';
 import 'package:provider/provider.dart';
 
 import 'issue_comment_more.dart';

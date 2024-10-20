@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:gogs_app/app_globals.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/utils/utils.dart';
-import 'package:gogs_app/widgets/issue/labels.dart';
+import 'package:git_app/app_globals.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/utils/utils.dart';
+import 'package:git_app/widgets/issue/labels.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:remixicon/remixicon.dart';
 

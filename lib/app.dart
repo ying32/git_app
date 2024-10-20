@@ -4,11 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:gogs_app/models/app_model.dart';
-import 'package:gogs_app/utils/app_config.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
-import 'package:gogs_app/utils/global_navigator.dart';
-import 'package:gogs_app/utils/utils.dart';
+import 'package:git_app/models/app_model.dart';
+import 'package:git_app/utils/app_config.dart';
+import 'package:git_app/utils/build_context_helper.dart';
+import 'package:git_app/utils/global_navigator.dart';
+import 'package:git_app/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 import 'navigation.dart';

@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.ying32.gogs_app"
+    namespace "com.ying32.git_app"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -42,7 +42,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.ying32.gogs_app"
+        applicationId "com.ying32.git_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
@@ -72,7 +72,7 @@ android {
                 def outputFile = output.outputFile
                 def fileName
                 if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                    fileName = "gogs_app_v${defaultConfig.versionName}+${defaultConfig.versionCode}-${variant.buildType.name}.apk"
+                    fileName = "git_app_v${defaultConfig.versionName}+${defaultConfig.versionCode}-${variant.buildType.name}.apk"
                     outputFileName = fileName
                 }
             }

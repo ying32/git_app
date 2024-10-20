@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
+import 'package:git_app/utils/build_context_helper.dart';
 import 'package:markdown_toolbar/markdown_toolbar.dart';
 
 import 'adaptive_widgets.dart';

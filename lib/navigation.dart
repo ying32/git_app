@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/pages/explore.dart';
-import 'package:gogs_app/pages/login.dart';
+import 'package:git_app/pages/explore.dart';
+import 'package:git_app/pages/login.dart';
 
-import 'package:gogs_app/pages/home.dart';
-import 'package:gogs_app/pages/activity.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
+import 'package:git_app/pages/home.dart';
+import 'package:git_app/pages/activity.dart';
+import 'package:git_app/utils/build_context_helper.dart';
 
 import 'app_globals.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
 
 /// 仓库模型
 class RepositoryModel extends ChangeNotifier {

@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.ying32" "\0"
-            VALUE "FileDescription", "gogs_app" "\0"
+            VALUE "FileDescription", "git_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "gogs_app" "\0"
+            VALUE "InternalName", "com.ying32.git_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.ying32. All rights reserved." "\0"
-            VALUE "OriginalFilename", "gogs_app.exe" "\0"
-            VALUE "ProductName", "gogs_app" "\0"
+            VALUE "OriginalFilename", "git_app.exe" "\0"
+            VALUE "ProductName", "git_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

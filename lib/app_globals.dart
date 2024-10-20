@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/utils/global_navigator.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/utils/global_navigator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum LoginState { none, logged, exited }

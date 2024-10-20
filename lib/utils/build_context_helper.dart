@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/utils/page_data.dart';
+import 'package:git_app/utils/page_data.dart';
 
 extension BuildContextHelper on BuildContext {
   /// 主题

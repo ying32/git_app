@@ -1,4 +1,4 @@
-package com.ying32.gogs_app
+package com.ying32.git_app
 
 import io.flutter.embedding.android.FlutterActivity
 

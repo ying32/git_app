@@ -1,24 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/app_globals.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/pages/issue/issues.dart';
-import 'package:gogs_app/pages/organizations.dart';
-import 'package:gogs_app/pages/repo/repositories.dart';
-import 'package:gogs_app/routes.dart';
-import 'package:gogs_app/utils/collection_mgr.dart';
-import 'package:gogs_app/utils/message_box.dart';
-import 'package:gogs_app/utils/page_data.dart';
-import 'package:gogs_app/widgets/adaptive_widgets.dart';
+import 'package:git_app/app_globals.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/pages/issue/issues.dart';
+import 'package:git_app/pages/organizations.dart';
+import 'package:git_app/pages/repo/repositories.dart';
+import 'package:git_app/routes.dart';
+import 'package:git_app/utils/collection_mgr.dart';
+import 'package:git_app/utils/message_box.dart';
+import 'package:git_app/utils/page_data.dart';
+import 'package:git_app/widgets/adaptive_widgets.dart';
 
-import 'package:gogs_app/widgets/background_icon.dart';
-import 'package:gogs_app/widgets/cached_image.dart';
-import 'package:gogs_app/widgets/collection_editor.dart';
+import 'package:git_app/widgets/background_icon.dart';
+import 'package:git_app/widgets/cached_image.dart';
+import 'package:git_app/widgets/collection_editor.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:remixicon/remixicon.dart';
 
-import 'package:gogs_app/widgets/platform_page_scaffold.dart';
-import 'package:gogs_app/widgets/list_section.dart';
+import 'package:git_app/widgets/platform_page_scaffold.dart';
+import 'package:git_app/widgets/list_section.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

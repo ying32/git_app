@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/widgets/platform_page_scaffold.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/widgets/platform_page_scaffold.dart';
 
 class IssueLabelsPage extends StatelessWidget {
   const IssueLabelsPage({super.key, required this.repo});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/utils/utils.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/utils/utils.dart';
 
 class IssueLabelWidget extends StatelessWidget {
   const IssueLabelWidget({super.key, required this.label});

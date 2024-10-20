@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gogs_app/app_globals.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
-import 'package:gogs_app/utils/message_box.dart';
+import 'package:git_app/app_globals.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/utils/build_context_helper.dart';
+import 'package:git_app/utils/message_box.dart';
 
-import 'package:gogs_app/widgets/editor_page.dart';
+import 'package:git_app/widgets/editor_page.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 /// 显示创建issue的

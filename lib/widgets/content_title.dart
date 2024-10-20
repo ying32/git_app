@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
-import 'package:gogs_app/widgets/adaptive_widgets.dart';
+import 'package:git_app/utils/build_context_helper.dart';
+import 'package:git_app/widgets/adaptive_widgets.dart';
 
 const routeContentName = 'route_contents';
 

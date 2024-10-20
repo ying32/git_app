@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/utils/app_config.dart';
-import 'package:gogs_app/utils/collection_mgr.dart';
+import 'package:git_app/utils/app_config.dart';
+import 'package:git_app/utils/collection_mgr.dart';
 
 import 'app.dart';
 import 'app_globals.dart';

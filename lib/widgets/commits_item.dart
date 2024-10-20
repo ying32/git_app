@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:gogs_app/gogs_client/gogs_client.dart';
-import 'package:gogs_app/pages/repo/commit_details.dart';
-import 'package:gogs_app/routes.dart';
-import 'package:gogs_app/utils/page_data.dart';
+import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/pages/repo/commit_details.dart';
+import 'package:git_app/routes.dart';
+import 'package:git_app/utils/page_data.dart';
 
-import 'package:gogs_app/utils/utils.dart';
-import 'package:gogs_app/widgets/list_section.dart';
+import 'package:git_app/utils/utils.dart';
+import 'package:git_app/widgets/list_section.dart';
 import 'cached_image.dart';
 
 class CommitsItem extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
+import 'package:git_app/utils/build_context_helper.dart';
 import 'package:markdown_widget/config/configs.dart';
 import 'package:markdown_widget/widget/markdown_block.dart';
 

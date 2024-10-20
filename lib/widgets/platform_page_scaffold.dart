@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gogs_app/utils/build_context_helper.dart';
-import 'package:gogs_app/utils/callbacks.dart';
+import 'package:git_app/utils/build_context_helper.dart';
+import 'package:git_app/utils/callbacks.dart';
 
 /// 异步数据改变
 typedef PlatformPageScaffoldRefreshCallback = Future<void> Function(
