@@ -33,15 +33,15 @@ class _RepositoriesPageState extends State<RepositoriesPage>
   RepositoryList? _repos;
 
   Future _init(_, bool? force) async {
-    //if (widget.user.isOrg) {
-    //  final res = await AppGlobal.cli.repos.orgRepos(widget.user, force: force);
-    //  _repos = res.data;
-    //} else {
-    final res = await (_isMy
-        ? AppGlobal.cli.user.repos(force)
-        : AppGlobal.cli.repos.userRepos(widget.user, force: force));
-    _repos = res.data;
-    //}
+    if (widget.user.isOrganization) {
+      final res = await AppGlobal.cli.repos.orgRepos(widget.user, force: force);
+      _repos = res.data;
+    } else {
+      final res = await (_isMy
+          ? AppGlobal.cli.user.repos(force)
+          : AppGlobal.cli.repos.userRepos(widget.user, force: force));
+      _repos = res.data;
+    }
     if (mounted) setState(() {});
   }
 

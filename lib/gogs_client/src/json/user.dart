@@ -4,9 +4,9 @@ class User {
   const User({
     required this.id,
     required this.username,
-    this.login = "",
-    required this.fullName,
-    required this.email,
+    this.login,
+    this.fullName = "",
+    this.email = "",
     required this.avatarUrl,
     this.location = "",
     this.website = "",
@@ -19,7 +19,7 @@ class User {
 
   final int id;
   final String username;
-  final String login;
+  final String? login;
   final String fullName;
   final String email;
   final String avatarUrl;
@@ -34,7 +34,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"] ?? 0,
         username: json["username"] ?? '',
-        login: json["login"] ?? '',
+        login: json["login"],
         fullName: json["full_name"] ?? '',
         email: json["email"] ?? '',
         avatarUrl: json["avatar_url"] ?? '',
@@ -49,12 +49,13 @@ class User {
         description: json["description"] ?? '',
       );
 
+  /// 因为API没有返回相关信息，所以通过对比结果，发现只有这一个这字段可以最好的判断
+  bool get isOrganization => login == null;
+
   /// 生成一个只有名称和头像的User信息
   factory User.fromNameAndHeadImage(String userName, String avatarUrl) => User(
         id: 0,
         username: userName,
-        fullName: '',
-        email: '',
         avatarUrl: avatarUrl,
       );
 
