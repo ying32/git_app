@@ -205,11 +205,11 @@ class SimpleRESTClient {
       }
       print("==============================================================");
     }
-    // 缓存get请求，以uri为key
-    if (response.requestOptions.method == "GET") {
-      if (!response.requestOptions.isNocache) {
-        _cache.store(_getRequestCacheKey(response.requestOptions), response);
-      }
+    // 缓存get请求，状态code必须为200，且为GET方法的，并且扩展中没有nocache标识
+    if (response.statusCode == HttpStatus.ok &&
+        response.requestOptions.method == "GET" &&
+        !response.requestOptions.isNocache) {
+      _cache.store(_getRequestCacheKey(response.requestOptions), response);
     }
     return handler.next(response);
   }
