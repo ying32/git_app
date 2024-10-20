@@ -34,12 +34,24 @@ class IssueComment {
             ? null
             : DateTime.parse(json["updated_at"]),
         // 补丁或者gitea
-        type: json["type"] ?? 'comment', // 默认个comment吧
+        type: json["type"] ?? _tryGetType(json), // 默认个comment吧
         // 时间线的
         timeline: IssueCommentTimeline.fromJson(json),
         assignee:
             json['assignee'] != null ? User.fromJson(json['assignee']) : null,
       );
+
+  static String _tryGetType(Map<String, dynamic> json) {
+    final String body = json['body'] ?? '';
+    if (body.isNotEmpty) {
+      if (body.startsWith("<")) {
+        return 'commit_ref';
+      } else {
+        return 'comment';
+      }
+    }
+    return '';
+  }
 
   // Map<String, dynamic> toJson() => {
   //       "id": id,
