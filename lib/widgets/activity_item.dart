@@ -215,16 +215,16 @@ class ActivityItem extends StatelessWidget {
         WidgetSpan(
             child: UserHeadImage(
                 size: 22,
-                user: item.committer,
+                user: item.actUser,
                 // imageURL: item.committer.avatarUrl,
                 radius: 0,
                 padding: const EdgeInsets.all(2))),
         const TextSpan(text: ' '),
         TextSpan(
-          text: item.committer.username,
+          text: item.actUser.username,
           style: const TextStyle(color: Colors.blue),
           recognizer: TapGestureRecognizer()
-            ..onTap = () => _pushUser(context, item.committer),
+            ..onTap = () => _pushUser(context, item.actUser),
         ),
         TextSpan(text: ' ${_opTypeToStr(item.opType)} '),
         if (item.opType == _actionCommitRepo) ...[

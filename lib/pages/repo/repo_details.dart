@@ -36,6 +36,7 @@ class RepositoryDetailsPage extends StatelessWidget {
   Future<void> _init(BuildContext context, bool? force) async {
     final model = context.read<RepositoryModel>();
     model.selectedBranch = null;
+    model.readMeContent = null;
     final res = await AppGlobal.cli.repos.repo(model.repo, force: force);
     if (res.succeed && res.data != null) {
       model.repo = res.data!;
@@ -222,68 +223,82 @@ class RepositoryDetailsPage extends StatelessWidget {
           if (model.repo.fork) _buildForkWidget(model),
 
           /// star和watch按钮
-          // Row(
-          //   children: [
-          //     Expanded(
-          //       child: SizedBox(
-          //         height: 40,
-          //         // width: 160,
-          //         child: _buildButton(model.repo.isStaring ? '取消点赞' : '点赞', () {
-          //           //todo: 没有API可用
-          //           showToast('没有API可用');
-          //         }, model.repo.isStaring ? Icons.star : Icons.star_border,
-          //             model.repo.isStaring ? Colors.yellow : null),
-          //       ),
-          //     ),
-          //     const SizedBox(width: 15),
-          //     Expanded(
-          //       child: SizedBox(
-          //         height: 40,
-          //         // width: 160,
-          //         child: _buildButton(
-          //           model.repo.isWatching ? '取消关注' : '注关',
-          //           () {
-          //             //todo: 没有API可用
-          //             showToast('没有API可用');
-          //           },
-          //           Icons.remove_red_eye_outlined,
-          //           model.repo.isWatching ? Colors.green : null,
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  // width: 160,
+                  child: _buildButton(
+                    // model.repo.isStaring ? '取消点赞' : '点赞',
+                    '点赞',
+                    () {
+                      //todo: 没有API可用
+                      showToast('没有API可用');
+                    },
+                    //model.repo.isStaring ? Icons.star : Icons.star_border,
+                    Icons.star,
+                    //model.repo.isStaring ? Colors.yellow : null,
+                    Colors.yellow,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  // width: 160,
+                  child: _buildButton(
+                    // model.repo.isWatching ? '取消关注' : '注关',
+                    '注关',
+                    () {
+                      //todo: 没有API可用
+                      showToast('没有API可用');
+                    },
+                    Icons.remove_red_eye_outlined,
+                    //model.repo.isWatching ? Colors.green : null,
+                    Colors.green,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  // Widget _buildLicense(RepositoryModel model, Color iconColor) {
-  //   return ListTileNav(
-  //     leading: const BackgroundIcon(
-  //       icon: Icons.balance_outlined,
-  //       color: Colors.pink,
-  //     ),
-  //     title: '许可证',
-  //     onTap: model.repo.license!.isEmpty
-  //         ? null
-  //         : () {
-  //             // 这里跳转到对应的去哈
-  //           },
-  //     trailing: model.repo.license!.isEmpty
-  //         ? const SizedBox()
-  //         : Icon(Icons.open_in_new_sharp, size: 16, color: iconColor),
-  //     additionalInfo: model.repo.license!.isNotEmpty
-  //         ? Row(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: [
-  //               Text(model.repo.license!, style: TextStyle(color: iconColor)),
-  //               const SizedBox(width: 5),
-  //             ],
-  //           )
-  //         : Text('无', style: TextStyle(color: iconColor)),
-  //   );
-  // }
+  Widget _buildLicense(RepositoryModel model, Color iconColor) {
+    return TopDivider(
+      child: ListTileNav(
+          leading: const BackgroundIcon(
+            icon: Icons.balance_outlined,
+            color: Colors.pink,
+          ),
+          title: '许可证',
+          onTap: () {
+            showToast('没有实现');
+          }
+          // onTap: model.repo.license!.isEmpty
+          //     ? null
+          //     : () {
+          //         // 这里跳转到对应的去哈
+          //       },
+          //trailing: model.repo.license!.isEmpty
+          //    ? const SizedBox()
+          //    : Icon(Icons.open_in_new_sharp, size: 16, color: iconColor),
+          // additionalInfo: model.repo.license!.isNotEmpty
+          //     ? Row(
+          //         mainAxisSize: MainAxisSize.min,
+          //         children: [
+          //           Text(model.repo.license!, style: TextStyle(color: iconColor)),
+          //           const SizedBox(width: 5),
+          //         ],
+          //       )
+          //     : Text('无', style: TextStyle(color: iconColor)),
+          ),
+    );
+  }
 
   void _doTapCreateIssue(BuildContext context, RepositoryModel model) =>
       showCreateIssuePage(context, model.repo);
@@ -398,10 +413,10 @@ class RepositoryDetailsPage extends StatelessWidget {
           },
         ),
 
-        // if (model.repo.license != null) ...[
-        //   const ListTileDivider(),
-        //   _buildLicense(model, iconColor),
-        // ],
+        //if (model.repo.license != null) ...[
+        //  const ListTileDivider(),
+        _buildLicense(model, iconColor),
+        //],
 
         // 下面分支和啥的
         const SizedBox(height: 15),

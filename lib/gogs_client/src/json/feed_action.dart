@@ -4,7 +4,7 @@ class FeedAction {
   FeedAction({
     required this.id,
     required this.opType,
-    required this.committer,
+    required this.actUser,
     required this.repo,
     required this.refName,
     required this.isPrivate,
@@ -16,7 +16,7 @@ class FeedAction {
 
   final int id;
   final String opType;
-  final User committer;
+  final User actUser;
   final Repository repo;
   final String refName;
   final bool isPrivate;
@@ -58,9 +58,9 @@ class FeedAction {
 
   factory FeedAction.fromJson(Map<String, dynamic> json) => FeedAction(
         id: json["id"] ?? 0,
-        opType: json["op_type"] ?? '', // ?? -1,
+        opType: json["op_type"] ?? '',
         // gitea: act_user
-        committer: User.fromJson(json["committer"] ?? json['act_user'] ?? {}),
+        actUser: User.fromJson(json['act_user'] ?? {}),
         repo: Repository.fromJson(json["repo"] ?? {}),
         refName: json["ref_name"] ?? '',
         isPrivate: json["is_private"] ?? false,

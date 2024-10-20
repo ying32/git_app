@@ -21,9 +21,8 @@ import (
 
 type FeedAction struct {
 	Id         int64           `json:"id"`
-	OpType     string          `json:"op_type"`    // 操作类型
-	Committer  *User           `json:"committer"`  // 提交者
-	RepoOwner  *User           `json:"repo_owner"` // 仓库所有者
+	OpType     string          `json:"op_type"`  // 操作类型
+	ActUser    *User           `json:"act_user"` // 提交者
 	Repo       *api.Repository `json:"repo"`
 	RefName    string          `json:"ref_name"` // 引用的分支
 	IsPrivate  bool            `json:"is_private"`
@@ -155,12 +154,9 @@ func GetRetrieveFeeds(c *context.APIContext) {
 		}
 
 		feedAct := &FeedAction{
-			Id:     act.ID,
-			OpType: actionToString(act.OpType),
-			//Committer: actUser.APIFormat(),
-			//RepoOwner: repoUser.APIFormat(),
-			Committer: fromUser(actUser),
-			RepoOwner: fromUser(repoUser),
+			Id:        act.ID,
+			OpType:    actionToString(act.OpType),
+			ActUser:   fromUser(actUser),
 			Repo:      repo.APIFormat(repoUser),
 			RefName:   act.RefName,
 			IsPrivate: act.IsPrivate,
