@@ -37,7 +37,7 @@ class _ActivityPageState extends State<ActivityPage> {
       if (res.succeed) {
         _isGitea = true;
         _feeds = res.data;
-        _afterId = 1; // 这里本应该用page的
+        _afterId = 2; // 这里本应该用page的
       }
     }
     if (mounted && (_feeds?.isNotEmpty ?? false)) setState(() {});
@@ -49,10 +49,10 @@ class _ActivityPageState extends State<ActivityPage> {
       // todo: 这里待处理gitea的
       FeedActionList? feeds;
       if (_isGitea) {
-        _afterId = _afterId! + 1;
         final res = await AppGlobal.cli.user
             .activitiesFeeds(AppGlobal.instance.userInfo!, page: _afterId);
         if (res.data != null && res.data!.isNotEmpty) {
+          _afterId = _afterId! + 1;
           feeds = res.data;
         }
       } else {
