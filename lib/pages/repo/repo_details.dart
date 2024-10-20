@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -13,9 +14,11 @@ import 'package:gogs_app/routes.dart';
 import 'package:gogs_app/utils/build_context_helper.dart';
 import 'package:gogs_app/utils/message_box.dart';
 import 'package:gogs_app/utils/page_data.dart';
+import 'package:gogs_app/utils/utils.dart';
 
 import 'package:gogs_app/widgets/cached_image.dart';
 import 'package:gogs_app/widgets/branches_list.dart';
+import 'package:gogs_app/widgets/divider_plus.dart';
 import 'package:gogs_app/widgets/markdown.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -30,16 +33,29 @@ import 'package:gogs_app/widgets/list_section.dart';
 class RepositoryDetailsPage extends StatelessWidget {
   const RepositoryDetailsPage({super.key});
 
-  Future _init(BuildContext context, bool? force) async {
+  Future<void> _init(BuildContext context, bool? force) async {
     final model = context.read<RepositoryModel>();
     model.selectedBranch = null;
     final res = await AppGlobal.cli.repos.repo(model.repo, force: force);
     if (res.succeed && res.data != null) {
       model.repo = res.data!;
+      _readReadMeFile(model, force);
     }
   }
 
-  Future _onSwitchBranches(BuildContext context, RepositoryModel model) async {
+  Future<void> _readReadMeFile(RepositoryModel model, bool? force) async {
+    // 没有我写的那个补丁的，这里直接读
+    if (model.repo.readMe == null) {
+      final readMe = await AppGlobal.cli.repos.content
+          .readMeFile(model.repo, model.selectedBranch, force: force);
+      if (readMe.succeed && readMe.data != null) {
+        model.readMeContent = tryDecodeText(Uint8List.fromList(readMe.data!));
+      }
+    }
+  }
+
+  Future<void> _onSwitchBranches(
+      BuildContext context, RepositoryModel model) async {
     final res = await showCupertinoModalBottomSheet<String>(
         context: context,
         // expand: true,
@@ -272,6 +288,25 @@ class RepositoryDetailsPage extends StatelessWidget {
   void _doTapCreateIssue(BuildContext context, RepositoryModel model) =>
       showCreateIssuePage(context, model.repo);
 
+  Widget _buildREADME(RepositoryModel model, Color iconColor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(Icons.chrome_reader_mode, size: 20, color: iconColor),
+              const SizedBox(width: 10),
+              const Text('README.md') //model.repo.readMe!.fileName),
+            ],
+          ),
+          //const Divider(height: 1),
+          MarkdownBlockPlus(data: model.readMeContent!),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final iconColor = context.colorScheme.outline;
@@ -388,22 +423,24 @@ class RepositoryDetailsPage extends StatelessWidget {
           ),
         ),
 
-        ListTileNav(
-          title: '浏览源代码',
-          onTap: () => routes.pushPage(
-              ContentsPage(
-                // todo: 这里先用默认的吧，后面再说
-                ref: context.read<RepositoryModel>().selectedBranch,
-                repo: model.repo,
-                title: model.repo.name,
-                path: "",
-                prevPath: "",
-              ),
-              context: context,
-              data: PageData(previousPageTitle: model.repo.name),
-              routeSettings: const RouteSettings(name: routeContentName)),
+        BottomDivider(
+          child: ListTileNav(
+            title: '浏览源代码',
+            onTap: () => routes.pushPage(
+                ContentsPage(
+                  // todo: 这里先用默认的吧，后面再说
+                  ref: context.read<RepositoryModel>().selectedBranch,
+                  repo: model.repo,
+                  title: model.repo.name,
+                  path: "",
+                  prevPath: "",
+                ),
+                context: context,
+                data: PageData(previousPageTitle: model.repo.name),
+                routeSettings: const RouteSettings(name: routeContentName)),
+          ),
         ),
-        const Divider(height: 1),
+
         ListTileNav(
           title: '提交记录',
           additionalInfo: Text('${model.repo.commitsCount}',
@@ -419,27 +456,14 @@ class RepositoryDetailsPage extends StatelessWidget {
         ),
 
         const SizedBox(height: 15),
+        // Selector<RepositoryModel, String?>(
+        //   builder: (_, value, __) {},
+        //   selector: (_, RepositoryModel model) => model.readMeContent,
+        // ),
+
         // 这里是一个markdown解析的页面，一般解析README.md，如果为null说明没打补丁
-        if (model.repo.readMe != null &&
-            model.repo.readMe!.content.isNotEmpty) ...[
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.chrome_reader_mode, size: 20, color: iconColor),
-                    const SizedBox(width: 10),
-                    Text(model.repo.readMe!.fileName),
-                  ],
-                ),
-                //const Divider(height: 1),
-                MarkdownBlockPlus(data: model.repo.readMe!.content),
-              ],
-            ),
-          ),
-        ],
+        if (model.readMeContent != null && model.readMeContent!.isNotEmpty)
+          TopDivider(child: _buildREADME(model, iconColor)),
       ],
     );
   }

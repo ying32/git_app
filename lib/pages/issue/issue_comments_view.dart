@@ -7,7 +7,7 @@ import 'package:gogs_app/utils/build_context_helper.dart';
 import 'package:gogs_app/utils/message_box.dart';
 import 'package:gogs_app/widgets/adaptive_widgets.dart';
 import 'package:gogs_app/widgets/background_container.dart';
-import 'package:gogs_app/widgets/bottom_divider.dart';
+import 'package:gogs_app/widgets/divider_plus.dart';
 import 'package:gogs_app/widgets/issue/comment_issue_info.dart';
 import 'package:gogs_app/widgets/issue/comment_item.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';

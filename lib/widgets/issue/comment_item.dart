@@ -11,7 +11,7 @@ import 'package:gogs_app/utils/message_box.dart';
 import 'package:gogs_app/utils/utils.dart';
 import 'package:gogs_app/widgets/adaptive_widgets.dart';
 import 'package:gogs_app/widgets/background_container.dart';
-import 'package:gogs_app/widgets/bottom_divider.dart';
+import 'package:gogs_app/widgets/divider_plus.dart';
 import 'package:gogs_app/widgets/cached_image.dart';
 import 'package:gogs_app/widgets/markdown.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';

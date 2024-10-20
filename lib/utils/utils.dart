@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'dart:typed_data';
+import 'package:charset/charset.dart';
 
 bool get isPhone => Platform.isAndroid || Platform.isIOS;
 bool get isDesktop => !isPhone;
@@ -42,3 +45,19 @@ String timeToLabel(DateTime? dateTime) {
 /// 整型转枚举
 E enumFromValue<E extends Enum>(Iterable<E> values, int value, E defValue) =>
     values.firstWhere((e) => e.index == value, orElse: () => defValue);
+
+/// 尝试解码文本，采用不同的编码去尝试
+String? tryDecodeText(Uint8List data) {
+  //todo: 这个其实不准哈，需要根据内容来探测编码格式，先这样用着吧
+  const supports = [utf8, systemEncoding, gbk, utf16, utf32];
+  for (final encoding in supports) {
+    // 这里当操作系统不为Windows时，且编码为系统编码时跳过，其它平台的编码一般默认都是utf-8，只有windows不同。
+    if (!Platform.isWindows && encoding == systemEncoding) continue;
+    try {
+      return encoding.decode(data);
+    } catch (e) {
+      //
+    }
+  }
+  return null;
+}

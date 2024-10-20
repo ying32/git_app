@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'dart:typed_data';
 
-import 'package:charset/charset.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +12,7 @@ import 'package:flutter_highlight/themes/a11y-dark.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
 import 'package:gogs_app/utils/build_context_helper.dart';
+import 'package:gogs_app/utils/utils.dart';
 import 'package:gogs_app/widgets/markdown.dart';
 import 'package:path/path.dart' as path_lib;
 import 'package:gogs_app/app_globals.dart';
@@ -114,26 +113,11 @@ class _ContentViewPageState extends State<ContentViewPage> {
     }
   }
 
-  String? _decodeText(Uint8List data) {
-    //todo: 这个其实不准哈，需要根据内容来探测编码格式，先这样用着吧
-    const supports = [utf8, systemEncoding, gbk, utf16, utf32];
-    for (final encoding in supports) {
-      // 这里当操作系统不为Windows时，且编码为系统编码时跳过，其它平台的编码一般默认都是utf-8，只有windows不同。
-      if (!Platform.isWindows && encoding == systemEncoding) continue;
-      try {
-        return encoding.decode(data);
-      } catch (e) {
-        //
-      }
-    }
-    return null;
-  }
-
   Widget? _buildContent(Uint8List data) {
     if (_isImage(data)) {
       return Image.memory(data);
     }
-    final text = _decodeText(data);
+    final text = tryDecodeText(data);
     if (text != null) return _buildText(text);
     return null;
   }

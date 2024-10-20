@@ -23,6 +23,14 @@ class GogsRepoContent extends GogsClientBase {
           force: force,
           options: Options(
               responseType: ResponseType.bytes, extra: {"nocache": nocache}));
+
+  /// GET /repos/:username/:reponame/raw/:ref/README.md
+  ///
+  /// 读一个readme文件
+  FutureRESTResult<List<int>?> readMeFile(Repository repo, String ref,
+          {bool? force}) => // 先固定个README吧
+      client.get<List<int>>(_baseRepoPath(repo, "/raw/$ref/README.md"),
+          force: force, options: Options(responseType: ResponseType.bytes));
 }
 
 /// 仓库分支
