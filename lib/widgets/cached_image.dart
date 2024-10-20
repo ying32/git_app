@@ -108,10 +108,14 @@ class UserHeadImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var imageURl = (user ?? AppGlobal.instance.userInfo)?.avatarUrl ?? '';
+    if (imageURl.isEmpty) {
+      imageURl = '${AppGlobal.cli.host}/assets/img/avatar_default.png';
+    }
     Widget child = Padding(
       padding: padding ?? const EdgeInsets.all(6.0),
       child: CachedImage(
-        url: (user ?? AppGlobal.instance.userInfo)?.avatarUrl ?? '',
+        url: imageURl,
       ),
     );
     final borderRadius = BorderRadius.circular(radius ?? size / 2);

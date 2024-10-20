@@ -118,9 +118,11 @@ class ActivityItem extends StatelessWidget {
   bool get _contentIsJson => item.jsonContent != null;
   bool get _contentIsEmpty => item.content.isEmpty;
 
+  /// 提交记录
   Widget _buildContentCommit(ContentCommit commit) {
     return Text.rich(
       TextSpan(children: [
+        //WidgetSpan(child: UserHeadImage(size: size)),
         WidgetSpan(
           child: Padding(
             padding: const EdgeInsets.only(top: 2, bottom: 2, left: 15),
@@ -216,7 +218,6 @@ class ActivityItem extends StatelessWidget {
             child: UserHeadImage(
                 size: 22,
                 user: item.actUser,
-                // imageURL: item.committer.avatarUrl,
                 radius: 0,
                 padding: const EdgeInsets.all(2))),
         const TextSpan(text: ' '),

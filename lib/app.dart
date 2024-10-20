@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -49,6 +50,8 @@ class CustomMaterialScrollBehavior extends MaterialScrollBehavior {
 class GogsApp extends StatelessWidget {
   const GogsApp({super.key});
 
+  static final _fontFamily = Platform.isWindows ? '微软雅黑' : null;
+
   static const _themeColor = CupertinoColors.systemBlue;
   static const _platform = TargetPlatform.iOS;
   // static const _platform = TargetPlatform.android;
@@ -67,12 +70,12 @@ class GogsApp extends StatelessWidget {
         create: (_) => AppModel(AppConfig.instance.themeMode),
         child: Builder(builder: (context) {
           return MaterialApp(
-            title: 'Gogs',
+            title: 'GitApp',
             navigatorKey: GlobalNavigator.navigatorKey,
             themeMode: context.watch<AppModel>().themeMode, // ThemeMode.dark,
-
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
+              fontFamily: _fontFamily,
               colorScheme: ColorScheme.fromSeed(
                   seedColor: _themeColor,
                   primary: _themeColor,
@@ -81,6 +84,7 @@ class GogsApp extends StatelessWidget {
               useMaterial3: false,
             ),
             darkTheme: ThemeData(
+              fontFamily: _fontFamily,
               colorScheme: ColorScheme.fromSeed(
                   seedColor: _themeColor,
                   primary: _themeColor,

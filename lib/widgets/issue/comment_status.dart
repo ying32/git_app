@@ -85,8 +85,6 @@ class CommentStatus extends StatelessWidget {
           TextSpan(text: timeToLabel(comment.updatedAt)),
           const TextSpan(text: ' '),
           afterText,
-          //TextSpan(
-          //    text: ' $afterText', style: const TextStyle(color: Colors.grey)),
           if (_bodyIsHtml) const TextSpan(text: " 并引用了该问题"),
         ],
         style: _defaultTextStyle,
@@ -147,8 +145,11 @@ class CommentStatus extends StatelessWidget {
         padding: const EdgeInsets.only(left: 30),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // 状态图标
             _buildIcon(icon: icon, iconColor: iconColor),
+            // 内容
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: _startPadding),
@@ -233,7 +234,7 @@ class CommentStatus extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.bold)),
           ]),
         );
-      // 这个要优化，要合并起来为一条
+      // 这个要优化，要合并起来为一条？不过看github的app是每个一条哈。
       case IssueCommentType.label:
         final isDelete = comment.body != '1';
         child = _buildBody(
