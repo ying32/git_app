@@ -62,7 +62,9 @@ class IssuesItem extends StatelessWidget {
             if (item.comments > 0) ...[
               const SizedBox(height: 5),
               Container(
-                color: Colors.grey.withAlpha(128),
+                decoration: BoxDecoration(
+                    color: Colors.grey.withAlpha(128),
+                    borderRadius: BorderRadius.circular(2)),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 3, horizontal: 6),

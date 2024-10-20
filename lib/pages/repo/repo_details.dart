@@ -45,25 +45,20 @@ class RepositoryDetailsPage extends StatelessWidget {
   }
 
   Future<void> _readReadMeFile(RepositoryModel model, bool? force) async {
-    // 没有我写的那个补丁的，这里直接读
-    //if (model.repo.readMe == null) {
     final readMe = await AppGlobal.cli.repos.content
         .readMeFile(model.repo, model.selectedBranch, force: force);
     if (readMe.succeed && readMe.data != null) {
       model.readMeContent = tryDecodeText(Uint8List.fromList(readMe.data!));
     }
-    //}
   }
 
   Future<void> _onSwitchBranches(
       BuildContext context, RepositoryModel model) async {
     final res = await showCupertinoModalBottomSheet<String>(
         context: context,
-        // expand: true,
-
         //todo: 这里先设置为false，因为发现拖动下拉刷新，这个也会被检测，其实需要屏蔽外部的，暂没去分析
         enableDrag: false,
-        builder: (BuildContext context) => BranchesList(
+        builder: (_) => BranchesList(
             repo: model.repo, selectedBranch: model.selectedBranch));
     if (res != null) {
       model.selectedBranch = res;
