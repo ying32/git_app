@@ -17,15 +17,12 @@ type User struct {
 	*api.User
 
 	/// 新加的字段，
-	IsOrg       bool   `json:"is_org"`
 	Location    string `json:"location"`
 	Website     string `json:"website"`
 	Followers   int    `json:"followers_count"`
 	Following   int    `json:"following_count"`
-	Stars       int    `json:"star_count"`
+	Stars       int    `json:"starred_repos_count"`
 	Repos       int    `json:"repos_count"`
-	Teams       int    `json:"teams_count"`
-	Members     int    `json:"members_count"`
 	Description string `json:"description"`
 	// 这个可以未登录里干掉？
 	//Created time.Time `json:"created"`
@@ -35,15 +32,12 @@ type User struct {
 func FromUser(user *database.User, apiUser *api.User) *User {
 	return &User{
 		User:        apiUser,
-		IsOrg:       user.IsOrganization(),
 		Location:    user.Location,
 		Website:     user.Website,
 		Followers:   user.NumFollowers,
 		Following:   user.NumFollowing,
 		Stars:       user.NumStars,
 		Repos:       user.NumRepos,
-		Teams:       user.NumTeams,
-		Members:     user.NumMembers,
 		Description: user.Description,
 	}
 }

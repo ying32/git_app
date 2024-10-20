@@ -8,15 +8,12 @@ class User {
     required this.fullName,
     required this.email,
     required this.avatarUrl,
-    required this.isOrg,
     this.location = "",
     this.website = "",
     this.followersCount = 0,
     this.followingCount = 0,
     this.starCount = 0,
     this.reposCount = 0,
-    this.teamsCount = 0,
-    this.membersCount = 0,
     this.description = "",
   });
 
@@ -26,17 +23,12 @@ class User {
   final String fullName;
   final String email;
   final String avatarUrl;
-
-  final bool isOrg;
   final String location;
   final String website;
   final int followersCount;
   final int followingCount;
   final int starCount;
   final int reposCount;
-
-  final int teamsCount;
-  final int membersCount;
   final String description;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -48,27 +40,23 @@ class User {
         avatarUrl: json["avatar_url"] ?? '',
 
         // new
-        isOrg: json["is_org"] ?? false,
         location: json["location"] ?? '',
         website: json["website"] ?? '',
         followersCount: json["followers_count"] ?? 0,
         followingCount: json["following_count"] ?? 0,
-        // gitea: starred_repos_count
-        starCount: json["star_count"] ?? json['starred_repos_count'] ?? 0,
+        starCount: json['starred_repos_count'] ?? 0,
         reposCount: json["repos_count"] ?? 0,
-        teamsCount: json["teams_count"] ?? 0,
-        membersCount: json["members_count"] ?? 0,
         description: json["description"] ?? '',
       );
 
   /// 生成一个只有名称和头像的User信息
   factory User.fromNameAndHeadImage(String userName, String avatarUrl) => User(
-      id: 0,
-      username: userName,
-      fullName: '',
-      email: '',
-      avatarUrl: avatarUrl,
-      isOrg: false);
+        id: 0,
+        username: userName,
+        fullName: '',
+        email: '',
+        avatarUrl: avatarUrl,
+      );
 
   // Map<String, dynamic> toJson() => {
   //       "id": id,

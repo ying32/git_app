@@ -201,34 +201,34 @@ class UserDetailsPage extends StatelessWidget {
               ),
 
             // 这里还不太对哈，
-            if (!user.isOrg) ...[
-              ListTileNav(
-                leading: const BackgroundIcon(
-                  icon: Remix.star_line, //Icons.star_border,
-                  color: Colors.yellow,
-                ),
-                title: '点赞',
-                additionalInfo: Text("${user.starCount}",
-                    style: TextStyle(color: iconColor)),
-                // onTap: () => AppGlobal.pushPage(const OrganizationsPage(),
-                //    context: context, previousPageTitle: _user.username),
-              ),
-              ListTileNav(
-                leading: const BackgroundIcon(
-                  icon: Remix.organization_chart,
-                  color: Colors.orange,
-                ),
-                title: '组织',
-                additionalInfo: Text('1', style: TextStyle(color: iconColor)),
-                onTap: () => routes.pushPage(
-                  OrganizationsPage(
-                    user: user,
-                  ),
-                  context: context,
-                  data: PageData(previousPageTitle: user.username),
-                ),
-              ),
-            ],
+            // if (!user.isOrg) ...[
+            //   ListTileNav(
+            //     leading: const BackgroundIcon(
+            //       icon: Remix.star_line, //Icons.star_border,
+            //       color: Colors.yellow,
+            //     ),
+            //     title: '点赞',
+            //     additionalInfo: Text("${user.starCount}",
+            //         style: TextStyle(color: iconColor)),
+            //     // onTap: () => AppGlobal.pushPage(const OrganizationsPage(),
+            //     //    context: context, previousPageTitle: _user.username),
+            //   ),
+            //   ListTileNav(
+            //     leading: const BackgroundIcon(
+            //       icon: Remix.organization_chart,
+            //       color: Colors.orange,
+            //     ),
+            //     title: '组织',
+            //     additionalInfo: Text('1', style: TextStyle(color: iconColor)),
+            //     onTap: () => routes.pushPage(
+            //       OrganizationsPage(
+            //         user: user,
+            //       ),
+            //       context: context,
+            //       data: PageData(previousPageTitle: user.username),
+            //     ),
+            //   ),
+            // ],
           ],
         ),
       ],

@@ -26,12 +26,12 @@ class Repository {
   final RepositoryPermissions? permissions;
 
   final int openPullsCount;
-  final bool isWatching;
-  final bool isStaring;
-  final int branchCount;
-  final int commitsCount;
-  final RepositoryReadMe? readMe;
-  final String? license;
+  // final bool isWatching;
+  // final bool isStaring;
+  // final int branchCount;
+  // final int commitsCount;
+  // final RepositoryReadMe? readMe;
+  // final String? license;
 
   Repository({
     required this.id,
@@ -59,12 +59,12 @@ class Repository {
     this.permissions,
     //new
     this.openPullsCount = 0,
-    this.isWatching = false,
-    this.isStaring = false,
-    this.branchCount = 0,
-    this.commitsCount = 0,
-    this.readMe,
-    this.license,
+    // this.isWatching = false,
+    // this.isStaring = false,
+    // this.branchCount = 0,
+    // this.commitsCount = 0,
+    // this.readMe,
+    // this.license,
   });
 
   factory Repository.fromJson(Map<String, dynamic> json) => Repository(
@@ -99,16 +99,15 @@ class Repository {
             : RepositoryPermissions.fromJson(json["permissions"]),
         // new
         // open_pulls_count是我打的补丁，open_pr_counter 这个是gitea的
-        openPullsCount:
-            json["open_pulls_count"] ?? json['open_pr_counter'] ?? 0,
-        isWatching: json["is_watching"] ?? false,
-        isStaring: json["is_staring"] ?? false,
-        branchCount: json["branch_count"] ?? 0,
-        commitsCount: json["commits_count"] ?? 0,
-        readMe: json["read_me"] == null
-            ? null
-            : RepositoryReadMe.fromJson(json["read_me"]),
-        license: json['license'],
+        openPullsCount: json['open_pr_counter'] ?? 0,
+        // isWatching: json["is_watching"] ?? false,
+        // isStaring: json["is_staring"] ?? false,
+        // branchCount: json["branch_count"] ?? 0,
+        // commitsCount: json["commits_count"] ?? 0,
+        // readMe: json["read_me"] == null
+        //     ? null
+        //     : RepositoryReadMe.fromJson(json["read_me"]),
+        // license: json['license'],
       );
 
   /// 生成一个只有仓库名和所有者名+头像信息的

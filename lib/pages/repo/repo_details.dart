@@ -45,13 +45,13 @@ class RepositoryDetailsPage extends StatelessWidget {
 
   Future<void> _readReadMeFile(RepositoryModel model, bool? force) async {
     // 没有我写的那个补丁的，这里直接读
-    if (model.repo.readMe == null) {
-      final readMe = await AppGlobal.cli.repos.content
-          .readMeFile(model.repo, model.selectedBranch, force: force);
-      if (readMe.succeed && readMe.data != null) {
-        model.readMeContent = tryDecodeText(Uint8List.fromList(readMe.data!));
-      }
+    //if (model.repo.readMe == null) {
+    final readMe = await AppGlobal.cli.repos.content
+        .readMeFile(model.repo, model.selectedBranch, force: force);
+    if (readMe.succeed && readMe.data != null) {
+      model.readMeContent = tryDecodeText(Uint8List.fromList(readMe.data!));
     }
+    //}
   }
 
   Future<void> _onSwitchBranches(
@@ -222,68 +222,68 @@ class RepositoryDetailsPage extends StatelessWidget {
           if (model.repo.fork) _buildForkWidget(model),
 
           /// star和watch按钮
-          Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: 40,
-                  // width: 160,
-                  child: _buildButton(model.repo.isStaring ? '取消点赞' : '点赞', () {
-                    //todo: 没有API可用
-                    showToast('没有API可用');
-                  }, model.repo.isStaring ? Icons.star : Icons.star_border,
-                      model.repo.isStaring ? Colors.yellow : null),
-                ),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: SizedBox(
-                  height: 40,
-                  // width: 160,
-                  child: _buildButton(
-                    model.repo.isWatching ? '取消关注' : '注关',
-                    () {
-                      //todo: 没有API可用
-                      showToast('没有API可用');
-                    },
-                    Icons.remove_red_eye_outlined,
-                    model.repo.isWatching ? Colors.green : null,
-                  ),
-                ),
-              ),
-            ],
-          )
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: SizedBox(
+          //         height: 40,
+          //         // width: 160,
+          //         child: _buildButton(model.repo.isStaring ? '取消点赞' : '点赞', () {
+          //           //todo: 没有API可用
+          //           showToast('没有API可用');
+          //         }, model.repo.isStaring ? Icons.star : Icons.star_border,
+          //             model.repo.isStaring ? Colors.yellow : null),
+          //       ),
+          //     ),
+          //     const SizedBox(width: 15),
+          //     Expanded(
+          //       child: SizedBox(
+          //         height: 40,
+          //         // width: 160,
+          //         child: _buildButton(
+          //           model.repo.isWatching ? '取消关注' : '注关',
+          //           () {
+          //             //todo: 没有API可用
+          //             showToast('没有API可用');
+          //           },
+          //           Icons.remove_red_eye_outlined,
+          //           model.repo.isWatching ? Colors.green : null,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );
   }
 
-  Widget _buildLicense(RepositoryModel model, Color iconColor) {
-    return ListTileNav(
-      leading: const BackgroundIcon(
-        icon: Icons.balance_outlined,
-        color: Colors.pink,
-      ),
-      title: '许可证',
-      onTap: model.repo.license!.isEmpty
-          ? null
-          : () {
-              // 这里跳转到对应的去哈
-            },
-      trailing: model.repo.license!.isEmpty
-          ? const SizedBox()
-          : Icon(Icons.open_in_new_sharp, size: 16, color: iconColor),
-      additionalInfo: model.repo.license!.isNotEmpty
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(model.repo.license!, style: TextStyle(color: iconColor)),
-                const SizedBox(width: 5),
-              ],
-            )
-          : Text('无', style: TextStyle(color: iconColor)),
-    );
-  }
+  // Widget _buildLicense(RepositoryModel model, Color iconColor) {
+  //   return ListTileNav(
+  //     leading: const BackgroundIcon(
+  //       icon: Icons.balance_outlined,
+  //       color: Colors.pink,
+  //     ),
+  //     title: '许可证',
+  //     onTap: model.repo.license!.isEmpty
+  //         ? null
+  //         : () {
+  //             // 这里跳转到对应的去哈
+  //           },
+  //     trailing: model.repo.license!.isEmpty
+  //         ? const SizedBox()
+  //         : Icon(Icons.open_in_new_sharp, size: 16, color: iconColor),
+  //     additionalInfo: model.repo.license!.isNotEmpty
+  //         ? Row(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Text(model.repo.license!, style: TextStyle(color: iconColor)),
+  //               const SizedBox(width: 5),
+  //             ],
+  //           )
+  //         : Text('无', style: TextStyle(color: iconColor)),
+  //   );
+  // }
 
   void _doTapCreateIssue(BuildContext context, RepositoryModel model) =>
       showCreateIssuePage(context, model.repo);
@@ -398,10 +398,10 @@ class RepositoryDetailsPage extends StatelessWidget {
           },
         ),
 
-        if (model.repo.license != null) ...[
-          const ListTileDivider(),
-          _buildLicense(model, iconColor),
-        ],
+        // if (model.repo.license != null) ...[
+        //   const ListTileDivider(),
+        //   _buildLicense(model, iconColor),
+        // ],
 
         // 下面分支和啥的
         const SizedBox(height: 15),
@@ -443,8 +443,8 @@ class RepositoryDetailsPage extends StatelessWidget {
 
         ListTileNav(
           title: '提交记录',
-          additionalInfo: Text('${model.repo.commitsCount}',
-              style: TextStyle(color: iconColor)),
+          // additionalInfo: Text('${model.repo.commitsCount}',
+          //     style: TextStyle(color: iconColor)),
           onTap: () => routes.pushPage(
             CommitsPage(
               repo: model.repo,

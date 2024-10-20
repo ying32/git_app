@@ -26,7 +26,7 @@ class RepositoryModel extends ChangeNotifier {
 
   /// readme文件内容
   String? _readMeContent;
-  String? get readMeContent => _readMeContent ?? _repo.readMe?.content;
+  String? get readMeContent => _readMeContent; // ?? _repo.readMe?.content;
   set readMeContent(String? value) {
     if (_readMeContent != value) {
       _readMeContent = value;
