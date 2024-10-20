@@ -94,7 +94,7 @@ class _RepositoriesPageState extends State<RepositoriesPage>
             },
             leading: leading,
             title: item.fullName,
-            subTitle: Text(item.description,
+            subtitle: Text(item.description,
                 maxLines: 1, overflow: TextOverflow.ellipsis),
           );
         });

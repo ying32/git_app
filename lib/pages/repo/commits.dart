@@ -46,10 +46,8 @@ class _CommitsPageState extends State<CommitsPage> {
         previousPageTitle: context.previousPageTitle,
       ),
       emptyItemHint: const Center(child: Text('没有数据哦')),
-      itemBuilder: (BuildContext context, int index) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5),
-        child: CommitsItem(repo: widget.repo, item: _commits![index]),
-      ),
+      itemBuilder: (BuildContext context, int index) =>
+          CommitsItem(repo: widget.repo, item: _commits![index]),
       useSeparator: true,
       itemCount: _commits?.length ?? 0,
     );

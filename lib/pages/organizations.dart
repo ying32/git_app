@@ -81,7 +81,7 @@ class _OrganizationsPageState extends State<OrganizationsPage>
             size: 50,
           ),
           title: item.username,
-          subTitle: Text(item.description,
+          subtitle: Text(item.description,
               maxLines: 1, overflow: TextOverflow.ellipsis),
         );
       },

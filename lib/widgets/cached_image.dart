@@ -9,15 +9,20 @@ import 'package:gogs_app/widgets/adaptive_widgets.dart';
 import 'package:gogs_app/app_globals.dart';
 
 class CachedImage extends StatelessWidget {
-  const CachedImage({
-    super.key,
-    required this.url,
-  });
+  const CachedImage({super.key, required this.url});
 
   final String url;
 
+  Widget _buildError(BuildContext context, double size) => Icon(
+        Icons.error_outline,
+        color: context.primaryColor,
+        size: size,
+      );
+
   @override
   Widget build(BuildContext context) {
+    if (url.isEmpty) return _buildError(context, 25);
+
     // 也不知道为啥他头像返回的url与其它都不一样
     final bi = AppGlobal.cli.baseUri;
     final newURL = Uri.tryParse(url)
@@ -28,14 +33,8 @@ class CachedImage extends StatelessWidget {
       fit: BoxFit.cover,
       imageUrl: newURL ?? url,
       errorWidget: (context, url, error) => LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return Icon(
-            Icons.error_outline,
-            color: context.primaryColor,
-            size: constraints.maxHeight,
-          );
-        },
-      ),
+          builder: (BuildContext context, BoxConstraints constraints) =>
+              _buildError(context, constraints.maxHeight)),
     );
   }
 }

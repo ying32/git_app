@@ -70,7 +70,7 @@ class ListTileNav extends StatelessWidget {
     this.title = "",
     this.titleWidget,
     this.leading,
-    this.subTitle,
+    this.subtitle,
     this.onTap,
     this.trailing,
     this.additionalInfo,
@@ -86,7 +86,7 @@ class ListTileNav extends StatelessWidget {
   final String title;
 
   /// 子标题
-  final Widget? subTitle;
+  final Widget? subtitle;
 
   /// tap事件
   final VoidCallback? onTap;
@@ -117,7 +117,7 @@ class ListTileNav extends StatelessWidget {
             onTap: onTap,
             leading: leading,
             title: titleWidget ?? Text(title),
-            subtitle: subTitle,
+            subtitle: subtitle,
             trailing: trailing,
             additionalInfo: additionalInfo,
           )
@@ -127,7 +127,7 @@ class ListTileNav extends StatelessWidget {
               onTap: onTap,
               leading: leading,
               title: titleWidget ?? Text(title),
-              subtitle: subTitle,
+              subtitle: subtitle,
               trailing: trailing,
             ),
           );

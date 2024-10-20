@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gogs_app/gogs_client/gogs_client.dart';
+import 'package:gogs_app/pages/repo/commit_details.dart';
+import 'package:gogs_app/routes.dart';
+import 'package:gogs_app/utils/page_data.dart';
 
 import 'package:gogs_app/utils/utils.dart';
+import 'package:gogs_app/widgets/list_section.dart';
 import 'cached_image.dart';
 
 class CommitsItem extends StatelessWidget {
@@ -14,19 +18,27 @@ class CommitsItem extends StatelessWidget {
   final Repository repo;
   final Commit item;
 
+  void _doTap() {
+    routes.pushPage(const CommitDetailsPage(),
+        data: PageData(previousPageTitle: repo.name));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(item.commit.message,
-          maxLines: 2, overflow: TextOverflow.ellipsis),
+    return ListTileNav(
+      titleWidget: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Text(item.commit.message,
+            maxLines: 2, overflow: TextOverflow.ellipsis),
+      ),
       subtitle: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             UserHeadImage(
               size: 22,
               user: item.author,
-              // imageURL: item.author.avatarUrl,
               padding: const EdgeInsets.all(1),
             ),
             const SizedBox(width: 10),
@@ -36,6 +48,7 @@ class CommitsItem extends StatelessWidget {
       ),
       trailing: Text(timeToLabel(item.commit.committer.date),
           style: const TextStyle(fontSize: 12)),
+      onTap: _doTap,
     );
   }
 }
