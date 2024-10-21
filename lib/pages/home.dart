@@ -58,10 +58,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHeadImage() => UserHeadImage(
-        size: _headImageSize,
-        user: AppGlobal.instance.userInfo!,
-        previousPageTitle: _title,
+  Widget _buildHeadImage() => GestureDetector(
+        onLongPress: () {
+          //todo: 这里打算做个切换多个用户的
+        },
+        child: UserHeadImage(
+          size: _headImageSize,
+          user: AppGlobal.instance.userInfo!,
+          previousPageTitle: _title,
+        ),
       );
 
   void _doTapEdit() {

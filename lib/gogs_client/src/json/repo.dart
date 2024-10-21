@@ -1,38 +1,6 @@
 part of gogs.client;
 
 class Repository {
-  final int id;
-  final User owner;
-  final String name;
-  final String fullName;
-  final String description;
-  final bool private;
-  final bool fork;
-  final dynamic parent;
-  final bool empty;
-  final bool mirror;
-  final int? size;
-  final String? htmlUrl;
-  final String? sshUrl;
-  final String? cloneUrl;
-  final String website;
-  final int starsCount;
-  final int forksCount;
-  final int watchersCount;
-  final int openIssuesCount;
-  final String defaultBranch;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final RepositoryPermissions? permissions;
-
-  final int openPullsCount;
-  // final bool isWatching;
-  // final bool isStaring;
-  // final int branchCount;
-  // final int commitsCount;
-  // final RepositoryReadMe? readMe;
-  // final String? license;
-
   Repository({
     required this.id,
     required this.owner,
@@ -45,9 +13,9 @@ class Repository {
     this.empty = false,
     this.mirror = false,
     this.size,
-    this.htmlUrl,
-    this.sshUrl,
-    this.cloneUrl,
+    //this.htmlUrl,
+    //this.sshUrl,
+    //this.cloneUrl,
     this.website = '',
     this.starsCount = 0,
     this.forksCount = 0,
@@ -56,7 +24,7 @@ class Repository {
     required this.defaultBranch,
     this.createdAt,
     this.updatedAt,
-    this.permissions,
+    //this.permissions,
     //new
     this.openPullsCount = 0,
     // this.isWatching = false,
@@ -67,6 +35,38 @@ class Repository {
     // this.license,
   });
 
+  final int id;
+  final User owner;
+  final String name;
+  final String fullName;
+  final String description;
+  final bool private;
+  final bool fork;
+  final Repository? parent;
+  final bool empty;
+  final bool mirror;
+  final int? size;
+  //final String? htmlUrl;
+  //final String? sshUrl;
+  //final String? cloneUrl;
+  final String website;
+  final int starsCount;
+  final int forksCount;
+  final int watchersCount;
+  final int openIssuesCount;
+  final String defaultBranch;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  //final RepositoryPermissions? permissions;
+
+  final int openPullsCount;
+  // final bool isWatching;
+  // final bool isStaring;
+  // final int branchCount;
+  // final int commitsCount;
+  // final RepositoryReadMe? readMe;
+  // final String? license;
+
   factory Repository.fromJson(Map<String, dynamic> json) => Repository(
         id: json["id"] ?? 0,
         owner: User.fromJson(json["owner"] ?? {}),
@@ -75,13 +75,14 @@ class Repository {
         description: json["description"] ?? '',
         private: json["private"] ?? false,
         fork: json["fork"] ?? false,
-        parent: json["parent"],
+        parent:
+            json["parent"] != null ? Repository.fromJson(json['parent']) : null,
         empty: json["empty"] ?? false,
         mirror: json["mirror"] ?? false,
         size: json["size"],
-        htmlUrl: json["html_url"],
-        sshUrl: json["ssh_url"],
-        cloneUrl: json["clone_url"],
+        //htmlUrl: json["html_url"],
+        //sshUrl: json["ssh_url"],
+        //cloneUrl: json["clone_url"],
         website: json["website"] ?? '',
         starsCount: json["stars_count"] ?? 0,
         forksCount: json["forks_count"] ?? 0,
@@ -94,9 +95,9 @@ class Repository {
         updatedAt: json["updated_at"] == null
             ? null
             : DateTime.parse(json["updated_at"]),
-        permissions: json["permissions"] == null
-            ? null
-            : RepositoryPermissions.fromJson(json["permissions"]),
+        //permissions: json["permissions"] == null
+        //    ? null
+        //    : RepositoryPermissions.fromJson(json["permissions"]),
         // new
         // open_pulls_count是我打的补丁，open_pr_counter 这个是gitea的
         openPullsCount: json['open_pr_counter'] ?? 0,
@@ -154,13 +155,13 @@ class Repository {
   //       "license": license,
   //     };
 
-  String get parentName => parentRepo?.fullName ?? '';
-
-  Repository? get parentRepo {
-    if (parent == null) return null;
-    if (parent is! Map) return null;
-    return Repository.fromJson(parent);
-  }
+  // String get parentName => parentRepo?.fullName ?? '';
+  //
+  // Repository? get parentRepo {
+  //   if (parent == null) return null;
+  //   if (parent is! Map) return null;
+  //   return Repository.fromJson(parent);
+  // }
 
   static RepositoryList fromJsonList(dynamic data) =>
       RepositoryList.from(data.map((x) => Repository.fromJson(x)));

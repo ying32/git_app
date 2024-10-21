@@ -34,7 +34,7 @@ class IssueComment {
             ? null
             : DateTime.parse(json["updated_at"]),
         // 补丁或者gitea
-        type: json["type"] ?? _tryGetType(json), // 默认个comment吧
+        type: json["type"] ?? _tryGetType(json),
         // 时间线的
         timeline: IssueCommentTimeline.fromJson(json),
         assignee:
@@ -47,6 +47,7 @@ class IssueComment {
       if (body.startsWith("<")) {
         return 'commit_ref';
       } else {
+        // 默认个comment吧
         return 'comment';
       }
     }

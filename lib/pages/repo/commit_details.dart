@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:git_app/utils/build_context_helper.dart';
 import 'package:git_app/widgets/platform_page_scaffold.dart';
 
-class _CommitDetailsItem extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
-}
+// class _CommitDetailsItem extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     // TODO: implement build
+//     throw UnimplementedError();
+//   }
+// }
 
 class CommitDetailsPage extends StatelessWidget {
   const CommitDetailsPage({super.key});
@@ -21,7 +21,7 @@ class CommitDetailsPage extends StatelessWidget {
       cupertinoNavigationBar: () => CupertinoNavigationBar(
         previousPageTitle: context.previousPageTitle,
       ),
-      children: [],
+      children: const [],
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
 import 'package:git_app/models/issue_comment_model.dart';
 import 'package:git_app/routes.dart';
+import 'package:git_app/utils/build_context_helper.dart';
 import 'package:git_app/utils/message_box.dart';
 import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
@@ -130,20 +131,24 @@ class ActivityItem extends StatelessWidget {
               onTap: () {
                 showToast('没弄呢');
               },
-              child: Container(
-                constraints: const BoxConstraints(minWidth: 80),
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                // todo: 这里还要优化，要对齐
-                child: Text(
-                  commit.sha1.substring(0, 10),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ),
+              child: Builder(builder: (context) {
+                return Container(
+                  constraints: const BoxConstraints(minWidth: 80),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  decoration: BoxDecoration(
+                    color:
+                        context.isDark ? Colors.black38 : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  // todo: 这里还要优化，要对齐
+                  child: Text(
+                    commit.sha1.substring(0, 10),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                );
+              }),
             ),
           ),
         ),
@@ -253,9 +258,9 @@ class ActivityItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final icon = _opTypeToIcon(item.opType);
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (icon != null)
-          Padding(padding: const EdgeInsets.only(top: 10), child: icon),
+        if (icon != null) icon,
         const SizedBox(width: 10),
         // 中间详细区域
         Expanded(

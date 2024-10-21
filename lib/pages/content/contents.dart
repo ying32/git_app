@@ -124,6 +124,7 @@ class _ContentsPageState extends State<ContentsPage> {
               }
             });
       },
+      separatorPadding: const EdgeInsets.only(left: 60),
       useSeparator: true,
       itemCount: _contents?.length ?? 0,
     );

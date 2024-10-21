@@ -27,8 +27,8 @@ class OrganizationsPage extends StatefulWidget {
   State<OrganizationsPage> createState() => _OrganizationsPageState();
 }
 
-class _OrganizationsPageState extends State<OrganizationsPage>
-    with AutomaticKeepAliveClientMixin {
+class _OrganizationsPageState
+    extends State<OrganizationsPage> /*with AutomaticKeepAliveClientMixin*/ {
   OrganizationList? _orgs;
 
   Future<void> _init(_, bool? force) async {
@@ -43,7 +43,7 @@ class _OrganizationsPageState extends State<OrganizationsPage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    //super.build(context);
 
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
@@ -93,6 +93,6 @@ class _OrganizationsPageState extends State<OrganizationsPage>
     );
   }
 
-  @override
-  bool get wantKeepAlive => false;
+  // @override
+  // bool get wantKeepAlive => false;
 }

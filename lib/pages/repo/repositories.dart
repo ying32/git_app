@@ -28,8 +28,8 @@ class RepositoriesPage extends StatefulWidget {
   State<RepositoriesPage> createState() => _RepositoriesPageState();
 }
 
-class _RepositoriesPageState extends State<RepositoriesPage>
-    with AutomaticKeepAliveClientMixin {
+class _RepositoriesPageState
+    extends State<RepositoriesPage> /* with AutomaticKeepAliveClientMixin*/ {
   RepositoryList? _repos;
 
   Future _init(_, bool? force) async {
@@ -49,7 +49,7 @@ class _RepositoriesPageState extends State<RepositoriesPage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    // super.build(context);
 
     return PlatformPageScaffold(
         reqRefreshCallback: _init,
@@ -100,6 +100,6 @@ class _RepositoriesPageState extends State<RepositoriesPage>
         });
   }
 
-  @override
-  bool get wantKeepAlive => false;
+  //@override
+  // bool get wantKeepAlive => false;
 }

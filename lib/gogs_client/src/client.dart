@@ -95,7 +95,7 @@ class SimpleRESTClient {
 
   /// 基础头
   static const _baseHeaders = {
-    HttpHeaders.userAgentHeader: 'Gogs_client/1.0',
+    HttpHeaders.userAgentHeader: 'GitApp_client/1.0',
     HttpHeaders.acceptEncodingHeader: 'gzip, deflate',
     HttpHeaders.acceptLanguageHeader: 'zh-CN,zh;q=0.9,en-US,en;q=0.8',
   };
@@ -199,6 +199,39 @@ class SimpleRESTClient {
       print("statusMessage=${response.statusMessage}");
       print("headers=${response.headers}");
       // print("headers=${response.requestOptions.path}");
+
+      // 返回太多无用数据了，所以这里在调试模式下干掉一些
+      void processData(dynamic a) {
+        if (a == null) return;
+        if (a is Map) {
+          a.remove("_links");
+          a.remove("url");
+          a.remove("html_url");
+          a.remove("git_url");
+          a.remove("download_url");
+          a.remove("submodule_git_url");
+          a.remove("ssh_url");
+          a.remove("languages_url");
+          a.remove("clone_url");
+          a.remove("original_url");
+          a.remove("link");
+          a.remove("permissions");
+          a.remove("internal_tracker");
+          processData(a['owner']);
+          processData(a['act_user']);
+          processData(a['repo']);
+        }
+      }
+
+      if (response.data is Map || response.data is List) {
+        if (response.data is List) {
+          for (final a in response.data) {
+            processData(a);
+          }
+        } else {
+          processData(response.data);
+        }
+      }
 
       if (response.requestOptions.responseType == ResponseType.json) {
         print(jsonEncode(response.data));

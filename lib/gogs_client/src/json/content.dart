@@ -10,10 +10,10 @@ class Content {
     required this.path,
     required this.content,
     required this.sha,
-    required this.url,
-    required this.gitUrl,
-    required this.htmlUrl,
-    required this.downloadUrl,
+    //required this.url,
+    //required this.gitUrl,
+    //required this.htmlUrl,
+    // required this.downloadUrl,
     // required this.links,
   });
 
@@ -24,10 +24,10 @@ class Content {
   final String path;
   final String content;
   final String sha;
-  final String url;
-  final String gitUrl;
-  final String htmlUrl;
-  final String downloadUrl;
+  //final String url;
+  //final String gitUrl;
+  //final String htmlUrl;
+  //final String downloadUrl;
   // final Links links;
 
   factory Content.fromJson(Map<String, dynamic> json) => Content(
@@ -38,10 +38,10 @@ class Content {
         path: json["path"] ?? '',
         content: json["content"] ?? '',
         sha: json["sha"] ?? '',
-        url: json["url"] ?? '',
-        gitUrl: json["git_url"] ?? '',
-        htmlUrl: json["html_url"] ?? '',
-        downloadUrl: json["download_url"] ?? '',
+        //url: json["url"] ?? '',
+        //gitUrl: json["git_url"] ?? '',
+        //htmlUrl: json["html_url"] ?? '',
+        //downloadUrl: json["download_url"] ?? '',
         // links: Links.fromJson(json["_links"] ?? {}),
       );
 

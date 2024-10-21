@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
             autofocus: true,
             controller: _hostController,
             prefixIcon: const Icon(Remix.server_line),
-            hintText: 'gogs服务端地址',
+            hintText: '服务端地址，如：http://192.168.1.22:3000',
             suffixIcon: IconButton(
                 onPressed: () => _hostController.clear(),
                 icon: const Icon(Icons.add)),
@@ -183,11 +183,11 @@ class _LoginPageState extends State<LoginPage> {
   Future _doLogin() async {
     final host = _hostController.text.trim();
     if (host.isEmpty) {
-      showToast('Gogs主机地址未设置');
+      showToast('主机地址未设置');
       return;
     }
     if (!host.startsWith(RegExp(r"http://|https://", caseSensitive: false))) {
-      showToast('Gogs主机地址设置不正确');
+      showToast('主机地址设置不正确');
       return;
     }
     AppGlobal.cli.setServerHost(host);
