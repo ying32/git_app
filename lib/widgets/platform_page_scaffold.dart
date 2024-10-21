@@ -143,6 +143,7 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
   bool get _canShowMore => widget.reqPullUpLoadCallback != null && _showingMore;
 
   void _onScrollListener() {
+    if (_showingMore) return;
     if (!_controller!.hasClients) return;
     if (_controller!.offset > _controller!.position.maxScrollExtent + 80) {
       if (!_showingMore) {
@@ -255,7 +256,7 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
     if (widget.reqRefreshCallback != null) {
       child = RefreshIndicator.adaptive(
         onRefresh: _doRefresh,
-        displacement: 60,
+        displacement: 80,
         child: child,
       );
     }
@@ -284,10 +285,6 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
             SliverPadding(padding: widget.padding!, sliver: sliver)
           else
             sliver,
-
-          /// 没测试哈
-          if (widget.reqPullUpLoadCallback != null && _showingMore)
-            SliverToBoxAdapter(child: _buildLoadMore()),
           if (widget.bottomBar != null)
             SliverToBoxAdapter(child: widget.bottomBar!),
         ]);
@@ -297,14 +294,7 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
     return const Center(
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 5),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircularProgressIndicator.adaptive(),
-            SizedBox(width: 5),
-            Text('加载更多', style: TextStyle(color: Colors.grey)),
-          ],
-        ),
+        child: CircularProgressIndicator.adaptive(),
       ),
     );
   }
