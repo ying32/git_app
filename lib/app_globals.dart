@@ -29,6 +29,9 @@ class AppGlobal {
   /// 用户信息
   User? userInfo;
 
+  /// 是自己的信息
+  static bool isMe(User user) => user.id == instance.userInfo?.id;
+
   /// 减少直接引用[GlobalNavigator]，方便维护
   static BuildContext? get context => GlobalNavigator.context;
 

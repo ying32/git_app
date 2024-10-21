@@ -32,14 +32,12 @@ class _OrganizationsPageState
   OrganizationList? _orgs;
 
   Future<void> _init(_, bool? force) async {
-    final res = _isMy
+    final res = AppGlobal.isMe(widget.user)
         ? await AppGlobal.cli.user.orgs(force)
         : await AppGlobal.cli.user.usersOrgs(widget.user, force);
     _orgs = res.data;
     if (mounted) setState(() {});
   }
-
-  bool get _isMy => widget.user.id == AppGlobal.instance.userInfo?.id;
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +68,12 @@ class _OrganizationsPageState
             routes.pushUserDetailsPage(
               context,
               item,
-              data: PageData(previousPageTitle: _isMy ? null : widget.title),
+              data: PageData(
+                  previousPageTitle:
+                      AppGlobal.isMe(widget.user) ? null : widget.title),
             );
           },
           leading: UserHeadImage(
-            // imageURL: item.avatarUrl,
             user: item,
             radius: 3,
             padding: const EdgeInsets.all(3),

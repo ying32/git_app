@@ -63,8 +63,8 @@ class CommentIssueInfo extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(15),
         child: Selector<IssueCommentModel, Issue>(
-          selector: (_, IssueCommentModel model) => model.issue,
-          builder: (_, Issue issue, __) {
+          selector: (_, model) => model.issue,
+          builder: (_, issue, __) {
             final color = issue.isOpen ? Colors.green : Colors.red;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +74,6 @@ class CommentIssueInfo extends StatelessWidget {
                     UserHeadImage(
                         size: 22,
                         user: issue.user,
-                        // imageURL: model.issue.user.avatarUrl,
                         radius: 2,
                         padding: const EdgeInsets.all(1)),
                     const SizedBox(width: 5),

@@ -20,7 +20,6 @@ class RepositoryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget leading = UserHeadImage.lock(
       user: repo.owner,
-      // imageURL: item.owner.avatarUrl,
       radius: 3,
       padding: const EdgeInsets.all(3),
       size: 50,
@@ -33,12 +32,6 @@ class RepositoryItem extends StatelessWidget {
           repo,
           data: PageData(previousPageTitle: previousPageTitle),
         );
-        // AppGlobal.pushModalPage(
-        //     RepositoryDetailsPage(
-        //       repo: item,
-        //     ),
-        //     context: context,
-        //     previousPageTitle: _isMyRepos ? null : widget.title);
       },
       leading: leading,
       title: repo.fullName,

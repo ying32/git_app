@@ -32,15 +32,13 @@ class _RepositoriesPageState
       final res = await AppGlobal.cli.repos.orgRepos(widget.user, force: force);
       _repos = res.data;
     } else {
-      final res = await (_isMy
+      final res = await (AppGlobal.isMe(widget.user)
           ? AppGlobal.cli.user.repos(force)
           : AppGlobal.cli.repos.userRepos(widget.user, force: force));
       _repos = res.data;
     }
     if (mounted) setState(() {});
   }
-
-  bool get _isMy => widget.user.id == AppGlobal.instance.userInfo?.id;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +59,8 @@ class _RepositoriesPageState
       separatorPadding: const EdgeInsets.only(left: 60),
       emptyItemHint: const Center(child: Text('没有可用的仓库')),
       itemBuilder: (_, index) => RepositoryItem(
-          repo: _repos![index], previousPageTitle: _isMy ? null : widget.title),
+          repo: _repos![index],
+          previousPageTitle: AppGlobal.isMe(widget.user) ? null : widget.title),
     );
   }
 

@@ -60,7 +60,7 @@ class CommentItem extends StatelessWidget {
       return CommentStatus(comment: comment);
     }
     return Selector<IssueCommentModel, List<IssueComment>>(
-      selector: (_, IssueCommentModel model) => model.comments,
+      selector: (_, model) => model.comments,
       builder: (_, value, __) {
         return BottomDivider(
           child: _CommentItem(
@@ -101,7 +101,7 @@ class FirstCommentItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Selector<IssueCommentModel, Issue>(
-      selector: (_, IssueCommentModel model) => model.issue,
+      selector: (_, model) => model.issue,
       builder: (_, value, __) {
         return _CommentItem(
             key: key,
@@ -117,6 +117,7 @@ class FirstCommentItem extends StatelessWidget {
   }
 }
 
+/// 编辑菜单
 class _PopupMenu extends StatelessWidget {
   const _PopupMenu({
     required this.isMe,
@@ -181,9 +182,7 @@ class _PopupMenu extends StatelessWidget {
       ],
       cancelButton: CupertinoActionSheetAction(
         isDefaultAction: true,
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
+        onPressed: () => Navigator.of(context).pop(),
         child: const Text('取消'),
       ),
     );
@@ -264,7 +263,7 @@ class _CommentItem extends StatelessWidget {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (_) => _PopupMenu(
-          isMe: AppGlobal.instance.userInfo?.username == user.username,
+          isMe: AppGlobal.isMe(user),
           canDelete: canDelete,
           onDelete: () => _doTapDelete(context, model),
           onEdit: () => _doTapBodyEdit(context, model),
@@ -285,7 +284,6 @@ class _CommentItem extends StatelessWidget {
                   UserHeadImage(
                       size: 22,
                       user: user,
-                      // imageURL: comment.user.avatarUrl,
                       radius: 2,
                       padding: const EdgeInsets.all(1)),
                   const SizedBox(width: 5),

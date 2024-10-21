@@ -92,7 +92,7 @@ class IssueCommentMorePage extends StatelessWidget {
       const ListTileDivider(left: 20),
       // Consumer<CommentModel>(
       Selector<IssueCommentModel, Issue>(
-        builder: (_, Issue value, __) {
+        builder: (_, value, __) {
           return ListTileNav(
             leading: value.isOpen
                 ? const Icon(Remix.forbid_2_line, color: Colors.red)

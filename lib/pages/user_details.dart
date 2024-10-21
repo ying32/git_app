@@ -148,10 +148,8 @@ class UserDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.watch<UserModel>().user;
     final iconColor = context.colorScheme.outline;
-    // 是否为自己
-    final isMe = user.id == AppGlobal.instance.userInfo?.id;
     List<Widget>? rights;
-    if (isMe) {
+    if (AppGlobal.isMe(user)) {
       rights = [
         AdaptiveIconButton(
             icon: const Icon(Icons.settings),
