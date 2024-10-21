@@ -1,25 +1,25 @@
-![home](home.jpg)
+![home](https://ying32.github.io/assets/images/git_app/screenshots/home.jpg)
 
 
 
-![repos](repos.jpg)
+![repos](https://ying32.github.io/assets/images/git_app/screenshots/repos.jpg)
 
 
 
-![repo](repo.jpg)
+![repo](https://ying32.github.io/assets/images/git_app/screenshots/repo.jpg)
 
 
 
-![repo_issues](repo_issues.jpg)
+![repo_issues](https://ying32.github.io/assets/images/git_app/screenshots/repo_issues.jpg)
 
 
 
-![issue_comment](issue_comment.jpg)
+![issue_comment](https://ying32.github.io/assets/images/git_app/screenshots/issue_comment.jpg)
 
 
 
-![repo_content](repo_content.jpg)
+![repo_content](https://ying32.github.io/assets/images/git_app/screenshots/repo_content.jpg)
 
 
 
-![activity](activity.jpg)
+![activity](https://ying32.github.io/assets/images/git_app/screenshots/activity.jpg)
