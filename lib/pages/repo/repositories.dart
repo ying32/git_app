@@ -1,15 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
-
 import 'package:git_app/app_globals.dart';
-import 'package:git_app/routes.dart';
 import 'package:git_app/utils/build_context_helper.dart';
-import 'package:git_app/utils/page_data.dart';
-
-import 'package:git_app/widgets/cached_image.dart';
 import 'package:git_app/widgets/platform_page_scaffold.dart';
-import 'package:git_app/widgets/list_section.dart';
+import 'package:git_app/widgets/repository_item.dart';
 
 class RepositoriesPage extends StatefulWidget {
   const RepositoriesPage({
@@ -52,52 +47,22 @@ class _RepositoriesPageState
     // super.build(context);
 
     return PlatformPageScaffold(
-        reqRefreshCallback: _init,
-        materialAppBar: () => AppBar(
-              title: Text(widget.title),
-            ),
-        cupertinoSliverNavigationBar: () => CupertinoSliverNavigationBar(
-              previousPageTitle: context.previousPageTitle,
-              largeTitle: Text(widget.title),
-            ),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-        itemCount: _repos?.length ?? 0,
-        useSeparator: true,
-        separatorPadding: const EdgeInsets.only(left: 60),
-        emptyItemHint: const Center(child: Text('没有可用的仓库')),
-        itemBuilder: (_, index) {
-          final item = _repos![index];
-          Widget leading = UserHeadImage.lock(
-            user: item.owner,
-            // imageURL: item.owner.avatarUrl,
-            radius: 3,
-            padding: const EdgeInsets.all(3),
-            size: 50,
-            showLockIcon: item.private,
-          );
-
-          return ListTileNav(
-            onTap: () {
-              routes.pushRepositoryDetailsPage(
-                context,
-                item,
-                data: PageData(
-                  previousPageTitle: _isMy ? null : widget.title,
-                ),
-              );
-              // AppGlobal.pushModalPage(
-              //     RepositoryDetailsPage(
-              //       repo: item,
-              //     ),
-              //     context: context,
-              //     previousPageTitle: _isMyRepos ? null : widget.title);
-            },
-            leading: leading,
-            title: item.fullName,
-            subtitle: Text(item.description,
-                maxLines: 1, overflow: TextOverflow.ellipsis),
-          );
-        });
+      reqRefreshCallback: _init,
+      materialAppBar: () => AppBar(
+        title: Text(widget.title),
+      ),
+      cupertinoSliverNavigationBar: () => CupertinoSliverNavigationBar(
+        previousPageTitle: context.previousPageTitle,
+        largeTitle: Text(widget.title),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+      itemCount: _repos?.length ?? 0,
+      useSeparator: true,
+      separatorPadding: const EdgeInsets.only(left: 60),
+      emptyItemHint: const Center(child: Text('没有可用的仓库')),
+      itemBuilder: (_, index) => RepositoryItem(
+          repo: _repos![index], previousPageTitle: _isMy ? null : widget.title),
+    );
   }
 
   //@override

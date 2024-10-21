@@ -4,6 +4,11 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
+import 'package:remixicon/remixicon.dart';
+
 import 'package:git_app/app_globals.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
 import 'package:git_app/models/repo_model.dart';
@@ -21,9 +26,6 @@ import 'package:git_app/widgets/cached_image.dart';
 import 'package:git_app/widgets/branches_list.dart';
 import 'package:git_app/widgets/divider_plus.dart';
 import 'package:git_app/widgets/markdown.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:provider/provider.dart';
-import 'package:remixicon/remixicon.dart';
 
 import 'package:git_app/widgets/adaptive_widgets.dart';
 import 'package:git_app/widgets/background_icon.dart';
@@ -32,6 +34,14 @@ import 'package:git_app/widgets/content_title.dart';
 import 'package:git_app/widgets/list_section.dart';
 
 /// 将这些拆出来是因为防止写多了自己眼晕
+///
+Future<void> _readReadMeFile(RepositoryModel model, [bool? force]) async {
+  final readMe = await AppGlobal.cli.repos.content
+      .readMeFile(model.repo, model.selectedBranch, force: force);
+  if (readMe.succeed && readMe.data != null) {
+    model.readMeContent = tryDecodeText(Uint8List.fromList(readMe.data!));
+  }
+}
 
 /// 仓库issue按钮
 class _RepoCreateIssueButton extends StatelessWidget {
@@ -58,7 +68,6 @@ class _RepoOperateList extends StatelessWidget {
         // },
         builder: (_, repo, __) {
           final iconColor = context.colorScheme.outline;
-          //print("======================操作列表这里刷新");
           return Column(
             children: [
               ListTileNav(
@@ -193,7 +202,6 @@ class _RepoInfo extends StatelessWidget {
     return Selector<RepositoryModel, Repository>(
       selector: (_, model) => model.repo,
       builder: (_, repo, __) {
-        //print("======================仓库信息这里刷新");
         final iconColor = context.colorScheme.outline;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,6 +359,8 @@ class _RepoBranchOperate extends StatelessWidget {
             repo: model.repo, selectedBranch: model.selectedBranch));
     if (res != null) {
       model.selectedBranch = res;
+      // 分支切换了，重新拉取README。
+      _readReadMeFile(model);
     }
   }
 
@@ -359,8 +369,6 @@ class _RepoBranchOperate extends StatelessWidget {
     return Selector<RepositoryModel, Repository>(
       selector: (_, model) => model.repo,
       builder: (_, repo, __) {
-        // print("======================分支操作这里刷新");
-
         return Column(
           children: [
             Padding(
@@ -428,7 +436,6 @@ class _RepoReadMe extends StatelessWidget {
       selector: (_, model) => model.readMeContent,
       builder: (_, value, __) {
         if (value == null) return const SizedBox();
-        //print("======================README刷新");
         return TopDivider(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -468,19 +475,8 @@ class RepositoryDetailsPage extends StatelessWidget {
     }
   }
 
-  Future<void> _readReadMeFile(RepositoryModel model, bool? force) async {
-    final readMe = await AppGlobal.cli.repos.content
-        .readMeFile(model.repo, model.selectedBranch, force: force);
-    if (readMe.succeed && readMe.data != null) {
-      model.readMeContent = tryDecodeText(Uint8List.fromList(readMe.data!));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    //print(
-    //    "============================================================================================");
-    //print("======================整体页面刷新");
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
       materialAppBar: () => AppBar(
@@ -499,11 +495,9 @@ class RepositoryDetailsPage extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 15),
           child: _RepoInfo(),
         ),
-
         const SizedBox(height: 15),
         // 列表操作的
         _RepoOperateList(),
-
         // 下面分支和啥的
         const SizedBox(height: 15),
         const _RepoBranchOperate(),
