@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/models/issue_comment_model.dart';
 import 'package:git_app/models/repo_model.dart';
 import 'package:git_app/models/user_model.dart';
+import 'package:git_app/pages/issue/issue_comments_view.dart';
 import 'package:git_app/pages/repo/repo_details.dart';
 import 'package:git_app/pages/user_details.dart';
 import 'package:git_app/utils/build_context_helper.dart';
@@ -83,6 +85,20 @@ class Routes {
         ChangeNotifierProvider<UserModel>(
           create: (_) => UserModel(user),
           child: const UserDetailsPage(),
+        ),
+        data: data,
+        useModal: useModal);
+  }
+
+  /// 压入评论详情页
+  Future<T?> pushIssuesCommentsViewPage<T>(
+      BuildContext context, Repository repo, Issue issue,
+      {required PageData? data, bool useModal = true}) {
+    return routes.pushPage(
+        context: context,
+        ChangeNotifierProvider<IssueCommentModel>(
+          create: (_) => IssueCommentModel(issue, repo),
+          child: const IssuesCommentsViewPage(),
         ),
         data: data,
         useModal: useModal);

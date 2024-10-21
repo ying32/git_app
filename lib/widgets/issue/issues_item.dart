@@ -83,20 +83,7 @@ class IssuesItem extends StatelessWidget {
           showToast('没有仓库信息，无法跳转');
           return;
         }
-        routes.pushPage(
-            ChangeNotifierProvider<IssueCommentModel>(
-                create: (_) {
-                  final model = IssueCommentModel();
-                  model.issue = item;
-                  model.repo = repo!;
-                  return model;
-                },
-                child: const IssuesCommentsViewPage(
-                    // repo: repo, item: item
-                    )),
-            data: null);
-        // routes.pushModalPage(IssuesCommentsViewPage(repo: repo, item: item),
-        //     previousPageTitle: null);
+        routes.pushIssuesCommentsViewPage(context, repo!, item, data: null);
       },
     );
   }

@@ -191,27 +191,11 @@ class ActivityItem extends StatelessWidget {
       //         item: Issue.newEmptyFromId(item.issueId),
       //         updateIssues: true),
       //     data: null);
-
-      routes.pushPage(
-          ChangeNotifierProvider<IssueCommentModel>(
-              create: (_) {
-                final model = IssueCommentModel();
-                model.issue = Issue.newEmptyFromId(item.issueId);
-                model.repo = item.repo;
-                return model;
-              },
-              child: const IssuesCommentsViewPage(
-                  // updateIssues: true,
-                  // repo: repo, item: item
-                  )),
+      routes.pushIssuesCommentsViewPage(
+          context, item.repo, Issue.newEmptyFromId(item.issueId),
           data: null);
     } else {
       routes.pushRepositoryDetailsPage(context, item.repo, data: null);
-      // AppGlobal.pushPage(
-      //   RepositoryDetailsPage(repo: item.repo),
-      //   context: context,
-      //   previousPageTitle: null,
-      // );
     }
   }
 

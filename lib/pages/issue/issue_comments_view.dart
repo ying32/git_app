@@ -18,61 +18,19 @@ import 'package:provider/provider.dart';
 
 import 'issue_comment_more.dart';
 
-class IssuesCommentsViewPage extends StatefulWidget {
-  const IssuesCommentsViewPage({
-    super.key,
-    // required this.repo,
-    // required this.item,
-    // this.updateIssues = false,
-  });
+class IssuesCommentsViewPage extends StatelessWidget {
+  const IssuesCommentsViewPage({super.key});
 
-  /// 仓库
-  // final Repository repo;
-
-  /// issue信息
-  // final Issue item;
-
-  /// 如果为true，则会更新[item.id]的信息
-  // final bool updateIssues;
-  @override
-  State<IssuesCommentsViewPage> createState() => _IssuesCommentsViewPageState();
-}
-
-class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
-  /// 评论
-
-  final ScrollController _controller = ScrollController();
-  // final _commentModel = CommentModel();
-
-  @override
-  void initState() {
-    super.initState();
-    // _commentModel.repo = widget.repo;
-    // _commentModel.issue = widget.item;
-    // _commentModel.addListener(() {
-    //   setState(() {});
-    // });
-  }
-
-  @override
-  void dispose() {
-    // model.comments.clear();
-
-    _controller.dispose();
-    // _commentModel.dispose();
-    super.dispose();
-  }
-
-  IssueCommentModel get model => context.read<IssueCommentModel>();
-  Issue get issue => model.issue;
-
-  Future _init(_, bool? force) async {
+  Future _init(BuildContext context, bool? force) async {
+    final model = context.read<IssueCommentModel>();
     // if (widget.updateIssues) {
     // 这有一种情况，编辑issue后，因为列表没刷新，所以这里不会刷新，现在让他总是刷新下
     //if (issue.number <= 0) {
-    final resIssue = await AppGlobal.cli.issues
-        .getIssue(model.repo, issue.number <= 0 ? issue.id : issue.number);
-    if (resIssue.succeed && resIssue.data != null && issue != resIssue.data) {
+    final resIssue = await AppGlobal.cli.issues.getIssue(model.repo,
+        model.issue.number <= 0 ? model.issue.id : model.issue.number);
+    if (resIssue.succeed &&
+        resIssue.data != null &&
+        model.issue != resIssue.data) {
       model.issue = resIssue.data!;
     }
     // }
@@ -80,10 +38,10 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
     model.comments.clear();
     //todo: 这个时间线要另处理
     var resComments = await AppGlobal.cli.issues.comment
-        .timeline(model.repo, issue, force: force);
+        .timeline(model.repo, model.issue, force: force);
     if (!resComments.succeed) {
       resComments = await AppGlobal.cli.issues.comment
-          .getAll(model.repo, issue, force: force);
+          .getAll(model.repo, model.issue, force: force);
     }
     if (resComments.succeed) {
       // 添加默认项目到列表
@@ -92,13 +50,11 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
   }
 
   /// 创建评论
-  Future<bool?> _doSendComment(String? value) async {
+  Future<bool?> _doSendComment(String? value, IssueCommentModel model) async {
     if (value != null) {
       final res = await commitNewComment(model, value);
       if (res == null) {
-        if (_controller.hasClients) {
-          _controller.jumpTo(_controller.position.maxScrollExtent);
-        }
+        model.jumpEnd();
         return true;
       }
       showToast('提交评论失败，错误：$res');
@@ -107,14 +63,15 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
     return null;
   }
 
-  void _doTapCreateComment() {
+  void _doTapCreateComment(BuildContext context, IssueCommentModel model) {
     showCupertinoModalBottomSheet(
         expand: true,
         context: context,
-        builder: (context) => CommentInputPage(onSend: _doSendComment));
+        builder: (context) =>
+            CommentInputPage(onSend: (value) => _doSendComment(value, model)));
   }
 
-  Widget _buildBottomBar() {
+  Widget _buildBottomBar(BuildContext context, IssueCommentModel model) {
     const radius = Radius.circular(6.0);
     final backColor = context.isLight ? Colors.white : Colors.black12,
         fontColor = context.colorScheme.primary;
@@ -127,7 +84,7 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
             child: AdaptiveTextButton(
                 color: backColor,
                 borderRadius: const BorderRadius.all(radius),
-                onPressed: _doTapCreateComment,
+                onPressed: () => _doTapCreateComment(context, model),
                 child: Text(
                   '评论',
                   style: TextStyle(color: fontColor),
@@ -142,9 +99,9 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
               icon: Icon(Icons.keyboard_arrow_down, color: fontColor),
               onPressed: () {
                 // 位置不太对
-                if (_controller.hasClients) {
-                  _controller.position
-                      .jumpTo(_controller.position.maxScrollExtent - 1);
+                if (model.controller.hasClients) {
+                  model.controller.position
+                      .jumpTo(model.controller.position.maxScrollExtent - 1);
                 }
               }),
           //VerticalDivider(width: 1, color: Colors.grey.withAlpha(52)),
@@ -153,12 +110,7 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
             color: backColor,
             borderRadius:
                 const BorderRadius.only(topRight: radius, bottomRight: radius),
-            onPressed: () {
-              if (_controller.hasClients) {
-                _controller.position.jumpTo(0);
-              }
-              //  _controller.jumpTo(0);
-            },
+            onPressed: model.jumpStart,
             icon: Icon(Icons.keyboard_arrow_up, color: fontColor),
           ),
           const SizedBox(width: 10),
@@ -167,7 +119,7 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
             borderRadius:
                 const BorderRadius.only(topRight: radius, bottomRight: radius),
             icon: Icon(Icons.adaptive.more, color: fontColor),
-            onPressed: _doTapMore,
+            onPressed: () => _onTapMore(context, model),
           ),
           // _buildMoreButton(),
         ],
@@ -175,7 +127,7 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
     );
   }
 
-  void _doTapMore() {
+  void _onTapMore(BuildContext context, IssueCommentModel model) {
     showCupertinoModalBottomSheet(
       expand: false,
       backgroundColor: context.theme.scaffoldBackgroundColor,
@@ -189,13 +141,15 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<IssueCommentModel>();
+
     final title =
-        Text(issue.title, maxLines: 1, overflow: TextOverflow.ellipsis);
+        Text(model.issue.title, maxLines: 1, overflow: TextOverflow.ellipsis);
 
     final comments = context.watch<IssueCommentModel>().comments;
     return BackgroundContainer(
       child: PlatformPageScaffold(
-        controller: _controller,
+        controller: model.controller,
         reqRefreshCallback: _init,
         materialAppBar: () => AppBar(title: title),
         cupertinoNavigationBar: () => CupertinoNavigationBar(
@@ -218,7 +172,7 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
             _ => CommentItem(comment: comments[index - 3])
           };
         },
-        bottomBar: _buildBottomBar(),
+        bottomBar: _buildBottomBar(context, model),
         // useSeparator: true,
         itemCount: comments.length + 3,
       ),
@@ -226,3 +180,180 @@ class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
     );
   }
 }
+
+// class _IssuesCommentsViewPageState extends State<IssuesCommentsViewPage> {
+//   final ScrollController _controller = ScrollController();
+//   @override
+//   void initState() {
+//     super.initState();
+//   }
+//
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+//
+//   IssueCommentModel get model => context.read<IssueCommentModel>();
+//   Issue get issue => model.issue;
+//
+//   Future _init(_, bool? force) async {
+//     // if (widget.updateIssues) {
+//     // 这有一种情况，编辑issue后，因为列表没刷新，所以这里不会刷新，现在让他总是刷新下
+//     //if (issue.number <= 0) {
+//     final resIssue = await AppGlobal.cli.issues
+//         .getIssue(model.repo, issue.number <= 0 ? issue.id : issue.number);
+//     if (resIssue.succeed && resIssue.data != null && issue != resIssue.data) {
+//       model.issue = resIssue.data!;
+//     }
+//     // }
+//
+//     model.comments.clear();
+//     //todo: 这个时间线要另处理
+//     var resComments = await AppGlobal.cli.issues.comment
+//         .timeline(model.repo, issue, force: force);
+//     if (!resComments.succeed) {
+//       resComments = await AppGlobal.cli.issues.comment
+//           .getAll(model.repo, issue, force: force);
+//     }
+//     if (resComments.succeed) {
+//       // 添加默认项目到列表
+//       model.addAllComment(resComments.data!);
+//     }
+//   }
+//
+//   /// 创建评论
+//   Future<bool?> _doSendComment(String? value) async {
+//     if (value != null) {
+//       final res = await commitNewComment(model, value);
+//       if (res == null) {
+//         if (_controller.hasClients) {
+//           _controller.jumpTo(_controller.position.maxScrollExtent);
+//         }
+//         return true;
+//       }
+//       showToast('提交评论失败，错误：$res');
+//     }
+//
+//     return null;
+//   }
+//
+//   void _doTapCreateComment() {
+//     showCupertinoModalBottomSheet(
+//         expand: true,
+//         context: context,
+//         builder: (context) => CommentInputPage(onSend: _doSendComment));
+//   }
+//
+//   Widget _buildBottomBar() {
+//     const radius = Radius.circular(6.0);
+//     final backColor = context.isLight ? Colors.white : Colors.black12,
+//         fontColor = context.colorScheme.primary;
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 15),
+//       height: 80,
+//       child: Row(
+//         children: [
+//           Expanded(
+//             child: AdaptiveTextButton(
+//                 color: backColor,
+//                 borderRadius: const BorderRadius.all(radius),
+//                 onPressed: _doTapCreateComment,
+//                 child: Text(
+//                   '评论',
+//                   style: TextStyle(color: fontColor),
+//                 )),
+//           ),
+//           // todo: 跳转与列表里面有冲突，先不管了
+//           const SizedBox(width: 10),
+//           AdaptiveIconButton(
+//               color: backColor,
+//               borderRadius:
+//                   const BorderRadius.only(topLeft: radius, bottomLeft: radius),
+//               icon: Icon(Icons.keyboard_arrow_down, color: fontColor),
+//               onPressed: () {
+//                 // 位置不太对
+//                 if (_controller.hasClients) {
+//                   _controller.position
+//                       .jumpTo(_controller.position.maxScrollExtent - 1);
+//                 }
+//               }),
+//           //VerticalDivider(width: 1, color: Colors.grey.withAlpha(52)),
+//           const SizedBox(width: 1),
+//           AdaptiveIconButton(
+//             color: backColor,
+//             borderRadius:
+//                 const BorderRadius.only(topRight: radius, bottomRight: radius),
+//             onPressed: () {
+//               if (_controller.hasClients) {
+//                 _controller.position.jumpTo(0);
+//               }
+//               //  _controller.jumpTo(0);
+//             },
+//             icon: Icon(Icons.keyboard_arrow_up, color: fontColor),
+//           ),
+//           const SizedBox(width: 10),
+//           AdaptiveIconButton(
+//             color: backColor,
+//             borderRadius:
+//                 const BorderRadius.only(topRight: radius, bottomRight: radius),
+//             icon: Icon(Icons.adaptive.more, color: fontColor),
+//             onPressed: _onTapMore,
+//           ),
+//           // _buildMoreButton(),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   void _onTapMore() {
+//     showCupertinoModalBottomSheet(
+//       expand: false,
+//       backgroundColor: context.theme.scaffoldBackgroundColor,
+//       context: context,
+//       builder: (context) => ChangeNotifierProvider<IssueCommentModel>.value(
+//         value: model,
+//         child: const IssueCommentMorePage(),
+//       ),
+//     );
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final title =
+//         Text(issue.title, maxLines: 1, overflow: TextOverflow.ellipsis);
+//
+//     final comments = context.watch<IssueCommentModel>().comments;
+//     return BackgroundContainer(
+//       child: PlatformPageScaffold(
+//         controller: _controller,
+//         reqRefreshCallback: _init,
+//         materialAppBar: () => AppBar(title: title),
+//         cupertinoNavigationBar: () => CupertinoNavigationBar(
+//           middle: title,
+//           previousPageTitle: context.previousPageTitle,
+//           border: null,
+//         ),
+//         emptyItemHint: const Center(child: Text('没有数据哦')),
+//         itemBuilder: (BuildContext context, int index) {
+//           return switch (index) {
+//             0 => const BottomDivider(child: CommentIssueInfo()),
+//             1 => BottomDivider(
+//                 child: Container(
+//                   height: 15,
+//                   padding: const EdgeInsets.only(left: 40), // 这个后面再调整吧，有点不准哈
+//                   child: const VerticalDivider(width: 1),
+//                 ),
+//               ),
+//             2 => const BottomDivider(child: FirstCommentItem()),
+//             _ => CommentItem(comment: comments[index - 3])
+//           };
+//         },
+//         bottomBar: _buildBottomBar(),
+//         // useSeparator: true,
+//         itemCount: comments.length + 3,
+//       ),
+//       // ),
+//     );
+//   }
+// }

@@ -44,13 +44,16 @@ class _EditorPageState extends State<EditorPage> {
   String? _title;
   String? _content;
   final _submitting = ValueNotifier(false);
-  final _contentHaveFocus = ValueNotifier(false);
+  late final ValueNotifier<bool> _contentHaveFocus;
 
   @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
-    _focusNode.addListener(_onListener);
+    if (widget.showTitleEdit) {
+      _contentHaveFocus = ValueNotifier(false);
+      _focusNode.addListener(_onListener);
+    }
     if (widget.defaultTitle != null) {
       _titleController.text = widget.defaultTitle ?? '';
     }
@@ -67,8 +70,11 @@ class _EditorPageState extends State<EditorPage> {
   void dispose() {
     _contentController.dispose();
     _titleController.dispose();
-    _focusNode.removeListener(_onListener);
     _focusNode.dispose();
+    if (widget.showTitleEdit) {
+      _focusNode.removeListener(_onListener);
+      _contentHaveFocus.dispose();
+    }
     _submitting.dispose();
     super.dispose();
   }
@@ -182,6 +188,25 @@ class _EditorPageState extends State<EditorPage> {
       },
     );
 
+    Widget mkToolBar = SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: MarkdownToolbar(
+        // iconSize: 20,
+        width: 40,
+        height: 40,
+        runSpacing: 2,
+        spacing: 3,
+        collapsable: false,
+        borderRadius: BorderRadius.circular(0),
+        useIncludedTextField: false,
+        controller: _contentController,
+        focusNode: _focusNode,
+        backgroundColor:
+            context.isLight ? const Color(0xFFEEEEEE) : Colors.black12,
+        iconColor: context.isLight ? const Color(0xFF303030) : Colors.white60,
+      ),
+    );
+
     return PlatformPageScaffold(
       materialAppBar: () => AppBar(
         leading: navLeft,
@@ -197,32 +222,13 @@ class _EditorPageState extends State<EditorPage> {
         // border: null,
         transitionBetweenRoutes: false,
       ),
-      bottomBar: ValueListenableBuilder<bool>(
-        valueListenable: _contentHaveFocus,
-        builder: (BuildContext context, bool value, Widget? child) {
-          if (value) return child!;
-          return const SizedBox();
-        },
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: MarkdownToolbar(
-            // iconSize: 20,
-            width: 40,
-            height: 40,
-            runSpacing: 2,
-            spacing: 3,
-            collapsable: false,
-            borderRadius: BorderRadius.circular(0),
-            useIncludedTextField: false,
-            controller: _contentController,
-            focusNode: _focusNode,
-            backgroundColor:
-                context.isLight ? const Color(0xFFEEEEEE) : Colors.black12,
-            iconColor:
-                context.isLight ? const Color(0xFF303030) : Colors.white60,
-          ),
-        ),
-      ),
+      bottomBar: !widget.showTitleEdit
+          ? mkToolBar
+          : ValueListenableBuilder<bool>(
+              valueListenable: _contentHaveFocus,
+              builder: (_, bool value, __) =>
+                  value ? mkToolBar : const SizedBox(),
+            ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
         child: SingleChildScrollView(child: _buildForm()),

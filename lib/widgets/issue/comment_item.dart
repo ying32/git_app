@@ -117,6 +117,79 @@ class FirstCommentItem extends StatelessWidget {
   }
 }
 
+class _PopupMenu extends StatelessWidget {
+  const _PopupMenu({
+    required this.isMe,
+    required this.canDelete,
+    required this.onDelete,
+    required this.onEdit,
+    required this.onQuoteReply,
+  });
+
+  final bool isMe;
+  final bool canDelete;
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
+  final VoidCallback onQuoteReply;
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoActionSheet(
+      // message: const Text(' '),
+      actions: [
+        if (isMe) ...[
+          // 评论是自己创建的或者这个仓库的所有者是自己才能删除
+          if (canDelete)
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onDelete();
+              },
+              child: const Row(
+                children: [
+                  Icon(Remix.delete_bin_line, color: Colors.red),
+                  Expanded(child: Text('删除', textAlign: TextAlign.center))
+                ],
+              ),
+            ),
+          // 是自己的才能编辑？或者说仓库所都有者能编辑？
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.of(context).pop();
+              onEdit();
+            },
+            child: const Row(
+              children: [
+                Icon(Icons.edit),
+                Expanded(child: Text('编辑', textAlign: TextAlign.center))
+              ],
+            ),
+          ),
+        ],
+        CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.of(context).pop();
+            onQuoteReply();
+          },
+          child: const Row(
+            children: [
+              Icon(Remix.chat_4_line),
+              Expanded(child: Text('引用回复', textAlign: TextAlign.center))
+            ],
+          ),
+        )
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        isDefaultAction: true,
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        child: const Text('取消'),
+      ),
+    );
+  }
+}
+
 class _CommentItem extends StatelessWidget {
   const _CommentItem({
     super.key,
@@ -166,9 +239,7 @@ class _CommentItem extends StatelessWidget {
     return null;
   }
 
-  void _doTapBodyEdit(BuildContext context) {
-    //final model = context.read<CommentModel>();
-    Navigator.of(context).pop();
+  void _doTapBodyEdit(BuildContext context, IssueCommentModel model) {
     showCupertinoModalBottomSheet(
         expand: true,
         context: context,
@@ -176,12 +247,9 @@ class _CommentItem extends StatelessWidget {
             CommentInputPage(defaultContent: body, onSend: onEdited));
   }
 
-  void _doTapDelete(BuildContext context) {}
+  void _doTapDelete(BuildContext context, IssueCommentModel model) {}
 
-  void _doTapQuoteReply(BuildContext context) {
-    final model = context.read<IssueCommentModel>();
-    Navigator.of(context).pop();
-
+  void _doTapQuoteReply(BuildContext context, IssueCommentModel model) {
     // 这里要使用新建的
     showCupertinoModalBottomSheet(
         expand: true,
@@ -192,52 +260,15 @@ class _CommentItem extends StatelessWidget {
   }
 
   void _doTapMore(BuildContext context) {
+    final model = context.read<IssueCommentModel>();
     showCupertinoModalPopup<void>(
       context: context,
-      builder: (_) => CupertinoActionSheet(
-        // message: const Text(' '),
-        actions: [
-          if (AppGlobal.instance.userInfo?.username == user.username) ...[
-            // 评论是自己创建的或者这个仓库的所有者是自己才能删除
-            if (canDelete)
-              CupertinoActionSheetAction(
-                onPressed: () => _doTapDelete(context),
-                child: const Row(
-                  children: [
-                    Icon(Remix.delete_bin_line, color: Colors.red),
-                    Expanded(child: Text('删除', textAlign: TextAlign.center))
-                  ],
-                ),
-              ),
-            // 是自己的才能编辑？或者说仓库所都有者能编辑？
-            CupertinoActionSheetAction(
-              onPressed: () => _doTapBodyEdit(context),
-              child: const Row(
-                children: [
-                  Icon(Icons.edit),
-                  Expanded(child: Text('编辑', textAlign: TextAlign.center))
-                ],
-              ),
-            ),
-          ],
-          CupertinoActionSheetAction(
-            onPressed: () => _doTapQuoteReply(context),
-            child: const Row(
-              children: [
-                Icon(Remix.chat_4_line),
-                Expanded(child: Text('引用回复', textAlign: TextAlign.center))
-              ],
-            ),
-          )
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          isDefaultAction: true,
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('取消'),
-        ),
-      ),
+      builder: (_) => _PopupMenu(
+          isMe: AppGlobal.instance.userInfo?.username == user.username,
+          canDelete: canDelete,
+          onDelete: () => _doTapDelete(context, model),
+          onEdit: () => _doTapBodyEdit(context, model),
+          onQuoteReply: () => _doTapQuoteReply(context, model)),
     );
   }
 
