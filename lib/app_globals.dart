@@ -12,7 +12,7 @@ enum LoginState { none, logged, exited }
 class AppGlobal {
   AppGlobal._();
 
-  static const _gogsHostKey = "gogs_host";
+  static const _hostKey = "git_app_host";
 
   static final _instance = AppGlobal._();
   static AppGlobal get instance => _instance;
@@ -40,13 +40,14 @@ class AppGlobal {
     final prefs = await SharedPreferences.getInstance();
 
     /// 懒得检查了
-    client.setServerHost(prefs.getString(_gogsHostKey) ?? '');
+    client.setServerHost(
+        prefs.getString(_hostKey) ?? prefs.getString('gogs_host') ?? '');
     await client.loadToken();
   }
 
   Future<void> saveServerHost(String host) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString(_gogsHostKey, host);
+    prefs.setString(_hostKey, host);
   }
 
   static void setLoginState(bool value) {

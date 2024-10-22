@@ -7,10 +7,11 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_highlight/flutter_highlight.dart';
+
 import 'package:flutter_highlight/themes/a11y-dark.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/pages/content/highlight_plus.dart';
 import 'package:git_app/utils/build_context_helper.dart';
 import 'package:git_app/utils/utils.dart';
 import 'package:git_app/widgets/markdown.dart';
@@ -98,6 +99,11 @@ class _ContentViewPageState extends State<ContentViewPage> {
     }
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> _init(_, bool? force) async {
     // 不缓存内容
     // 这里兼容原来的
@@ -155,14 +161,11 @@ class _ContentViewPageState extends State<ContentViewPage> {
     // return SelectionArea(
     //     child: RichText(text: renderer.span ?? const TextSpan())); //??
 
-    ///todo: 选择功能没生效？待研究哪有问题
-    return SelectionArea(
-      child: HighlightView(
-        data,
-        language: ext,
-        theme: AppGlobal.context?.isDark == true ? a11yDarkTheme : githubTheme,
-        textStyle: const TextStyle(fontFamily: 'Courier New'),
-      ),
+    ///todo: 选择功能windows没反应，android上倒是可以用
+    return HighlightViewPlus(
+      data,
+      language: ext,
+      theme: AppGlobal.context?.isDark == true ? a11yDarkTheme : githubTheme,
     );
   }
 

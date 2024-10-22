@@ -72,6 +72,7 @@ dependencies:
 
   #google_fonts: ^6.1.0
   charset: ^2.0.1
+  highlight: any
 
   # 比如编辑框的 粘贴，复制，等
   flutter_localizations:

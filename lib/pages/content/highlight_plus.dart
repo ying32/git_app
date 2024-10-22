@@ -1,0 +1,231 @@
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:git_app/utils/build_context_helper.dart';
+import 'package:highlight/highlight.dart' show highlight, Node;
+
+const _lineNumberOffset = 5.0;
+
+TextPainter _createPainter(BuildContext context, InlineSpan span) =>
+    TextPainter(
+      text: span,
+      textAlign: TextAlign.left,
+      textDirection: TextDirection.ltr,
+      locale: Localizations.localeOf(context),
+    );
+
+///todo: 这玩意还有待优化，有时候不准，原因还得找找
+class _LineNumberPainter extends CustomPainter {
+  _LineNumberPainter(
+    this.span, {
+    required this.context,
+    required this.width,
+    required this.lineNumbers,
+    required this.backgroundColor,
+  });
+
+  final BuildContext context;
+
+  final InlineSpan span;
+  final double width;
+  final List<int> lineNumbers;
+  final Color backgroundColor;
+
+  final Paint _paint = Paint()..style = PaintingStyle.fill;
+
+  void _drawText(Canvas canvas, int number,
+      {required double width, required double offsetY, TextStyle? style}) {
+    ui.ParagraphBuilder paragraphBuilder =
+        ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: TextAlign.right));
+    paragraphBuilder.pushStyle(ui.TextStyle(
+        fontSize: style?.fontSize,
+        fontFamily: style?.fontFamily,
+        color: style?.color));
+    paragraphBuilder.addText('$number');
+    ui.ParagraphConstraints paragraphConstraints =
+        ui.ParagraphConstraints(width: width);
+    ui.Paragraph paragraph = paragraphBuilder.build();
+    paragraph.layout(paragraphConstraints);
+    canvas.drawParagraph(paragraph, Offset(-_lineNumberOffset / 2.0, offsetY));
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    TextPainter tp = _createPainter(context, span);
+    tp.layout(maxWidth: width);
+    final r = ui.Rect.fromLTWH(0, 0, size.width, tp.height);
+    _paint.color = backgroundColor;
+    canvas.drawRect(r, _paint);
+    var n = 1;
+    for (var e in lineNumbers) {
+      final pp = tp.getOffsetForCaret(
+          TextPosition(offset: e), //, affinity: TextAffinity.upstream
+          ui.Rect.fromLTRB(0, 0, width - size.width, 0.0));
+      _drawText(canvas, n,
+          width: size.width, offsetY: pp.dy, style: tp.text?.style);
+      n++;
+    }
+    tp.dispose();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return oldDelegate != this;
+  }
+}
+
+// class _LineNumberWidget extends StatelessWidget {
+//   const _LineNumberWidget();
+//
+//   @override
+//   Widget build(BuildContext context) {
+//
+//      return   CustomPaint(
+//          size: ui.Size(lineNumberWidth, 0),
+//          painter: _LineNumberPainter(
+//            context: context,
+//            lineNumbers: lineNumbers,
+//            span,
+//            width: width,
+//            backgroundColor: context.isDark
+//                ? Colors.black.withAlpha(200)
+//                : Colors.white.withAlpha(200),
+//          ));
+//   }
+//
+// }
+
+/// 修改自：flutter_highlight-0.7.0\lib\flutter_highlight.dart
+
+class HighlightViewPlus extends StatelessWidget {
+  final String source;
+  final String? language;
+  final Map<String, TextStyle> theme;
+  final EdgeInsetsGeometry? padding;
+
+  HighlightViewPlus(
+    String input, {
+    super.key,
+    this.language,
+    this.theme = const {},
+    this.padding,
+    int tabSize = 8, // TODO: https://github.com/flutter/flutter/issues/50087
+  }) : source = input.replaceAll('\t', ' ' * tabSize);
+
+  List<TextSpan> _convert(List<Node> nodes) {
+    List<TextSpan> spans = [];
+    var currentSpans = spans;
+    List<List<TextSpan>> stack = [];
+
+    void traverse(Node node) {
+      if (node.value != null) {
+        currentSpans.add(node.className == null
+            ? TextSpan(text: node.value)
+            : TextSpan(text: node.value, style: theme[node.className!]));
+      } else if (node.children != null) {
+        List<TextSpan> tmp = [];
+        currentSpans
+            .add(TextSpan(children: tmp, style: theme[node.className!]));
+        stack.add(currentSpans);
+        currentSpans = tmp;
+
+        for (var n in node.children!) {
+          traverse(n);
+          if (n == node.children!.last) {
+            currentSpans = stack.isEmpty ? spans : stack.removeLast();
+          }
+        }
+      }
+    }
+
+    for (var node in nodes) {
+      traverse(node);
+    }
+    return spans;
+  }
+
+  static const _rootKey = 'root';
+  static const _defaultFontColor = Color(0xff000000);
+  static const _defaultBackgroundColor = Color(0xffffffff);
+
+  // TODO: dart:io is not available at web platform currently
+  // See: https://github.com/flutter/flutter/issues/39998
+  // So we just use monospace here for now
+  static const _defaultFontFamily = 'Courier New';
+
+  List<int> _getLineNumbers(String text) {
+    final res = <int>[];
+    int last = 0;
+    for (var i = 0; i < text.length; i++) {
+      if (text.codeUnitAt(i) == 0xA) {
+        if (res.isEmpty) {
+          res.add(0);
+        } else {
+          res.add(last + 1);
+        }
+        last = i;
+      }
+    }
+    return res;
+  }
+
+  double _calcLineMaxWidth(BuildContext context, InlineSpan span) {
+    final tp = _createPainter(context, span);
+    try {
+      tp.layout(maxWidth: 999);
+      return tp.width;
+    } finally {
+      tp.dispose();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final style = TextStyle(
+      fontFamily: _defaultFontFamily,
+      fontSize: 14.0,
+      color: theme[_rootKey]?.color ?? _defaultFontColor,
+    );
+    final span = TextSpan(
+        style: style,
+        children: _convert(highlight.parse(source, language: language).nodes!));
+    // 计算代码绘制位置的
+    final lineNumbers = _getLineNumbers(source);
+    // 计算最大行宽
+    final lineNumberWidth = lineNumbers.isEmpty
+        ? 0.0
+        : _calcLineMaxWidth(context,
+                TextSpan(text: "${lineNumbers.length}", style: style)) +
+            _lineNumberOffset;
+    // 代码显示区域的宽度
+    final width = MediaQuery.of(context).size.width -
+        lineNumberWidth -
+        (padding != null ? padding!.horizontal : 0);
+    final bkColor = theme[_rootKey]?.backgroundColor ?? _defaultBackgroundColor;
+    return Container(
+      color: bkColor,
+      padding: padding,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomPaint(
+              size: ui.Size(lineNumberWidth, 0),
+              painter: _LineNumberPainter(
+                context: context,
+                lineNumbers: lineNumbers,
+                span,
+                width: width,
+                backgroundColor: context.isDark
+                    ? Colors.black.withAlpha(200)
+                    : Colors.white.withAlpha(200),
+              )),
+          Expanded(
+            child: SelectionArea(
+              child: RichText(text: span),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
