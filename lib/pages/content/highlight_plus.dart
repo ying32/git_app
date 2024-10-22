@@ -59,6 +59,9 @@ class _LineNumberPainter extends CustomPainter {
     final r = ui.Rect.fromLTWH(0, 0, size.width, tp.height);
     _paint.color = backgroundColor;
     canvas.drawRect(r, _paint);
+    _paint.color = Colors.grey.withAlpha(158);
+    canvas.drawLine(ui.Offset(size.width - 1, 0),
+        ui.Offset(size.width - 1, r.height), _paint);
     var n = 1;
     for (var e in lineNumbers) {
       final pp = tp.getOffsetForCaret(
