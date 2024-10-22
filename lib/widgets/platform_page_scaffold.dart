@@ -31,6 +31,7 @@ class PlatformPageScaffold<T> extends StatefulWidget {
     this.bottomBar,
     this.reqPullUpLoadCallback,
     this.initInFirstFrame = false,
+    this.canPullDownRefresh = true,
   })  : assert(!(itemBuilder != null && children != null),
             'itemBuilder和children同时只能存在一个'),
         assert(!(itemBuilder != null && itemCount == null),
@@ -88,6 +89,10 @@ class PlatformPageScaffold<T> extends StatefulWidget {
   /// 如果[reqRefreshCallback]不为null，
   /// [initInFirstFrame]为true时会在[WidgetsBinding.instance.addPostFrameCallback]中初始
   final bool initInFirstFrame;
+
+  /// 能否下拉刷新，如果[reqRefreshCallback]不为null也会被影响，默认为true
+  /// 但不影响在init事件中的调用
+  final bool canPullDownRefresh;
 
   @override
   State<StatefulWidget> createState() => _PlatformPageScaffoldState<T>();
@@ -253,14 +258,13 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
       }
     }
     // 有刷新方法
-    if (widget.reqRefreshCallback != null) {
+    if (widget.reqRefreshCallback != null && widget.canPullDownRefresh) {
       child = RefreshIndicator.adaptive(
         onRefresh: _doRefresh,
         displacement: 80,
         child: child,
       );
     }
-
     return child;
   }
 
@@ -276,7 +280,7 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
           widget.cupertinoSliverNavigationBar!.call(),
           // 有刷新事件的
 
-          if (widget.reqRefreshCallback != null)
+          if (widget.reqRefreshCallback != null && widget.canPullDownRefresh)
             CupertinoSliverRefreshControl(onRefresh: _doRefresh),
           // 导航栏底下的
           if (widget.topBar != null) SliverToBoxAdapter(child: widget.topBar),

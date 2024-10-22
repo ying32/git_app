@@ -19,32 +19,32 @@ import 'package:path/path.dart' as path_lib;
 import 'package:git_app/app_globals.dart';
 import 'package:git_app/widgets/platform_page_scaffold.dart';
 
-const _jpegHeader = [0xFF, 0xD8, 0xFF];
-const tiffHeader1 = [0x49, 0x49, 0x2A];
-const tiffHeader2 = [0x4D, 0x4D, 0x2A];
-const tiffHeader3 = [0x4D, 0x4D, 0x00];
-const pngHeader = [0x89, 0x50, 0x4E, 0x47];
-const bmpHeader = [0x42, 0x4D];
-const gifHeader = [0x47, 0x49, 0x46];
-
-bool _compareBytes(List<int> data1, List<int> data2) {
-  final count = math.min(data1.length, data2.length);
-  for (int i = 0; i < count; i++) {
-    if (data1[i] != data2[i]) return false;
-  }
-  return true;
-}
+// const _jpegHeader = [0xFF, 0xD8, 0xFF];
+// const tiffHeader1 = [0x49, 0x49, 0x2A];
+// const tiffHeader2 = [0x4D, 0x4D, 0x2A];
+// const tiffHeader3 = [0x4D, 0x4D, 0x00];
+// const pngHeader = [0x89, 0x50, 0x4E, 0x47];
+// const bmpHeader = [0x42, 0x4D];
+// const gifHeader = [0x47, 0x49, 0x46];
+//
+// bool _compareBytes(List<int> data1, List<int> data2) {
+//   final count = math.min(data1.length, data2.length);
+//   for (int i = 0; i < count; i++) {
+//     if (data1[i] != data2[i]) return false;
+//   }
+//   return true;
+// }
 
 /// 判断file类型
-bool _isImage(List<int> data) {
-  return _compareBytes(data, _jpegHeader) ||
-      _compareBytes(data, tiffHeader1) ||
-      _compareBytes(data, tiffHeader2) ||
-      _compareBytes(data, tiffHeader3) ||
-      _compareBytes(data, pngHeader) ||
-      _compareBytes(data, bmpHeader) ||
-      _compareBytes(data, gifHeader);
-}
+// bool _isImage(List<int> data) {
+//   return _compareBytes(data, _jpegHeader) ||
+//       _compareBytes(data, tiffHeader1) ||
+//       _compareBytes(data, tiffHeader2) ||
+//       _compareBytes(data, tiffHeader3) ||
+//       _compareBytes(data, pngHeader) ||
+//       _compareBytes(data, bmpHeader) ||
+//       _compareBytes(data, gifHeader);
+// }
 
 class ContentViewPage extends StatefulWidget {
   const ContentViewPage({
@@ -77,26 +77,20 @@ class _ContentViewPageState extends State<ContentViewPage> {
     "txt": {"CMakeLists.txt": "cmake"},
     "iml": "xml",
     "manifest": "xml",
+    "rc": "c",
+    "arb": "json",
     "": {"Podfile": "ruby"}
   };
 
   Widget? child;
-  Widget? _emptyTip;
 
   bool get _canPreview => widget.file.size <= 1024 * 1024 * 1;
 
   @override
   void initState() {
     super.initState();
-
-    // 兼容老的
-    if (_canPreview && widget.file.content.isNotEmpty) {
-      if (widget.file.encoding == "base64") {
-        child = _buildContent(base64.decode(widget.file.content));
-      }
-    } else {
-      _emptyTip = const Center(child: Text('<...文件太大...>'));
-    }
+    // 不使用下拉刷新，且不再兼容原来gogs的content字段，那个太扯淡了
+    //_init(null, null);
   }
 
   @override
@@ -104,28 +98,34 @@ class _ContentViewPageState extends State<ContentViewPage> {
     super.dispose();
   }
 
-  Future<void> _init(_, bool? force) async {
-    // 不缓存内容
-    // 这里兼容原来的
-    if (widget.file.content.isEmpty && _canPreview) {
-      final res = await AppGlobal.cli.repos.content.raw(
-          widget.repo, widget.ref, widget.file.path,
-          force: true, nocache: true);
+  Future<void> _init(_, __) async {
+    if (_canPreview) {
+      // 不缓存内容
+      final res = await AppGlobal.cli.repos.content
+          .raw(widget.repo, widget.ref, widget.file.path, nocache: true);
       final data = res.data;
       if (data != null) {
-        child = _buildContent(Uint8List.fromList(data));
-        if (mounted) setState(() {});
+        child = _buildContent(Uint8List.fromList(data), res.contentType ?? '');
       }
+    } else {
+      child = const Center(child: Text('<...文件太大...>'));
     }
+    if (mounted) setState(() {});
   }
 
-  Widget? _buildContent(Uint8List data) {
-    if (_isImage(data)) {
+  Widget? _buildContent(Uint8List data, String contentType) {
+    /// 是图片类型
+    if (contentType.startsWith("image/")) {
       return Image.memory(data);
+    } else if (contentType.startsWith("text/plain")) {
+      final text = tryDecodeText(data, contentType);
+      if (text != null) return _buildText(text);
     }
-    final text = tryDecodeText(data);
-    if (text != null) return _buildText(text);
-    return null;
+    //
+    // if (_isImage(data)) {
+    //   return Image.memory(data);
+    // }
+    return Text('不支持预览的数据类型=$contentType');
   }
 
   Widget _buildText(String data) {
@@ -153,14 +153,6 @@ class _ContentViewPageState extends State<ContentViewPage> {
 
     if (isMarkdown) return MarkdownBlockPlus(data: data);
 
-    // final HighlightResult result = _highlight.highlightAuto(data, [ext]);
-    // const txtStyle = TextStyle(fontFamily: 'Courier New');
-    // final TextSpanRenderer renderer = TextSpanRenderer(
-    //     txtStyle, context.isDark ? githubDarkTheme : vs2015Theme);
-    // result.render(renderer);
-    // return SelectionArea(
-    //     child: RichText(text: renderer.span ?? const TextSpan())); //??
-
     ///todo: 选择功能windows没反应，android上倒是可以用
     return HighlightViewPlus(
       data,
@@ -182,8 +174,10 @@ class _ContentViewPageState extends State<ContentViewPage> {
       ),
       padding: const EdgeInsets.all(5),
       reqRefreshCallback: _init,
-      emptyItemHint: _emptyTip,
-      children: child != null ? [child!] : [],
+      canPullDownRefresh: false,
+      //emptyItemHint: const Center(child: Text('<...文件太大...>')),
+
+      children: child == null ? [] : [child!],
     );
   }
 }

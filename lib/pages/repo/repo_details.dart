@@ -39,7 +39,8 @@ Future<void> _readReadMeFile(RepositoryModel model, [bool? force]) async {
   final readMe = await AppGlobal.cli.repos.content
       .readMeFile(model.repo, model.selectedBranch, force: force);
   if (readMe.succeed && readMe.data != null) {
-    model.readMeContent = tryDecodeText(Uint8List.fromList(readMe.data!));
+    model.readMeContent =
+        tryDecodeText(Uint8List.fromList(readMe.data!), readMe.contentType);
   }
 }
 
@@ -430,6 +431,11 @@ class _RepoBranchOperate extends StatelessWidget {
 class _RepoReadMe extends StatelessWidget {
   const _RepoReadMe();
 
+  void _onTap(String value) {
+    //todo: 待完善内部跳转
+    print(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Selector<RepositoryModel, String?>(
@@ -450,7 +456,7 @@ class _RepoReadMe extends StatelessWidget {
                   ],
                 ),
                 //const Divider(height: 1),
-                MarkdownBlockPlus(data: value),
+                MarkdownBlockPlus(data: value, onTap: _onTap),
               ],
             ),
           ),

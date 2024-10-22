@@ -21,8 +21,8 @@ class GogsRepoContent extends GogsClientBase {
           {bool? force, bool? nocache}) =>
       client.get<List<int>>(_baseRepoPath(repo, "/raw/$ref/$path"),
           force: force,
-          options: Options(
-              responseType: ResponseType.bytes, extra: {"nocache": nocache}));
+          nocache: nocache,
+          options: Options(responseType: ResponseType.bytes));
 
   /// GET /repos/:username/:reponame/raw/:ref/README.md
   ///
@@ -162,6 +162,6 @@ class GogsRepos extends GogsClientBase {
             if (limit != null) "limit": limit,
             if (page != null) "page": page,
           },
-          options: Options(extra: {"nocache": true}),
+          nocache: true,
           decoder: (data) => SearchRepositories.fromJson(data));
 }

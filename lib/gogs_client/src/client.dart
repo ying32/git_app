@@ -35,11 +35,13 @@ class RESTResult<T> {
     required this.succeed,
     required this.statusMessage,
     required this.data,
+    this.contentType,
   });
 
   final bool succeed;
   final String? statusMessage;
   final T? data;
+  final String? contentType;
 
   static bool _isOK(Response resp) => switch (resp.statusCode) {
         HttpStatus.ok || // GET
@@ -55,12 +57,14 @@ class RESTResult<T> {
         statusMessage = resp.statusMessage,
         data = _isOK(resp)
             ? (decoder == null ? resp.data : decoder(resp.data))
-            : null;
+            : null,
+        contentType = resp.headers.value(HttpHeaders.contentTypeHeader)?.trim();
 
   RESTResult.fromErrorMessage(String msg)
       : succeed = false,
         statusMessage = msg,
-        data = null;
+        data = null,
+        contentType = null;
 }
 
 typedef FutureRESTResult<T> = Future<RESTResult<T>>;
@@ -295,14 +299,12 @@ class SimpleRESTClient {
     return key != null && key.isNotEmpty;
   }
 
-  Options? _getForceOptions(Options? options, bool? force) {
-    if (force != null) {
-      if (options != null) {
-        options.extra ??= <String, dynamic>{};
-        options.extra!["force"] = force;
-      } else {
-        options ??= Options(extra: {"force": force});
-      }
+  Options? _getOptions(Options? options, bool? force, bool? nocache) {
+    if (force != null || nocache != null) {
+      options ??= Options(extra: {});
+      options.extra ??= {};
+      if (force != null) options.extra!["force"] = force;
+      if (nocache != null) options.extra!["nocache"] = nocache;
     }
     return options;
   }
@@ -329,12 +331,13 @@ class SimpleRESTClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     bool? force,
+    bool? nocache,
     RESTJsonDecoder<T>? decoder,
   }) =>
       _execRequest<T>(
           () => _dio.get(_checkUrl(path),
               queryParameters: queryParameters,
-              options: _getForceOptions(options, force)),
+              options: _getOptions(options, force, nocache)),
           decoder);
 
   /// 新建

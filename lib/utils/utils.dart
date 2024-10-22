@@ -47,7 +47,30 @@ E enumFromValue<E extends Enum>(Iterable<E> values, int value, E defValue) =>
     values.firstWhere((e) => e.index == value, orElse: () => defValue);
 
 /// 尝试解码文本，采用不同的编码去尝试
-String? tryDecodeText(Uint8List data) {
+String? tryDecodeText(Uint8List data, String? contentType) {
+  if (contentType != null) {
+    String? charset;
+    final idx = contentType.lastIndexOf("charset=");
+    if (idx != -1) {
+      charset = contentType.substring(idx + 8).trim();
+    }
+    if (charset != null) {
+      Encoding? encoding;
+      if (charset.startsWith("utf-8")) {
+        encoding = utf8;
+      } else if (charset.startsWith("utf-16")) {
+        encoding = utf16;
+      }
+      if (encoding != null) {
+        try {
+          return encoding.decode(data);
+        } catch (e) {
+          //
+        }
+      }
+    }
+  }
+
   //todo: 这个其实不准哈，需要根据内容来探测编码格式，先这样用着吧
   const supports = [utf8, systemEncoding, gbk, utf16, utf32];
   for (final encoding in supports) {
