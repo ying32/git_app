@@ -11,7 +11,12 @@ import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
 
 class CommentIssueInfo extends StatelessWidget {
-  const CommentIssueInfo({super.key});
+  const CommentIssueInfo({
+    super.key,
+    this.canEdit = true,
+  });
+
+  final bool canEdit;
 
   Future<void> _doTapMore(BuildContext context) async {
     final model = context.read<IssueCommentModel>();
@@ -94,7 +99,8 @@ class CommentIssueInfo extends StatelessWidget {
                       AdaptiveIconButton(
                           //icon: Icon(Icons.adaptive.more),
                           icon: const Icon(Remix.edit_2_line, size: 20),
-                          onPressed: () => _doTapMore(context)),
+                          onPressed:
+                              !canEdit ? null : () => _doTapMore(context)),
                   ],
                 ),
                 const SizedBox(height: 10),

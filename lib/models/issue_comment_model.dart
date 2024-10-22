@@ -30,6 +30,15 @@ class IssueCommentModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool _done = false;
+  bool get done => _done;
+  set done(bool value) {
+    if (value != _done) {
+      _done = value;
+      notifyListeners();
+    }
+  }
+
   /// 更新指定评论
   void updateComment(int id, IssueComment newComment) {
     final idx = _comments.indexWhere((e) => e.id == id);

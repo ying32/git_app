@@ -54,10 +54,11 @@ class GogsIssuesComment extends GogsClientBase {
   ///
   /// 获取指定issue下的评论列表
   FutureRESTResult<IssueCommentList?> getAll(Repository repo, Issue issue,
-          {bool? force}) =>
+          {bool? nocache, bool? force}) =>
       client.get<IssueCommentList>(
           _baseRepoPath(repo, "/issues/${issue.number}/comments"),
           force: force,
+          nocache: nocache,
           decoder: (data) => IssueComment.fromJsonList(data));
 
   /// POST /repos/:username/:reponame/issues/:index/comments
@@ -88,10 +89,12 @@ class GogsIssuesComment extends GogsClientBase {
           int? page,
           int? limit,
           DateTime? before,
+          bool? nocache,
           bool? force}) =>
       client.get<IssueCommentList>(
           _baseRepoPath(repo, "/issues/${issue.number}/timeline"),
           force: force,
+          nocache: nocache,
           decoder: (data) => IssueComment.fromJsonList(data));
 }
 

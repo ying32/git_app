@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:math' as math;
 
 import 'dart:typed_data';
 
@@ -79,6 +77,9 @@ class _ContentViewPageState extends State<ContentViewPage> {
     "manifest": "xml",
     "rc": "c",
     "arb": "json",
+    "firebaserc": "json",
+    "fmx": "delphi",
+    "lfm": "delphi",
     "": {"Podfile": "ruby"}
   };
 
