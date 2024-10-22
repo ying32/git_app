@@ -9,7 +9,7 @@ const _lineNumberOffset = 5.0;
 TextPainter _createPainter(BuildContext context, InlineSpan span) =>
     TextPainter(
       text: span,
-      textAlign: TextAlign.left,
+      textAlign: TextAlign.start,
       textDirection: TextDirection.ltr,
       locale: Localizations.localeOf(context),
     );
@@ -52,7 +52,10 @@ class _LineNumberPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     TextPainter tp = _createPainter(context, span);
-    tp.layout(maxWidth: width);
+    tp.layout(maxWidth: width, minWidth: width);
+
+    // tp.paint(canvas, ui.Offset(size.width, 0));
+
     final r = ui.Rect.fromLTWH(0, 0, size.width, tp.height);
     _paint.color = backgroundColor;
     canvas.drawRect(r, _paint);
@@ -60,9 +63,13 @@ class _LineNumberPainter extends CustomPainter {
     for (var e in lineNumbers) {
       final pp = tp.getOffsetForCaret(
           TextPosition(offset: e), //, affinity: TextAffinity.upstream
-          ui.Rect.fromLTRB(0, 0, width - size.width, 0.0));
+          ui.Rect.fromLTRB(0, 0, width, 0.0));
       _drawText(canvas, n,
           width: size.width, offsetY: pp.dy, style: tp.text?.style);
+      // _paint.color = Colors.lightBlue;
+      // canvas.drawLine(
+      //     ui.Offset(pp.dx, pp.dy), ui.Offset(pp.dx + 5, pp.dy), _paint);
+
       n++;
     }
     tp.dispose();
@@ -74,41 +81,18 @@ class _LineNumberPainter extends CustomPainter {
   }
 }
 
-// class _LineNumberWidget extends StatelessWidget {
-//   const _LineNumberWidget();
-//
-//   @override
-//   Widget build(BuildContext context) {
-//
-//      return   CustomPaint(
-//          size: ui.Size(lineNumberWidth, 0),
-//          painter: _LineNumberPainter(
-//            context: context,
-//            lineNumbers: lineNumbers,
-//            span,
-//            width: width,
-//            backgroundColor: context.isDark
-//                ? Colors.black.withAlpha(200)
-//                : Colors.white.withAlpha(200),
-//          ));
-//   }
-//
-// }
-
 /// 修改自：flutter_highlight-0.7.0\lib\flutter_highlight.dart
 
 class HighlightViewPlus extends StatelessWidget {
   final String source;
   final String? language;
   final Map<String, TextStyle> theme;
-  final EdgeInsetsGeometry? padding;
 
   HighlightViewPlus(
     String input, {
     super.key,
     this.language,
     this.theme = const {},
-    this.padding,
     int tabSize = 8, // TODO: https://github.com/flutter/flutter/issues/50087
   }) : source = input.replaceAll('\t', ' ' * tabSize);
 
@@ -148,11 +132,6 @@ class HighlightViewPlus extends StatelessWidget {
   static const _defaultFontColor = Color(0xff000000);
   static const _defaultBackgroundColor = Color(0xffffffff);
 
-  // TODO: dart:io is not available at web platform currently
-  // See: https://github.com/flutter/flutter/issues/39998
-  // So we just use monospace here for now
-  static const _defaultFontFamily = 'Courier New';
-
   List<int> _getLineNumbers(String text) {
     final res = <int>[];
     int last = 0;
@@ -182,7 +161,7 @@ class HighlightViewPlus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = TextStyle(
-      fontFamily: _defaultFontFamily,
+      fontFamily: 'Courier New',
       fontSize: 14.0,
       color: theme[_rootKey]?.color ?? _defaultFontColor,
     );
@@ -197,34 +176,36 @@ class HighlightViewPlus extends StatelessWidget {
         : _calcLineMaxWidth(context,
                 TextSpan(text: "${lineNumbers.length}", style: style)) +
             _lineNumberOffset;
-    // 代码显示区域的宽度
-    final width = MediaQuery.of(context).size.width -
-        lineNumberWidth -
-        (padding != null ? padding!.horizontal : 0);
+
     final bkColor = theme[_rootKey]?.backgroundColor ?? _defaultBackgroundColor;
     return Container(
       color: bkColor,
-      padding: padding,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomPaint(
-              size: ui.Size(lineNumberWidth, 0),
-              painter: _LineNumberPainter(
-                context: context,
-                lineNumbers: lineNumbers,
-                span,
-                width: width,
-                backgroundColor: context.isDark
-                    ? Colors.black.withAlpha(200)
-                    : Colors.white.withAlpha(200),
-              )),
-          Expanded(
-            child: SelectionArea(
-              child: RichText(text: span),
-            ),
-          ),
-        ],
+      padding: EdgeInsets.zero,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          // 代码显示区域的宽度，如果不用精准的width计算，会造成行号显示位置不正确
+          final width = constraints.minWidth - lineNumberWidth;
+          return Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomPaint(
+                  size: ui.Size(lineNumberWidth, 0),
+                  painter: _LineNumberPainter(
+                    context: context,
+                    lineNumbers: lineNumbers,
+                    span,
+                    width: width,
+                    backgroundColor: context.isDark
+                        ? Colors.black.withAlpha(200)
+                        : Colors.white.withAlpha(200),
+                  )),
+              SelectionArea(
+                child: SizedBox(width: width, child: RichText(text: span)),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
