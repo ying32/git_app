@@ -30,11 +30,12 @@ class IssueCommentModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _done = false;
-  bool get done => _done;
-  set done(bool value) {
-    if (value != _done) {
-      _done = value;
+  /// 完成标识，只一次
+  bool _firstDone = false;
+  bool get firstDone => _firstDone;
+  set firstDone(bool value) {
+    if (value != _firstDone) {
+      _firstDone = value;
       notifyListeners();
     }
   }

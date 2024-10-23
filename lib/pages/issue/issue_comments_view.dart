@@ -22,7 +22,8 @@ class IssuesCommentsViewPage extends StatelessWidget {
 
   Future _init(BuildContext context, bool? force) async {
     final model = context.read<IssueCommentModel>();
-    model.done = false;
+    // 这个只一次，
+    //model.done = false;
     // if (widget.updateIssues) {
     // 这有一种情况，编辑issue后，因为列表没刷新，所以这里不会刷新，现在让他总是刷新下
     //if (issue.number <= 0) {
@@ -34,7 +35,11 @@ class IssuesCommentsViewPage extends StatelessWidget {
       model.issue = resIssue.data!;
     }
     // }
-    _loadComment(model);
+    if (model.firstDone) {
+      await _loadComment(model);
+    } else {
+      _loadComment(model);
+    }
   }
 
   Future<void> _loadComment(IssueCommentModel model) async {
@@ -47,7 +52,9 @@ class IssuesCommentsViewPage extends StatelessWidget {
       resComments = await AppGlobal.cli.issues.comment
           .getAll(model.repo, model.issue, nocache: true);
     }
-    model.done = true;
+    if (!model.firstDone) {
+      model.firstDone = true;
+    }
     if (resComments.succeed) {
       // 这里加点时间，好让有动画显示
       await Future.delayed(const Duration(milliseconds: 10));
@@ -167,10 +174,13 @@ class IssuesCommentsViewPage extends StatelessWidget {
         emptyItemHint: const Center(child: Text('没有数据哦')),
         itemBuilder: (BuildContext context, int index) {
           // 如果还没有数据，则显示另一种的
-          if (comments.isEmpty && !model.done) {
+          if (comments.isEmpty && !model.firstDone) {
             return switch (index) {
               0 => const BottomDivider(child: CommentIssueInfo(canEdit: false)),
-              1 => const CircularProgressIndicator.adaptive(),
+              1 => const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  child: CircularProgressIndicator.adaptive(),
+                ),
               _ => const SizedBox()
             };
           }
@@ -188,7 +198,7 @@ class IssuesCommentsViewPage extends StatelessWidget {
             _ => CommentItem(comment: comments[index - 3])
           };
         },
-        bottomBar: !model.done ? null : _buildBottomBar(context, model),
+        bottomBar: !model.firstDone ? null : _buildBottomBar(context, model),
         // useSeparator: true,
         itemCount: comments.length + 3,
       ),
