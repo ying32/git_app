@@ -72,6 +72,7 @@ class _HomePageState extends State<HomePage> {
   void _doTapEdit() {
     showCupertinoModalBottomSheet<bool>(
             expand: true,
+            useRootNavigator: true,
             context: context,
             builder: (BuildContext context) => const CollectionEditor())
         .then((value) {

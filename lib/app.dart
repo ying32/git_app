@@ -10,6 +10,7 @@ import 'package:git_app/utils/app_config.dart';
 import 'package:git_app/utils/build_context_helper.dart';
 import 'package:git_app/utils/global_navigator.dart';
 import 'package:git_app/utils/utils.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 import 'navigation.dart';
@@ -110,7 +111,7 @@ class GogsApp extends StatelessWidget {
             // "/my_orgs": (context) => const OrganizationsPage(),
             // "/login": (context) => const LoginPage(),
             // },
-            home: const NavigationPage(),
+            //home: const NavigationPage(),
 
             navigatorObservers: [FlutterSmartDialog.observer],
             builder: FlutterSmartDialog.init(
@@ -123,16 +124,16 @@ class GogsApp extends StatelessWidget {
                                 : cupertinoLightTheme,
                             child: child!)
                         : child!),
-            // onGenerateRoute: (RouteSettings settings) {
-            //   switch (settings.name) {
-            //     case '/':
-            //       // return MaterialPageRoute(
-            //       return MaterialWithModalsPageRoute(
-            //           builder: (_) => const NavigationPage(),
-            //           settings: settings); //const NavigationPage()
-            //   }
-            //   return null;
-            // },
+            onGenerateRoute: (RouteSettings settings) {
+              switch (settings.name) {
+                case '/':
+                  // return MaterialPageRoute(
+                  return MaterialWithModalsPageRoute(
+                      builder: (_) => const NavigationPage(),
+                      settings: settings); //const NavigationPage()
+              }
+              return null;
+            },
           );
         }),
       );

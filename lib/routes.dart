@@ -49,16 +49,15 @@ class Routes {
     /// 上下文
     final ctx = context ?? GlobalNavigator.context!;
     late PageRoute<T> route;
-    if (useModal ?? false) {
-      route = MaterialWithModalsPageRoute(
-          settings: routeSettings, builder: (_) => provider);
-    } else {
-      route = ctx.platformIsIOS
-          ? CupertinoPageRoute(
-              settings: routeSettings, builder: (_) => provider, title: title)
-          : MaterialPageRoute(
-              settings: routeSettings, builder: (_) => provider);
-    }
+    // if (useModal ?? false) {
+    //   route = MaterialWithModalsPageRoute(
+    //       settings: routeSettings, builder: (_) => provider);
+    // } else {
+    route = ctx.platformIsIOS
+        ? CupertinoPageRoute(
+            settings: routeSettings, builder: (_) => provider, title: title)
+        : MaterialPageRoute(settings: routeSettings, builder: (_) => provider);
+    // }
     return Navigator.of(ctx, rootNavigator: rootNavigator).push(route);
   }
 
@@ -96,6 +95,7 @@ class Routes {
       {required PageData? data, bool useModal = true}) {
     return routes.pushPage(
         context: context,
+        rootNavigator: true,
         ChangeNotifierProvider<IssueCommentModel>(
           create: (_) => IssueCommentModel(issue, repo),
           child: const IssuesCommentsViewPage(),

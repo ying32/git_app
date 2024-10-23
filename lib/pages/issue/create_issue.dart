@@ -12,6 +12,7 @@ Future<Issue?> showCreateIssuePage(
     BuildContext context, Repository repo) async {
   return showCupertinoModalBottomSheet<Issue>(
     expand: true,
+    useRootNavigator: true,
     context: context,
     builder: (context) => _CreateIssuePage(repo: repo),
   );

@@ -80,6 +80,7 @@ class IssuesCommentsViewPage extends StatelessWidget {
   void _doTapCreateComment(BuildContext context, IssueCommentModel model) {
     showCupertinoModalBottomSheet(
         expand: true,
+        useRootNavigator: true,
         context: context,
         builder: (context) =>
             CommentInputPage(onSend: (value) => _doSendComment(value, model)));
@@ -143,7 +144,8 @@ class IssuesCommentsViewPage extends StatelessWidget {
 
   void _onTapMore(BuildContext context, IssueCommentModel model) {
     showCupertinoModalBottomSheet(
-      expand: false,
+      expand: true,
+      useRootNavigator: true,
       backgroundColor: context.theme.scaffoldBackgroundColor,
       context: context,
       builder: (context) => ChangeNotifierProvider<IssueCommentModel>.value(
