@@ -187,7 +187,8 @@ class HighlightViewPlus extends StatelessWidget {
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           // 代码显示区域的宽度，如果不用精准的width计算，会造成行号显示位置不正确
-          final width = constraints.minWidth - lineNumberWidth;
+          const offset = 10.0;
+          final width = constraints.minWidth - lineNumberWidth - offset;
           return Row(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,7 +205,11 @@ class HighlightViewPlus extends StatelessWidget {
                         : Colors.white.withAlpha(200),
                   )),
               SelectionArea(
-                child: SizedBox(width: width, child: RichText(text: span)),
+                child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: offset / 2.0),
+                    width: width,
+                    child: RichText(text: span)),
               ),
             ],
           );
