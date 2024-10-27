@@ -10,7 +10,6 @@ import 'package:git_app/pages/user_details.dart';
 import 'package:git_app/utils/build_context_helper.dart';
 import 'package:git_app/utils/global_navigator.dart';
 import 'package:git_app/utils/page_data.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 /// 默认的路由

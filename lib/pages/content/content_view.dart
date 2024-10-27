@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_highlight/themes/a11y-dark.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
-import 'package:git_app/pages/content/highlight_plus.dart';
+import 'package:git_app/widgets/highlight_plus.dart';
 import 'package:git_app/utils/build_context_helper.dart';
 import 'package:git_app/utils/utils.dart';
 import 'package:git_app/widgets/markdown.dart';

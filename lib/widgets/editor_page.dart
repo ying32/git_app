@@ -63,7 +63,10 @@ class _EditorPageState extends State<EditorPage> {
   }
 
   void _onListener() {
-    _contentHaveFocus.value = _focusNode.hasFocus;
+    //???
+    if (!FocusScope.of(context).hasPrimaryFocus) {
+      _contentHaveFocus.value = _focusNode.hasFocus;
+    }
   }
 
   @override
@@ -204,6 +207,18 @@ class _EditorPageState extends State<EditorPage> {
         backgroundColor:
             context.isLight ? const Color(0xFFEEEEEE) : Colors.black12,
         iconColor: context.isLight ? const Color(0xFF303030) : Colors.white60,
+        headingTooltip: '标题',
+        boldTooltip: '加粗',
+        italicTooltip: '斜体',
+        strikethroughTooltip: '删除线',
+        linkTooltip: '超链接',
+        imageTooltip: '图像',
+        codeTooltip: '代码',
+        bulletedListTooltip: '项目符号列表',
+        numberedListTooltip: '编号列表',
+        checkboxTooltip: '复选框',
+        quoteTooltip: '引用',
+        horizontalRuleTooltip: '横线',
       ),
     );
 

@@ -188,7 +188,7 @@ class HighlightViewPlus extends StatelessWidget {
         builder: (BuildContext context, BoxConstraints constraints) {
           //todo: 代码显示区域的宽度，如果不用精准的width计算，会造成行号显示位置不正确
           // 其它地方稍微加点就这样，看来这边得另想办法
-          const offset = 0.0;
+          const offset = 5.0;
           final width = constraints.minWidth - lineNumberWidth - offset;
           return Row(
             mainAxisSize: MainAxisSize.max,
@@ -205,6 +205,8 @@ class HighlightViewPlus extends StatelessWidget {
                         ? Colors.black.withAlpha(200)
                         : Colors.white.withAlpha(200),
                   )),
+              // 经过测试用padding会造成不准，只有用SizedBox才会正常
+              const SizedBox(width: offset),
               SelectionArea(
                 child: SizedBox(width: width, child: RichText(text: span)),
               ),

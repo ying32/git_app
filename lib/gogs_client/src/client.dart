@@ -81,6 +81,7 @@ class SimpleRESTClient {
           return true; // status != null && status >= 200 && status <= 500;
         },
         receiveDataWhenStatusError: true,
+        //responseDecoder: responseDecode,
       ),
     );
 
@@ -159,6 +160,19 @@ class SimpleRESTClient {
   void _setHeaderToken(String token) {
     _token = token;
     _dio.options.headers[HttpHeaders.authorizationHeader] = "token $token";
+  }
+
+  FutureOr<String?> responseDecode(
+    List<int> responseBytes,
+    RequestOptions options,
+    ResponseBody responseBody,
+  ) {
+    if (kDebugMode) {
+      print(
+          "==========================responseDecode==========================");
+      print("==============================================================");
+    }
+    return null;
   }
 
   void _onRequest(RequestOptions options, RequestInterceptorHandler handler) {
