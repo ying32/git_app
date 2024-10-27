@@ -343,18 +343,19 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
         physics: widget.physics,
         controller: _controller,
         slivers: <Widget>[
-          CupertinoSliverNavigationBar(
-            leading: widget.appBar?.leading,
-            automaticallyImplyLeading:
-                widget.appBar?.automaticallyImplyLeading ?? true,
-            largeTitle: widget.appBar?.largeTitle,
-            trailing: _buildIOSActions(),
-            border: widget.appBar?.border,
-            transitionBetweenRoutes:
-                widget.appBar?.transitionBetweenRoutes ?? true,
-            stretch: widget.appBar?.stretch ?? false,
-            previousPageTitle: widget.appBar?.previousPageTitle,
-          ),
+          // 标题bar
+          if (widget.appBar != null)
+            CupertinoSliverNavigationBar(
+              leading: widget.appBar!.leading,
+              automaticallyImplyLeading:
+                  widget.appBar!.automaticallyImplyLeading,
+              largeTitle: widget.appBar!.largeTitle,
+              trailing: _buildIOSActions(),
+              border: widget.appBar!.border,
+              transitionBetweenRoutes: widget.appBar!.transitionBetweenRoutes,
+              stretch: widget.appBar!.stretch,
+              previousPageTitle: widget.appBar!.previousPageTitle,
+            ),
           // widget.cupertinoSliverNavigationBar!.call(),
           // 有刷新事件的
 
@@ -428,18 +429,19 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
       child = CupertinoPageScaffold(
           backgroundColor: widget.backgroundColor ??
               context.cupertinoTheme.barBackgroundColor,
-          navigationBar: isSliver
+          // 标题bar
+          navigationBar: isSliver || widget.appBar == null
               ? null
               : CupertinoNavigationBar(
-                  leading: widget.appBar?.leading,
+                  leading: widget.appBar!.leading,
                   automaticallyImplyLeading:
-                      widget.appBar?.automaticallyImplyLeading ?? true,
-                  middle: widget.appBar?.title,
-                  previousPageTitle: widget.appBar?.previousPageTitle,
-                  border: widget.appBar?.border,
+                      widget.appBar!.automaticallyImplyLeading,
+                  middle: widget.appBar!.title,
+                  previousPageTitle: widget.appBar!.previousPageTitle,
+                  border: widget.appBar!.border,
                   trailing: _buildIOSActions(),
                   transitionBetweenRoutes:
-                      widget.appBar?.transitionBetweenRoutes ?? true,
+                      widget.appBar!.transitionBetweenRoutes,
                 ),
           //navigationBar:
           //    isSliver ? null : widget.cupertinoNavigationBar?.call(),
@@ -447,14 +449,17 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
     } else {
       child = Scaffold(
           //appBar: widget.materialAppBar?.call(),
-          appBar: AppBar(
-            leading: widget.appBar?.leading,
-            automaticallyImplyLeading:
-                widget.appBar?.automaticallyImplyLeading ?? true,
-            centerTitle: widget.appBar?.centerTitle,
-            title: widget.appBar?.title ?? widget.appBar?.largeTitle,
-            actions: widget.appBar?.actions,
-          ),
+          // 标题bar
+          appBar: widget.appBar == null
+              ? null
+              : AppBar(
+                  leading: widget.appBar!.leading,
+                  automaticallyImplyLeading:
+                      widget.appBar!.automaticallyImplyLeading,
+                  centerTitle: widget.appBar!.centerTitle,
+                  title: widget.appBar!.title ?? widget.appBar!.largeTitle,
+                  actions: widget.appBar!.actions,
+                ),
           backgroundColor: widget.backgroundColor,
           body: _buildNavBottomAndPadding(child));
     }
