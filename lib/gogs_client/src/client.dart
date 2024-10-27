@@ -238,6 +238,10 @@ class SimpleRESTClient {
           processData(a['owner']);
           processData(a['act_user']);
           processData(a['repo']);
+          // 移除文件内容的
+          if (a['type'] == 'file' && a['encoding'] != null) {
+            a.remove('content');
+          }
         }
       }
 
