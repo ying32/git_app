@@ -165,12 +165,17 @@ class _ContentViewPageState extends State<ContentViewPage> {
   @override
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
-      materialAppBar: () => AppBar(
+      // materialAppBar: () => AppBar(
+      //   title: widget.title,
+      //   centerTitle: true,
+      // ),
+      // cupertinoNavigationBar: () => CupertinoNavigationBar(
+      //   middle: widget.title,
+      //   previousPageTitle: context.previousPageTitle,
+      // ),
+      appBar: PlatformPageAppBar(
         title: widget.title,
         centerTitle: true,
-      ),
-      cupertinoNavigationBar: () => CupertinoNavigationBar(
-        middle: widget.title,
         previousPageTitle: context.previousPageTitle,
       ),
       padding: const EdgeInsets.all(5),

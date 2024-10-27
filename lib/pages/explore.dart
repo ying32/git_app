@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:git_app/app_globals.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
 import 'package:git_app/widgets/platform_page_scaffold.dart';
@@ -28,10 +27,15 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
-      materialAppBar: () => AppBar(
-        title: const Text('发现'),
-      ),
-      cupertinoSliverNavigationBar: () => const CupertinoSliverNavigationBar(
+      // materialAppBar: () => AppBar(
+      //   title: const Text('发现'),
+      // ),
+      // cupertinoSliverNavigationBar: () => const CupertinoSliverNavigationBar(
+      //   largeTitle: Text('发现'),
+      //   border: null,
+      //   stretch: true,
+      // ),
+      appBar: const PlatformPageAppBar(
         largeTitle: Text('发现'),
         border: null,
         stretch: true,

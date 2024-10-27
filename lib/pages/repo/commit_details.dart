@@ -17,8 +17,11 @@ class CommitDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
-      materialAppBar: () => AppBar(),
-      cupertinoNavigationBar: () => CupertinoNavigationBar(
+      // materialAppBar: () => AppBar(),
+      // cupertinoNavigationBar: () => CupertinoNavigationBar(
+      //   previousPageTitle: context.previousPageTitle,
+      // ),
+      appBar: PlatformPageAppBar(
         previousPageTitle: context.previousPageTitle,
       ),
       children: const [],

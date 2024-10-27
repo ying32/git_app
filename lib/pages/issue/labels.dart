@@ -18,12 +18,15 @@ class IssueLabelsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
         reqRefreshCallback: _init,
-        materialAppBar: () => AppBar(
-              title: const Text('标签'),
-            ),
-        cupertinoNavigationBar: () => const CupertinoNavigationBar(
-              middle: Text('标签'),
-            ),
+        // materialAppBar: () => AppBar(
+        //       title: const Text('标签'),
+        //     ),
+        // cupertinoNavigationBar: () => const CupertinoNavigationBar(
+        //       middle: Text('标签'),
+        //     ),
+        appBar: const PlatformPageAppBar(
+          title: Text('标签'),
+        ),
         child: const Center(
           child: Text('111'),
         ));

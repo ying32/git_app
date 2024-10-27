@@ -79,10 +79,15 @@ class _ActivityPageState extends State<ActivityPage> {
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
       reqPullUpLoadCallback: _loadMore,
-      materialAppBar: () => AppBar(
-        title: const Text('最近活动'),
-      ),
-      cupertinoSliverNavigationBar: () => const CupertinoSliverNavigationBar(
+      // materialAppBar: () => AppBar(
+      //   title: const Text('最近活动'),
+      // ),
+      // cupertinoSliverNavigationBar: () => const CupertinoSliverNavigationBar(
+      //   // border: null,
+      //   largeTitle: Text('最近活动'),
+      //   // stretch: true,
+      // ),
+      appBar: const PlatformPageAppBar(
         // border: null,
         largeTitle: Text('最近活动'),
         // stretch: true,

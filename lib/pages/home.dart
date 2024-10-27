@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:git_app/app_globals.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
@@ -6,6 +5,7 @@ import 'package:git_app/pages/issue/issues.dart';
 import 'package:git_app/pages/organizations.dart';
 import 'package:git_app/pages/repo/repositories.dart';
 import 'package:git_app/routes.dart';
+import 'package:git_app/utils/build_context_helper.dart';
 import 'package:git_app/utils/collection_mgr.dart';
 import 'package:git_app/utils/message_box.dart';
 import 'package:git_app/utils/page_data.dart';
@@ -109,20 +109,36 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) => PlatformPageScaffold(
         reqRefreshCallback: _init,
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-        materialAppBar: () => AppBar(
-          leading: UnconstrainedBox(
-            child: _buildHeadImage(),
-          ),
-        ),
-        cupertinoSliverNavigationBar: () => CupertinoSliverNavigationBar(
-          leading: SizedBox(
-            height: _headImageSize,
-            width: _headImageSize, // 他约束了高了，而且不能用UnconstrainedBox解除限制，否则异常
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: _buildHeadImage(),
-            ),
-          ),
+        // materialAppBar: () => AppBar(
+        //   leading: UnconstrainedBox(
+        //     child: _buildHeadImage(),
+        //   ),
+        // ),
+        // cupertinoSliverNavigationBar: () => CupertinoSliverNavigationBar(
+        //   leading: SizedBox(
+        //     height: _headImageSize,
+        //     width: _headImageSize, // 他约束了高了，而且不能用UnconstrainedBox解除限制，否则异常
+        //     child: Padding(
+        //       padding: const EdgeInsets.all(4.0),
+        //       child: _buildHeadImage(),
+        //     ),
+        //   ),
+        //   border: null,
+        //   largeTitle: const Text(_title),
+        //   // stretch: true,
+        // ),
+        appBar: PlatformPageAppBar(
+          leading: context.platformIsIOS
+              ? SizedBox(
+                  height: _headImageSize,
+                  width:
+                      _headImageSize, // 他约束了高了，而且不能用UnconstrainedBox解除限制，否则异常
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: _buildHeadImage(),
+                  ),
+                )
+              : UnconstrainedBox(child: _buildHeadImage()),
           border: null,
           largeTitle: const Text(_title),
           // stretch: true,

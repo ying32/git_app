@@ -155,32 +155,41 @@ class _IssuesPageState extends State<IssuesPage> {
       onPressed: _doTapCreateIssue,
       child: const Icon(Icons.add_circle_outline),
     );
+    final isRepo = widget.category == IssuesCategory.repoIssues ||
+        widget.category == IssuesCategory.repoPullRequests;
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
       reqPullUpLoadCallback: _loadMoreData,
-      materialAppBar: () => AppBar(
-        title: Text(widget.title),
-        actions: [
-          createIssueButton,
-        ],
+      // materialAppBar: () => AppBar(
+      //   title: Text(widget.title),
+      //   actions: [
+      //     createIssueButton,
+      //   ],
+      // ),
+      // cupertinoNavigationBar: widget.category == IssuesCategory.repoIssues ||
+      //         widget.category == IssuesCategory.repoPullRequests
+      //     ? () => CupertinoNavigationBar(
+      //           middle: Text(widget.title),
+      //           previousPageTitle: context.previousPageTitle,
+      //           border: null,
+      //           trailing: createIssueButton,
+      //         )
+      //     : null,
+      // cupertinoSliverNavigationBar: widget.category == IssuesCategory.issues ||
+      //         widget.category == IssuesCategory.pullRequests
+      //     ? () => CupertinoSliverNavigationBar(
+      //           previousPageTitle: context.previousPageTitle,
+      //           border: null,
+      //           largeTitle: Text(widget.title),
+      //         )
+      //     : null,
+      appBar: PlatformPageAppBar(
+        title: isRepo ? Text(widget.title) : null,
+        largeTitle: !isRepo ? Text(widget.title) : null,
+        actions: isRepo ? [createIssueButton] : null,
+        previousPageTitle: context.previousPageTitle,
+        border: null,
       ),
-      cupertinoNavigationBar: widget.category == IssuesCategory.repoIssues ||
-              widget.category == IssuesCategory.repoPullRequests
-          ? () => CupertinoNavigationBar(
-                middle: Text(widget.title),
-                previousPageTitle: context.previousPageTitle,
-                border: null,
-                trailing: createIssueButton,
-              )
-          : null,
-      cupertinoSliverNavigationBar: widget.category == IssuesCategory.issues ||
-              widget.category == IssuesCategory.pullRequests
-          ? () => CupertinoSliverNavigationBar(
-                previousPageTitle: context.previousPageTitle,
-                border: null,
-                largeTitle: Text(widget.title),
-              )
-          : null,
       topBar: Column(
         children: [
           //todo: 搜索框，待完成

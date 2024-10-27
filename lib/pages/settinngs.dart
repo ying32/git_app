@@ -38,11 +38,15 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
-      materialAppBar: () => AppBar(
+      // materialAppBar: () => AppBar(
+      //   title: const Text('设置'),
+      // ),
+      // cupertinoNavigationBar: () => CupertinoNavigationBar(
+      //   middle: const Text('设置'),
+      //   previousPageTitle: context.previousPageTitle,
+      // ),
+      appBar: PlatformPageAppBar(
         title: const Text('设置'),
-      ),
-      cupertinoNavigationBar: () => CupertinoNavigationBar(
-        middle: const Text('设置'),
         previousPageTitle: context.previousPageTitle,
       ),
       children: [

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:git_app/app_globals.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
@@ -33,11 +32,16 @@ class _BranchesListState extends State<BranchesList> {
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
-      materialAppBar: () => AppBar(
-        title: const Text('选择分支'),
-      ),
-      cupertinoNavigationBar: () => const CupertinoNavigationBar(
-        middle: Text('选择分支'),
+      // materialAppBar: () => AppBar(
+      //   title: const Text('选择分支'),
+      // ),
+      // cupertinoNavigationBar: () => const CupertinoNavigationBar(
+      //   middle: Text('选择分支'),
+      //   previousPageTitle: '取消',
+      //   transitionBetweenRoutes: false,
+      // ),
+      appBar: const PlatformPageAppBar(
+        title: Text('选择分支'),
         previousPageTitle: '取消',
         transitionBetweenRoutes: false,
       ),

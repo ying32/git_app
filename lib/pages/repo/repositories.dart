@@ -46,12 +46,16 @@ class _RepositoriesPageState
 
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
-      materialAppBar: () => AppBar(
-        title: Text(widget.title),
-      ),
-      cupertinoSliverNavigationBar: () => CupertinoSliverNavigationBar(
-        previousPageTitle: context.previousPageTitle,
+      // materialAppBar: () => AppBar(
+      //   title: Text(widget.title),
+      // ),
+      // cupertinoSliverNavigationBar: () => CupertinoSliverNavigationBar(
+      //   previousPageTitle: context.previousPageTitle,
+      //   largeTitle: Text(widget.title),
+      // ),
+      appBar: PlatformPageAppBar(
         largeTitle: Text(widget.title),
+        previousPageTitle: context.previousPageTitle,
       ),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
       itemCount: _repos?.length ?? 0,

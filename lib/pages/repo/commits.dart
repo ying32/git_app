@@ -38,11 +38,15 @@ class _CommitsPageState extends State<CommitsPage> {
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
-      materialAppBar: () => AppBar(
+      // materialAppBar: () => AppBar(
+      //   title: const Text('提交记录'),
+      // ),
+      // cupertinoNavigationBar: () => CupertinoNavigationBar(
+      //   middle: const Text('提交记录'),
+      //   previousPageTitle: context.previousPageTitle,
+      // ),
+      appBar: PlatformPageAppBar(
         title: const Text('提交记录'),
-      ),
-      cupertinoNavigationBar: () => CupertinoNavigationBar(
-        middle: const Text('提交记录'),
         previousPageTitle: context.previousPageTitle,
       ),
       emptyItemHint: const Center(child: Text('没有数据哦')),

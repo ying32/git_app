@@ -223,20 +223,29 @@ class _EditorPageState extends State<EditorPage> {
     );
 
     return PlatformPageScaffold(
-      materialAppBar: () => AppBar(
+      // materialAppBar: () => AppBar(
+      //   leading: navLeft,
+      //   title: widget.title,
+      //   centerTitle: true,
+      //   actions: [navRight],
+      // ),
+      // cupertinoNavigationBar: () => CupertinoNavigationBar(
+      //   leading: navLeft,
+      //   middle: widget.title,
+      //   trailing: navRight,
+      //   previousPageTitle: context.previousPageTitle,
+      //   // border: null,
+      //   transitionBetweenRoutes: false,
+      // ),
+      appBar: PlatformPageAppBar(
         leading: navLeft,
         title: widget.title,
         centerTitle: true,
         actions: [navRight],
-      ),
-      cupertinoNavigationBar: () => CupertinoNavigationBar(
-        leading: navLeft,
-        middle: widget.title,
-        trailing: navRight,
         previousPageTitle: context.previousPageTitle,
-        // border: null,
         transitionBetweenRoutes: false,
       ),
+
       bottomBar: !widget.showTitleEdit
           ? mkToolBar
           : ValueListenableBuilder<bool>(

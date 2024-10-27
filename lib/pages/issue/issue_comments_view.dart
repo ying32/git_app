@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:git_app/models/issue_comment_model.dart';
 import 'package:git_app/pages/issue/create_issue_comment.dart';
@@ -167,9 +166,14 @@ class IssuesCommentsViewPage extends StatelessWidget {
       child: PlatformPageScaffold(
         controller: model.controller,
         reqRefreshCallback: _init,
-        materialAppBar: () => AppBar(title: title),
-        cupertinoNavigationBar: () => CupertinoNavigationBar(
-          middle: title,
+        // materialAppBar: () => AppBar(title: title),
+        // cupertinoNavigationBar: () => CupertinoNavigationBar(
+        //   middle: title,
+        //   previousPageTitle: context.previousPageTitle,
+        //   border: null,
+        // ),
+        appBar: PlatformPageAppBar(
+          title: title,
           previousPageTitle: context.previousPageTitle,
           border: null,
         ),

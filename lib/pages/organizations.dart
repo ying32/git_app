@@ -45,17 +45,21 @@ class _OrganizationsPageState
 
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
-      materialAppBar: () => AppBar(
-        title: Text(widget.title),
-      ),
-      // cupertinoNavigationBar: () => CupertinoNavigationBar(
-      //   middle: Text(widget.title),
-      //   previousPageTitle: PageRouteData.maybeOf(context)?.previousPageTitle,
+      // materialAppBar: () => AppBar(
+      //   title: Text(widget.title),
       // ),
-
-      cupertinoSliverNavigationBar: () => CupertinoSliverNavigationBar(
+      // // cupertinoNavigationBar: () => CupertinoNavigationBar(
+      // //   middle: Text(widget.title),
+      // //   previousPageTitle: PageRouteData.maybeOf(context)?.previousPageTitle,
+      // // ),
+      //
+      // cupertinoSliverNavigationBar: () => CupertinoSliverNavigationBar(
+      //   previousPageTitle: context.previousPageTitle,
+      //   largeTitle: Text(widget.title),
+      // ),
+      appBar: PlatformPageAppBar(
+        title: Text(widget.title),
         previousPageTitle: context.previousPageTitle,
-        largeTitle: Text(widget.title),
       ),
 
       itemCount: _orgs?.length ?? 0,

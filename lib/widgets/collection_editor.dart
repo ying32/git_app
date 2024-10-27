@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:git_app/app_globals.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
@@ -217,16 +216,25 @@ class _CollectionEditorState extends State<CollectionEditor> {
     );
 
     return PlatformPageScaffold(
-      materialAppBar: () => AppBar(
+      // materialAppBar: () => AppBar(
+      //   leading: navLeft,
+      //   title: const Text('仓库'),
+      //   centerTitle: true,
+      //   actions: [navRight],
+      // ),
+      // cupertinoNavigationBar: () => CupertinoNavigationBar(
+      //   leading: navLeft,
+      //   middle: const Text('仓库'),
+      //   trailing: navRight,
+      //   previousPageTitle: null,
+      //   border: null,
+      //   transitionBetweenRoutes: false,
+      // ),
+      appBar: PlatformPageAppBar(
         leading: navLeft,
         title: const Text('仓库'),
         centerTitle: true,
         actions: [navRight],
-      ),
-      cupertinoNavigationBar: () => CupertinoNavigationBar(
-        leading: navLeft,
-        middle: const Text('仓库'),
-        trailing: navRight,
         previousPageTitle: null,
         border: null,
         transitionBetweenRoutes: false,

@@ -280,11 +280,16 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
-      materialAppBar: () => AppBar(
+      // materialAppBar: () => AppBar(
+      //   title: const Text('登录'),
+      // ),
+      // cupertinoNavigationBar: () => CupertinoNavigationBar(
+      //   middle: const Text('登录'),
+      //   previousPageTitle: context.previousPageTitle,
+      //   border: null,
+      // ),
+      appBar: PlatformPageAppBar(
         title: const Text('登录'),
-      ),
-      cupertinoNavigationBar: () => CupertinoNavigationBar(
-        middle: const Text('登录'),
         previousPageTitle: context.previousPageTitle,
         border: null,
       ),

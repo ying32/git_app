@@ -4,21 +4,74 @@ import 'package:flutter/material.dart';
 import 'package:git_app/utils/build_context_helper.dart';
 import 'package:git_app/utils/callbacks.dart';
 
+// copy from: lib\src\cupertino\nav_bar.dart
+const Color _kDefaultNavBarBorderColor = Color(0x4D000000);
+
+const Border _kDefaultNavBarBorder =
+    Border(bottom: BorderSide(color: _kDefaultNavBarBorderColor, width: 0.0));
+
 /// 异步数据改变
 typedef PlatformPageScaffoldRefreshCallback = Future<void> Function(
     BuildContext context, bool? value);
+
+class PlatformPageAppBar {
+  const PlatformPageAppBar({
+    this.leading,
+    this.automaticallyImplyLeading = true,
+    this.title,
+    this.actions,
+    this.centerTitle,
+    // only iOS style
+    this.previousPageTitle,
+    this.border = _kDefaultNavBarBorder,
+    this.largeTitle,
+    this.transitionBetweenRoutes = true,
+    this.stretch = false,
+  });
+
+  /// 标题左边
+  final Widget? leading;
+
+  final bool automaticallyImplyLeading;
+
+  /// [AppBar]中对应[AppBar.title]字段，[CupertinoNavigationBar]中对应[CupertinoNavigationBar.middle]
+  /// 当定义了[largeTitle]如果[title]为null，则title为[largeTitle]
+  final Widget? title;
+
+  /// [AppBar]中对应[AppBar.actions]，[CupertinoNavigationBar]中对应[CupertinoNavigationBar.trailing]
+  final List<Widget>? actions;
+
+  /// 仅[AppBar]有效
+  final bool? centerTitle;
+
+  /// 上一页的标题，仅[CupertinoNavigationBar]有效
+  final String? previousPageTitle;
+
+  /// 仅CupertinoNavigationBar有效
+  final Border? border;
+
+  /// 当此值不为null则使用[CupertinoSliverNavigationBar]类型的导航，同时忽略[title]字段。
+  final Widget? largeTitle;
+
+  /// 仅[CupertinoNavigationBar]或[CupertinoSliverNavigationBar]有效
+  final bool transitionBetweenRoutes;
+
+  /// 当[largeTitle]不为null时有效，对应[CupertinoSliverNavigationBar.stretch]
+  final bool stretch;
+}
 
 /// 一个公共的页面基础类，这个T参数还得想想怎么弄好
 class PlatformPageScaffold<T> extends StatefulWidget {
   const PlatformPageScaffold({
     super.key,
+    this.appBar,
     this.controller,
     this.physics = const AlwaysScrollableScrollPhysics(),
     this.reqRefreshCallback,
     this.child,
-    this.materialAppBar,
-    this.cupertinoNavigationBar,
-    this.cupertinoSliverNavigationBar,
+    // this.materialAppBar,
+    // this.cupertinoNavigationBar,
+    // this.cupertinoSliverNavigationBar,
     this.children,
     this.itemCount,
     this.useSeparator,
@@ -37,9 +90,12 @@ class PlatformPageScaffold<T> extends StatefulWidget {
         assert(!(itemBuilder != null && itemCount == null),
             '当itemBuilder存在时，itemCount不能为null');
 
-  final ValueGetter<PreferredSizeWidget?>? materialAppBar;
-  final ValueGetter<ObstructingPreferredSizeWidget?>? cupertinoNavigationBar;
-  final ValueGetter<CupertinoSliverNavigationBar>? cupertinoSliverNavigationBar;
+  // final ValueGetter<PreferredSizeWidget?>? materialAppBar;
+  // final ValueGetter<ObstructingPreferredSizeWidget?>? cupertinoNavigationBar;
+  // final ValueGetter<CupertinoSliverNavigationBar>? cupertinoSliverNavigationBar;
+
+  /// 标题bar
+  final PlatformPageAppBar? appBar;
 
   /// ListView或者CustomScrollView的滚动控制器
   final ScrollController? controller;
@@ -271,13 +327,35 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
   Future<void> _doRefresh() async =>
       await widget.reqRefreshCallback?.call(context, true);
 
+  Widget? _buildIOSActions() {
+    if (widget.appBar?.actions == null) return null;
+    if (widget.appBar!.actions!.isEmpty) return null;
+    if (widget.appBar!.actions!.length == 1) {
+      return widget.appBar!.actions!.first;
+    }
+    return Row(
+        mainAxisSize: MainAxisSize.min, children: widget.appBar!.actions!);
+  }
+
   /// ios下sliver模式的刷主体
   Widget _buildCupertinoSliverBody(Widget sliver) {
     return CustomScrollView(
         physics: widget.physics,
         controller: _controller,
         slivers: <Widget>[
-          widget.cupertinoSliverNavigationBar!.call(),
+          CupertinoSliverNavigationBar(
+            leading: widget.appBar?.leading,
+            automaticallyImplyLeading:
+                widget.appBar?.automaticallyImplyLeading ?? true,
+            largeTitle: widget.appBar?.largeTitle,
+            trailing: _buildIOSActions(),
+            border: widget.appBar?.border,
+            transitionBetweenRoutes:
+                widget.appBar?.transitionBetweenRoutes ?? true,
+            stretch: widget.appBar?.stretch ?? false,
+            previousPageTitle: widget.appBar?.previousPageTitle,
+          ),
+          // widget.cupertinoSliverNavigationBar!.call(),
           // 有刷新事件的
 
           if (widget.reqRefreshCallback != null && widget.canPullDownRefresh)
@@ -331,7 +409,8 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
     late Widget child;
 
     final isIOS = context.platformIsIOS;
-    final isSliver = isIOS && widget.cupertinoSliverNavigationBar != null;
+    //final isSliver = isIOS && widget.cupertinoSliverNavigationBar != null;
+    final isSliver = isIOS && widget.appBar?.largeTitle != null;
 
     if (!_loading) {
       // 当为ios平台，并且使用sliver方式时，需要构建SliverList
@@ -349,12 +428,33 @@ class _PlatformPageScaffoldState<T> extends State<PlatformPageScaffold<T>> {
       child = CupertinoPageScaffold(
           backgroundColor: widget.backgroundColor ??
               context.cupertinoTheme.barBackgroundColor,
-          navigationBar:
-              isSliver ? null : widget.cupertinoNavigationBar?.call(),
+          navigationBar: isSliver
+              ? null
+              : CupertinoNavigationBar(
+                  leading: widget.appBar?.leading,
+                  automaticallyImplyLeading:
+                      widget.appBar?.automaticallyImplyLeading ?? true,
+                  middle: widget.appBar?.title,
+                  previousPageTitle: widget.appBar?.previousPageTitle,
+                  border: widget.appBar?.border,
+                  trailing: _buildIOSActions(),
+                  transitionBetweenRoutes:
+                      widget.appBar?.transitionBetweenRoutes ?? true,
+                ),
+          //navigationBar:
+          //    isSliver ? null : widget.cupertinoNavigationBar?.call(),
           child: SafeArea(child: child));
     } else {
       child = Scaffold(
-          appBar: widget.materialAppBar?.call(),
+          //appBar: widget.materialAppBar?.call(),
+          appBar: AppBar(
+            leading: widget.appBar?.leading,
+            automaticallyImplyLeading:
+                widget.appBar?.automaticallyImplyLeading ?? true,
+            centerTitle: widget.appBar?.centerTitle,
+            title: widget.appBar?.title ?? widget.appBar?.largeTitle,
+            actions: widget.appBar?.actions,
+          ),
           backgroundColor: widget.backgroundColor,
           body: _buildNavBottomAndPadding(child));
     }

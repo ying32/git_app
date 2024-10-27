@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -161,16 +160,21 @@ class UserDetailsPage extends StatelessWidget {
 
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
-      materialAppBar: () => AppBar(
+      // materialAppBar: () => AppBar(
+      //   title: Text(user.username),
+      //   actions: rights,
+      // ),
+      // cupertinoNavigationBar: () => CupertinoNavigationBar(
+      //   middle: Text(user.username),
+      //   previousPageTitle: context.previousPageTitle,
+      //   trailing: rights != null
+      //       ? Row(mainAxisSize: MainAxisSize.min, children: rights)
+      //       : null,
+      // ),
+      appBar: PlatformPageAppBar(
         title: Text(user.username),
         actions: rights,
-      ),
-      cupertinoNavigationBar: () => CupertinoNavigationBar(
-        middle: Text(user.username),
         previousPageTitle: context.previousPageTitle,
-        trailing: rights != null
-            ? Row(mainAxisSize: MainAxisSize.min, children: rights)
-            : null,
       ),
       children: [
         _buildUserInfo(user, iconColor),

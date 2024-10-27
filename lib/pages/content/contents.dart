@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:git_app/app_globals.dart';
@@ -62,12 +61,17 @@ class _ContentsPageState extends State<ContentsPage> {
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
-      materialAppBar: () => AppBar(
+      // materialAppBar: () => AppBar(
+      //   title: ContentTitle(title: _title, path: widget.prevPath),
+      //   centerTitle: true,
+      // ),
+      // cupertinoNavigationBar: () => CupertinoNavigationBar(
+      //   middle: ContentTitle(title: _title, path: widget.prevPath),
+      //   previousPageTitle: context.previousPageTitle,
+      // ),
+      appBar: PlatformPageAppBar(
         title: ContentTitle(title: _title, path: widget.prevPath),
         centerTitle: true,
-      ),
-      cupertinoNavigationBar: () => CupertinoNavigationBar(
-        middle: ContentTitle(title: _title, path: widget.prevPath),
         previousPageTitle: context.previousPageTitle,
       ),
       emptyItemHint: const Center(child: Text('没有数据哦')),

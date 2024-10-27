@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -356,6 +355,8 @@ class _RepoBranchOperate extends StatelessWidget {
         context: context,
         //todo: 这里先设置为false，因为发现拖动下拉刷新，这个也会被检测，其实需要屏蔽外部的，暂没去分析
         enableDrag: false,
+        expand: true,
+        useRootNavigator: true,
         builder: (_) => BranchesList(
             repo: model.repo, selectedBranch: model.selectedBranch));
     if (res != null) {
@@ -485,13 +486,18 @@ class RepositoryDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
-      materialAppBar: () => AppBar(
+      // materialAppBar: () => AppBar(
+      //   title: Text(context.watch<RepositoryModel>().repo.name),
+      //   actions: const [_RepoCreateIssueButton()],
+      // ),
+      // cupertinoNavigationBar: () => CupertinoNavigationBar(
+      //   middle: Text(context.watch<RepositoryModel>().repo.name),
+      //   trailing: const _RepoCreateIssueButton(),
+      //   previousPageTitle: context.previousPageTitle,
+      // ),
+      appBar: PlatformPageAppBar(
         title: Text(context.watch<RepositoryModel>().repo.name),
         actions: const [_RepoCreateIssueButton()],
-      ),
-      cupertinoNavigationBar: () => CupertinoNavigationBar(
-        middle: Text(context.watch<RepositoryModel>().repo.name),
-        trailing: const _RepoCreateIssueButton(),
         previousPageTitle: context.previousPageTitle,
       ),
       children: [
