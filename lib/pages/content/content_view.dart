@@ -80,6 +80,7 @@ class _ContentViewPageState extends State<ContentViewPage> {
     "firebaserc": "json",
     "fmx": "delphi",
     "lfm": "delphi",
+    "dfm": "delphi",
     "": {"Podfile": "ruby"}
   };
 
@@ -129,6 +130,8 @@ class _ContentViewPageState extends State<ContentViewPage> {
     return Text('不支持预览的数据类型=$contentType');
   }
 
+  static final _xmlStartPattern = RegExp(r'\<\?xml|\<.+?xmlns\=\"');
+
   Widget _buildText(String data) {
     var ext = path_lib.extension(widget.file.name).toLowerCase();
     if (ext.startsWith(".")) ext = ext.substring(1);
@@ -146,7 +149,7 @@ class _ContentViewPageState extends State<ContentViewPage> {
       }
     }
     if (highlight == null) {
-      if (data.startsWith("<?xml")) {
+      if (data.startsWith(_xmlStartPattern)) {
         ext = "xml";
       }
     }
