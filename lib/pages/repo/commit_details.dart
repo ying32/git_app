@@ -42,18 +42,23 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
 
   // diff\s--git\sa(.+)\sb(.+)
   final _diffReg = RegExp(r'diff\s--git\sa/(.+)\sb/(.+)', caseSensitive: false);
+  //final _lineInfo = RegExp(r'@@ \-(\d+),(\d+) \+(\d+),(\d+) @@');
+  // 添加行，删除行
+  var additions = 0, deletions = 0;
 
   Future _init(_, bool? force) async {
     _list.clear();
     final res = await AppGlobal.cli.repos.commit
         .diff(widget.repo, widget.commit, force: force);
-
+    additions = 0;
+    deletions = 0;
     if (res.succeed && res.data != null) {
       // 这里分析
       final lines = List<String>.of(LineSplitter.split(res.data!));
       var i = 0;
       _FileItem? item;
       _list.clear();
+
       final buff = StringBuffer();
       while (i < lines.length) {
         var line = lines[i];
@@ -68,19 +73,39 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
           _list.add(item);
 
           var find = false;
+          // 跳过不要的一些信息
           while (i < lines.length) {
             line = lines[i];
             item.isBinFile = line.startsWith('Binary files');
-            find = line.startsWith("@@") || item.isBinFile;
+            final isDiffStart = line.startsWith("@@");
+            // if (isDiffStart) {
+            //   // 原本以为这个给出的信息是增加多少行，删除多少行，结果发现不是
+            //   final re = _lineInfo.firstMatch(line);
+            //   if (re != null) {
+            //     // 前面是减
+            //     deletions += int.tryParse(re.group(2) ?? '') ?? 0;
+            //     // 后面是加
+            //     additions += int.tryParse(re.group(4) ?? '') ?? 0;
+            //   }
+            // }
+            find = isDiffStart || item.isBinFile;
             if (find) break;
             i++;
           }
           if (find) continue;
         } else {
+          // 开始部分的
+          if (line.startsWith("+")) {
+            additions++;
+          } else if (line.startsWith("-")) {
+            deletions++;
+          }
+
           buff.writeln(line);
         }
         i++;
       }
+      print("增加行=$additions, 删除行=$deletions,总计行=${additions + deletions}");
       if (item != null && buff.isNotEmpty) {
         item.content = buff.toString();
       }
@@ -97,25 +122,46 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
         title: Text(widget.commit.sha.substring(0, 10)),
         previousPageTitle: context.previousPageTitle,
       ),
-      itemCount: _list.length + 1,
+      itemCount: _list.length + 3,
       useSeparator: true,
       itemBuilder: (BuildContext context, int index) {
         if (index == 0) {
           return BackgroundContainer(
             padding:
-                const EdgeInsets.symmetric(vertical: 6.0, horizontal: 10.0),
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
             child: Text(widget.commit.commit.message.trimRight()),
           );
+        } else if (index == 1) {
+          return const SizedBox(height: 15);
+        } else if (index == 2) {
+          return BackgroundContainer(
+            padding:
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+            child: Text.rich(TextSpan(
+              children: [
+                TextSpan(
+                    text: '${_list.length}个文件已改变\n',
+                    style: const TextStyle(color: Colors.orange)),
+                TextSpan(
+                    text: '$additions 次插入',
+                    style: const TextStyle(color: Colors.green)),
+                const TextSpan(text: ' 和 '),
+                TextSpan(
+                    text: '$deletions 次删除',
+                    style: const TextStyle(color: Colors.red)),
+              ],
+            )),
+          );
         }
-        final item = _list[index - 1];
+        final item = _list[index - 3];
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 这里的标题还要做一个可以浮动的大概就是到顶部就浮动，得用sliver来做
             BottomDivider(
                 child: BackgroundContainer(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    height: 30.0,
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    height: 35.0,
                     child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(item.fileName,
@@ -125,7 +171,7 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
               width: double.infinity,
               child: item.isBinFile
                   ? const Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(10.0),
                       child: Text('二进制文件未显示。'),
                     )
                   : HighlightViewPlus(
