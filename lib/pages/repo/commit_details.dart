@@ -7,14 +7,20 @@ import 'package:flutter_highlight/themes/github.dart';
 import 'package:git_app/app_globals.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
 import 'package:git_app/utils/build_context_helper.dart';
+import 'package:git_app/widgets/background_container.dart';
 import 'package:git_app/widgets/divider_plus.dart';
 import 'package:git_app/widgets/highlight_plus.dart';
 import 'package:git_app/widgets/platform_page_scaffold.dart';
 
 class _FileItem {
-  _FileItem(this.fileName, this.content);
+  _FileItem(
+    this.fileName,
+    this.content, {
+    this.isBinFile = false,
+  });
   final String fileName;
   String content;
+  bool isBinFile;
 }
 
 class CommitDetailsPage extends StatefulWidget {
@@ -64,7 +70,8 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
           var find = false;
           while (i < lines.length) {
             line = lines[i];
-            find = line.startsWith("@@");
+            item.isBinFile = line.startsWith('Binary files');
+            find = line.startsWith("@@") || item.isBinFile;
             if (find) break;
             i++;
           }
@@ -85,33 +92,52 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
-      // canPullDownRefresh: false,
+      canPullDownRefresh: false,
       appBar: PlatformPageAppBar(
+        title: Text(widget.commit.sha.substring(0, 10)),
         previousPageTitle: context.previousPageTitle,
       ),
-      itemCount: _list.length,
+      itemCount: _list.length + 1,
+      useSeparator: true,
       itemBuilder: (BuildContext context, int index) {
-        final item = _list[index];
-        return BottomDivider(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              BottomDivider(
-                  child: SizedBox(height: 30.0, child: Text(item.fileName))),
-              const SizedBox(height: 1),
-              SizedBox(
-                width: double.infinity,
-                child: HighlightViewPlus(
-                  isDiff: true,
-                  item.content,
-                  fileName: item.fileName,
-                  theme: AppGlobal.context?.isDark == true
-                      ? a11yDarkTheme
-                      : githubTheme,
-                ),
-              ),
-            ],
-          ),
+        if (index == 0) {
+          return BackgroundContainer(
+            padding:
+                const EdgeInsets.symmetric(vertical: 6.0, horizontal: 10.0),
+            child: Text(widget.commit.commit.message.trimRight()),
+          );
+        }
+        final item = _list[index - 1];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 这里的标题还要做一个可以浮动的大概就是到顶部就浮动，得用sliver来做
+            BottomDivider(
+                child: BackgroundContainer(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    height: 30.0,
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(item.fileName,
+                            maxLines: 1, overflow: TextOverflow.ellipsis)))),
+            const SizedBox(height: 1),
+            SizedBox(
+              width: double.infinity,
+              child: item.isBinFile
+                  ? const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text('二进制文件未显示。'),
+                    )
+                  : HighlightViewPlus(
+                      isDiff: true,
+                      item.content,
+                      fileName: item.fileName,
+                      theme: AppGlobal.context?.isDark == true
+                          ? a11yDarkTheme
+                          : githubTheme,
+                    ),
+            ),
+          ],
         );
       },
     );

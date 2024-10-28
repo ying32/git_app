@@ -32,11 +32,11 @@ class CommitsItem extends StatelessWidget {
     return ListTileNav(
       titleWidget: Padding(
         padding: const EdgeInsets.only(top: 8.0),
-        child: Text(item.commit.message,
+        child: Text(item.commit.message.trimRight(),
             maxLines: 2, overflow: TextOverflow.ellipsis),
       ),
       subtitle: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.only(bottom: 8.0, top: 2),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

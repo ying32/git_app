@@ -70,9 +70,30 @@ class GogsRepoCommit extends GogsClientBase {
   ///
   /// 获取指定仓库提交记录信息。注：他这个API不完善，不能做分页
   FutureRESTResult<CommitList?> getAll(Repository repo,
-          {int? pageSize, bool? force}) =>
+          {String? sha,
+          String? path,
+          bool? stat = false, // 这里行设置false,他默认为true
+          bool? verification = false, // 这里行设置false,他默认为true
+          bool? files = false, // 这里行设置false,他默认为true
+          int? page,
+          bool? limit,
+          String? not,
+          bool? force}) =>
       client.get<CommitList>(_baseRepoPath(repo, "/commits"),
-          queryParameters: pageSize != null ? {'pagesize': pageSize} : null,
+          queryParameters: {
+            if (sha != null) 'sha': sha,
+            if (path != null) 'path': path,
+            if (stat != null) 'stat': stat,
+            if (verification != null) 'verification': verification,
+            if (files != null) 'files': files,
+            if (limit != null) 'limit': limit,
+            if (not != null) 'not': not,
+
+            // gitea的字段
+            if (page != null) 'page': page,
+            // gogs的字段，
+            if (page != null) 'pagesize': page,
+          },
           force: force,
           decoder: (data) => Commit.fromJsonList(data));
 

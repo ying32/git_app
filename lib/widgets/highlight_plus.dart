@@ -103,7 +103,8 @@ class _LineNumberPainter extends CustomPainter {
           }
           canvas.drawRect(r, _paint);
           // 这里直接溢出绘制
-          r = ui.Rect.fromLTRB(size.width, pp.dy, size.width + width, npp.dy);
+          r = ui.Rect.fromLTRB(
+              size.width, pp.dy, size.width + width + 5.0, npp.dy);
           _paint.color = _paint.color.withAlpha(50);
           canvas.drawRect(r, _paint);
         }

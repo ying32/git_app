@@ -5,11 +5,15 @@ class BackgroundContainer extends StatelessWidget {
   const BackgroundContainer({
     super.key,
     required this.child,
+    this.width,
+    this.height,
     this.color,
     this.radius,
     this.padding,
   });
 
+  final double? width;
+  final double? height;
   final Color? color;
   final double? radius;
   final Widget child;
@@ -18,6 +22,8 @@ class BackgroundContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: width,
+      height: height,
       padding: padding,
       clipBehavior: radius != null ? Clip.hardEdge : Clip.none,
       decoration: BoxDecoration(
