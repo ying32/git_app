@@ -19,7 +19,11 @@ class CommitsItem extends StatelessWidget {
   final Commit item;
 
   void _doTap() {
-    routes.pushPage(const CommitDetailsPage(),
+    routes.pushPage(
+        CommitDetailsPage(
+          repo: repo,
+          commit: item,
+        ),
         data: PageData(previousPageTitle: repo.name));
   }
 

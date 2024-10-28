@@ -434,7 +434,7 @@ class _RepoReadMe extends StatelessWidget {
 
   void _onTap(String value) {
     //todo: 待完善内部跳转
-    print(value);
+    // print(value);
   }
 
   @override

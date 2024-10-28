@@ -29,6 +29,9 @@ extension BuildContextHelper on BuildContext {
   /// 上下文件中的数据
   PageData? get pageData => PageDataProvider.maybeOf(this)?.data;
 
+  /// 是否为平板模式
+  bool get isTablet => MediaQuery.of(this).size.width > 450.0;
+
   /// 上一页标题
   String? get previousPageTitle {
     final title = pageData?.previousPageTitle ?? '返回';

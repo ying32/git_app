@@ -32,36 +32,39 @@ extension _RequestOptionsHelper on RequestOptions {
 /// RESTResult返回的
 class RESTResult<T> {
   const RESTResult({
-    required this.succeed,
+    required this.statusCode,
     required this.statusMessage,
     required this.data,
     this.contentType,
   });
 
-  final bool succeed;
+  final int statusCode;
   final String? statusMessage;
   final T? data;
   final String? contentType;
 
-  static bool _isOK(Response resp) => switch (resp.statusCode) {
+  bool get succeed => _isOK(statusCode);
+
+  static bool _isOK(int? statusCode) => switch (statusCode) {
         HttpStatus.ok || // GET
         HttpStatus.created || // POST or PATCH
         HttpStatus.accepted || // POST or PATCH
-        HttpStatus.noContent => // DELETE
+        HttpStatus.noContent || // DELETE
+        HttpStatus.notModified => // from cache
           true,
         _ => false
       };
 
   RESTResult.fromResponse(Response resp, RESTJsonDecoder<T>? decoder)
-      : succeed = _isOK(resp),
+      : statusCode = resp.statusCode ?? 0,
         statusMessage = resp.statusMessage,
-        data = _isOK(resp)
+        data = _isOK(resp.statusCode)
             ? (decoder == null ? resp.data : decoder(resp.data))
             : null,
         contentType = resp.headers.value(HttpHeaders.contentTypeHeader)?.trim();
 
   RESTResult.fromErrorMessage(String msg)
-      : succeed = false,
+      : statusCode = 0,
         statusMessage = msg,
         data = null,
         contentType = null;
@@ -191,23 +194,76 @@ class SimpleRESTClient {
     }
     // 从缓存中加载，如果force标识为true则不加载缓存
     if (options.method == "GET" && !options.isForce && !options.isNocache) {
-      final resp = _cache.load(_getRequestCacheKey(options));
-      if (resp != null && resp is Response) {
-        if (kDebugMode) {
-          // resp.headers['']
-          //print("time=${HttpDate.parse('Fri, 11 Oct 2024 07:27:57 GMT')}");
-          print('from cache, key = ${_getRequestCacheKey(options)}');
-          print(
-              "==============================================================");
+      final key = _getRequestCacheKey(options);
+      final cache = _cache.load(key);
+      if (cache != null && cache.resp is Response) {
+        // 这里要检测有没有过期
+        //if(cache.expired.su)
+        if (DateTime.now().compareTo(cache.expired) <= 0) {
+          final resp = cache.resp;
+          // 修改结果为304
+          resp.statusCode = HttpStatus.notModified;
+          if (kDebugMode) {
+            // resp.headers['']
+            //print("time=${HttpDate.parse('Fri, 11 Oct 2024 07:27:57 GMT')}");
+            print('from cache, key = ${_getRequestCacheKey(options)}');
+            print(
+                "==============================================================");
+          }
+          return handler.resolve(resp);
+        } else {
+          _cache.remove(key);
         }
-        return handler.resolve(resp);
       }
     }
     return handler.next(options);
   }
 
+  /// 返回太多无用数据了，所以这里干掉一些
+  void _cleanJsonFields(Response response) {
+    if (response.requestOptions.responseType != ResponseType.json) {
+      return;
+    }
+    void processData(dynamic a) {
+      if (a == null) return;
+      if (a is Map) {
+        a.remove("_links");
+        a.remove("url");
+        a.remove("html_url");
+        a.remove("git_url");
+        a.remove("download_url");
+        a.remove("submodule_git_url");
+        a.remove("ssh_url");
+        a.remove("languages_url");
+        a.remove("clone_url");
+        a.remove("original_url");
+        a.remove("link");
+        a.remove("permissions");
+        a.remove("internal_tracker");
+        processData(a['owner']);
+        processData(a['act_user']);
+        processData(a['repo']);
+        // 移除文件内容的
+        if (a['type'] == 'file' && a['encoding'] != null) {
+          a.remove('content');
+        }
+      }
+    }
+
+    if (response.data is Map || response.data is List) {
+      if (response.data is List) {
+        for (final a in response.data) {
+          processData(a);
+        }
+      } else {
+        processData(response.data);
+      }
+    }
+  }
+
   ///
   void _onResponse(Response response, ResponseInterceptorHandler handler) {
+    _cleanJsonFields(response);
     if (kDebugMode) {
       print("==========================Response==========================");
       print("realUri=${response.requestOptions.uri}");
@@ -217,44 +273,6 @@ class SimpleRESTClient {
       print("statusMessage=${response.statusMessage}");
       print("headers=${response.headers}");
       // print("headers=${response.requestOptions.path}");
-
-      // 返回太多无用数据了，所以这里在调试模式下干掉一些
-      void processData(dynamic a) {
-        if (a == null) return;
-        if (a is Map) {
-          a.remove("_links");
-          a.remove("url");
-          a.remove("html_url");
-          a.remove("git_url");
-          a.remove("download_url");
-          a.remove("submodule_git_url");
-          a.remove("ssh_url");
-          a.remove("languages_url");
-          a.remove("clone_url");
-          a.remove("original_url");
-          a.remove("link");
-          a.remove("permissions");
-          a.remove("internal_tracker");
-          processData(a['owner']);
-          processData(a['act_user']);
-          processData(a['repo']);
-          // 移除文件内容的
-          if (a['type'] == 'file' && a['encoding'] != null) {
-            a.remove('content');
-          }
-        }
-      }
-
-      if (response.data is Map || response.data is List) {
-        if (response.data is List) {
-          for (final a in response.data) {
-            processData(a);
-          }
-        } else {
-          processData(response.data);
-        }
-      }
-
       if (response.requestOptions.responseType == ResponseType.json) {
         print(jsonEncode(response.data));
       }

@@ -60,13 +60,13 @@ String? tryDecodeText(Uint8List data, String? contentType) {
         encoding = utf8;
       } else if (charset.startsWith("utf-16")) {
         encoding = utf16;
+      } else {
+        encoding = systemEncoding;
       }
-      if (encoding != null) {
-        try {
-          return encoding.decode(data);
-        } catch (e) {
-          //
-        }
+      try {
+        return encoding.decode(data);
+      } catch (e) {
+        //
       }
     }
   }

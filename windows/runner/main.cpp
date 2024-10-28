@@ -29,7 +29,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   // center
   tagRECT rect = {};
   SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
-  Win32Window::Size size(620, 720);
+  Win32Window::Size size(480, 720);
   Win32Window::Point origin(((rect.right - rect.left) - size.width) / 2, (( rect.bottom - rect.top) - size.height) / 2);
 
   if (!window.Create(L"GitApp", origin, size)) {

@@ -76,6 +76,25 @@ class GogsRepoCommit extends GogsClientBase {
           force: force,
           decoder: (data) => Commit.fromJsonList(data));
 
+  /// GET /repos/{owner}/{repo}/git/commits/{sha}
+  ///
+  /// gitea 获取指定sha的提交信息
+  // FutureRESTResult<Commit?> commit(Repository repo, String sha,
+  //         {bool? force}) =>
+  //     client.get<Commit>(_baseRepoPath(repo, "/commits/$sha"),
+  //         force: force, decoder: (data) => Commit.fromJson(data));
+
+  /// GET /repos/{owner}/{repo}/git/commits/{sha}.{diffType}
+  ///
+  /// gitea才有的
+  ///  [diffType]分为 "patch"和"diff"两种
+  FutureRESTResult<String?> diff(Repository repo, Commit commit,
+          {String diffType = "diff", bool? force}) =>
+      client.get<String>(
+          _baseRepoPath(repo, "/git/commits/${commit.sha}.$diffType"),
+          options: Options(responseType: ResponseType.plain),
+          force: force);
+
   /// GET /repos/:username/:reponame/commits/:sha
 
   /// GET /repos/:username/:reponame/commits/:ref

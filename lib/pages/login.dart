@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:git_app/utils/build_context_helper.dart';
 import 'package:git_app/utils/collection_mgr.dart';
 import 'package:git_app/utils/message_box.dart';
@@ -36,6 +35,8 @@ class _LoginPageState extends State<LoginPage> {
   final _logging = ValueNotifier(false);
 
   final Map<String, dynamic> _histories = {};
+
+  String? _groupValue = 'restful';
 
   @override
   void initState() {
@@ -99,6 +100,53 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Widget _buildAPIOptions() {
+    return Row(
+      children: [
+        const Icon(Icons.api_outlined),
+        const Text('API选择：'),
+        Expanded(
+          child: GestureDetector(
+            onTap: () => _onRadioChanged('restful'),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Radio.adaptive(
+                    value: 'restful', groupValue: _groupValue, onChanged: null),
+                const Padding(
+                  padding: EdgeInsets.only(left: 5.0),
+                  child: Text('RESTful'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Expanded(
+          child: GestureDetector(
+            onTap: () => _onRadioChanged('graphql'),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Radio.adaptive(
+                    value: 'graphql', groupValue: _groupValue, onChanged: null),
+                const Padding(
+                  padding: EdgeInsets.only(left: 5.0),
+                  child: Text('GraphQL'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _onRadioChanged(String? value) {
+    setState(() {
+      _groupValue = value;
+    });
+  }
+
   Widget _buildLoginWidget() {
     return SingleChildScrollView(
       child: Column(
@@ -147,6 +195,8 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () => _hostController.clear(),
                 icon: const Icon(Icons.add)),
           ),
+          // const SizedBox(height: 20.0),
+          // _buildAPIOptions(),
           const SizedBox(height: 20.0),
           const Text('历史登录'),
           const SizedBox(height: 5.0),
@@ -244,7 +294,8 @@ class _LoginPageState extends State<LoginPage> {
       await CollectionMgr.instance.reLoad(token);
       AppGlobal.setLoginState(true);
 
-      SmartDialog.showNotify(msg: '登录成功，欢迎回来', notifyType: NotifyType.success);
+      // 这里不提示登录成功了
+      //SmartDialog.showNotify(msg: '登录成功，欢迎回来', notifyType: NotifyType.success);
     } finally {
       _logging.value = false;
     }

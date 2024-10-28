@@ -70,20 +70,6 @@ class ContentViewPage extends StatefulWidget {
 }
 
 class _ContentViewPageState extends State<ContentViewPage> {
-  // 因为有些不能根据扩展名识别，所以这里维护一个
-  static final _otherHighlights = {
-    "txt": {"CMakeLists.txt": "cmake"},
-    "iml": "xml",
-    "manifest": "xml",
-    "rc": "c",
-    "arb": "json",
-    "firebaserc": "json",
-    "fmx": "delphi",
-    "lfm": "delphi",
-    "dfm": "delphi",
-    "": {"Podfile": "ruby"}
-  };
-
   Widget? child;
 
   bool get _canPreview => widget.file.size <= 1024 * 1024 * 1;
@@ -121,48 +107,25 @@ class _ContentViewPageState extends State<ContentViewPage> {
       return Image.memory(data);
     } else if (contentType.startsWith("text/plain")) {
       final text = tryDecodeText(data, contentType);
-      if (text != null) return _buildText(text);
+      if (text != null) {
+        var ext = path_lib.extension(widget.file.name).toLowerCase();
+        if (ext.startsWith(".")) ext = ext.substring(1);
+        final isMarkdown =
+            switch (ext) { "md" || "markdown" => true, _ => false };
+        if (isMarkdown) return MarkdownBlockPlus(data: text);
+        return HighlightViewPlus(
+          text,
+          fileName: widget.file.name,
+          theme:
+              AppGlobal.context?.isDark == true ? a11yDarkTheme : githubTheme,
+        );
+      }
     }
     //
     // if (_isImage(data)) {
     //   return Image.memory(data);
     // }
     return Text('不支持预览的数据类型=$contentType');
-  }
-
-  static final _xmlStartPattern = RegExp(r'\<\?xml|\<.+?xmlns\=\"');
-
-  Widget _buildText(String data) {
-    var ext = path_lib.extension(widget.file.name).toLowerCase();
-    if (ext.startsWith(".")) ext = ext.substring(1);
-
-    // 这个只是临时的，想要好的，还得做内容识别
-    final highlight = _otherHighlights[ext];
-
-    if (highlight != null) {
-      // 先查文件名
-      final language = (highlight is Map)
-          ? highlight[widget.file.name] ?? highlight[ext]
-          : highlight;
-      if (language != null && language.isNotEmpty) {
-        ext = language;
-      }
-    }
-    if (highlight == null) {
-      if (data.startsWith(_xmlStartPattern)) {
-        ext = "xml";
-      }
-    }
-    final isMarkdown = switch (ext) { "md" || "markdown" => true, _ => false };
-
-    if (isMarkdown) return MarkdownBlockPlus(data: data);
-
-    ///todo: 选择功能windows没反应，android上倒是可以用
-    return HighlightViewPlus(
-      data,
-      language: ext,
-      theme: AppGlobal.context?.isDark == true ? a11yDarkTheme : githubTheme,
-    );
   }
 
   @override
