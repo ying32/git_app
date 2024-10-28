@@ -60,7 +60,8 @@ dependencies:
   flutter_highlight: ^0.7.0
   remixicon: ^1.2.0
   flutter_widget_from_html: ^0.15.2
-  #re_highlight: ^0.0.3
+  # 只引用一个github-dark.dart
+  re_highlight: ^0.0.3
 
   modal_bottom_sheet: ^3.0.0
   # 下面没拉取过，只是放这哪天想要换了有个记录

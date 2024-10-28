@@ -6,8 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_highlight/themes/a11y-dark.dart';
-import 'package:flutter_highlight/themes/github.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
 import 'package:git_app/widgets/highlight_plus.dart';
 import 'package:git_app/utils/build_context_helper.dart';
@@ -113,12 +111,7 @@ class _ContentViewPageState extends State<ContentViewPage> {
         final isMarkdown =
             switch (ext) { "md" || "markdown" => true, _ => false };
         if (isMarkdown) return MarkdownBlockPlus(data: text);
-        return HighlightViewPlus(
-          text,
-          fileName: widget.file.name,
-          theme:
-              AppGlobal.context?.isDark == true ? a11yDarkTheme : githubTheme,
-        );
+        return HighlightViewPlus(text, fileName: widget.file.name);
       }
     }
     //

@@ -1,9 +1,12 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_highlight/themes/github.dart';
+import 'package:git_app/app_globals.dart';
 import 'package:git_app/utils/build_context_helper.dart';
 import 'package:highlight/highlight.dart' show highlight, Node;
 import 'package:path/path.dart' as path_lib;
+import 'package:re_highlight/styles/github-dark.dart';
 
 const _lineNumberOffset = 5.0;
 
@@ -130,14 +133,12 @@ class HighlightViewPlus extends StatelessWidget {
   HighlightViewPlus(
     String input, {
     super.key,
-    this.theme = const {},
     required this.fileName,
     this.isDiff = false,
     int tabSize = 8, // TODO: https://github.com/flutter/flutter/issues/50087
   }) : source = input.replaceAll('\t', ' ' * tabSize);
 
   final String source;
-  final Map<String, TextStyle> theme;
   final String fileName;
   final bool isDiff;
 
@@ -157,7 +158,7 @@ class HighlightViewPlus extends StatelessWidget {
 
   static final _xmlStartPattern = RegExp(r'\<\?xml|\<.+?xmlns\=\"');
 
-  List<TextSpan> _convert(List<Node> nodes) {
+  List<TextSpan> _convert(List<Node> nodes, Map<String, TextStyle> theme) {
     List<TextSpan> spans = [];
     var currentSpans = spans;
     List<List<TextSpan>> stack = [];
@@ -307,6 +308,9 @@ class HighlightViewPlus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme =
+        AppGlobal.context?.isDark == true ? githubDarkTheme : githubTheme;
+
     final style = TextStyle(
       fontFamily: 'Courier New',
       fontSize: 14.0,
@@ -315,7 +319,7 @@ class HighlightViewPlus extends StatelessWidget {
     final span = TextSpan(
         style: style,
         children: _convert(
-            highlight.parse(source, language: _getLang(source)).nodes!));
+            highlight.parse(source, language: _getLang(source)).nodes!, theme));
     // 计算代码绘制位置的
     final lineNumbers = _getLineNumbers(source);
     // 计算最大行宽

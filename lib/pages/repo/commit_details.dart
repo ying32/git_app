@@ -1,9 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_highlight/themes/a11y-dark.dart';
-import 'package:flutter_highlight/themes/github.dart';
 import 'package:git_app/app_globals.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
 import 'package:git_app/utils/build_context_helper.dart';
@@ -15,9 +12,9 @@ import 'package:git_app/widgets/platform_page_scaffold.dart';
 class _FileItem {
   _FileItem(
     this.fileName,
-    this.content, {
-    this.isBinFile = false,
-  });
+    this.content,
+    this.isBinFile,
+  );
   final String fileName;
   String content;
   bool isBinFile;
@@ -69,7 +66,7 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
 
           item?.content = buff.toString();
           buff.clear();
-          item = _FileItem(re.group(1) ?? '', '');
+          item = _FileItem(re.group(1) ?? '', '', false);
           _list.add(item);
 
           var find = false;
@@ -178,9 +175,6 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
                       isDiff: true,
                       item.content,
                       fileName: item.fileName,
-                      theme: AppGlobal.context?.isDark == true
-                          ? a11yDarkTheme
-                          : githubTheme,
                     ),
             ),
           ],
