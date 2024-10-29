@@ -1,5 +1,32 @@
 part of gogs.client;
 
+/// 根据repose的header中contentType解码文本
+String? decodeResponseText(List<int> data, String? contentType) {
+  if (contentType != null) {
+    String charset = "";
+    final idx = contentType.lastIndexOf("charset=");
+    if (idx != -1) {
+      charset = contentType.substring(idx + 8).trim();
+    }
+    Encoding? encoding;
+    if (charset.startsWith("utf-8")) {
+      encoding = utf8;
+    } else if (charset.startsWith("utf-16")) {
+      encoding = utf16;
+    } else if (charset.startsWith("utf-32")) {
+      encoding = utf32;
+    } else {
+      encoding = systemEncoding;
+    }
+    try {
+      return encoding.decode(data);
+    } catch (e) {
+      //
+    }
+  }
+  return null;
+}
+
 class GogsRESTClient extends SimpleRESTClient {
   GogsRESTClient() {
     user = GogsUser(this);
@@ -206,7 +233,7 @@ class SimpleRESTClient {
           if (kDebugMode) {
             // resp.headers['']
             //print("time=${HttpDate.parse('Fri, 11 Oct 2024 07:27:57 GMT')}");
-            print('from cache, key = ${_getRequestCacheKey(options)}');
+            print('from cache, key = $key');
             print(
                 "==============================================================");
           }

@@ -99,6 +99,7 @@ class _ContentViewPageState extends State<ContentViewPage> {
     if (mounted) setState(() {});
   }
 
+  //todo: 这里还有待调整，解码这块要重新处理下
   Widget? _buildContent(Uint8List data, String contentType) {
     /// 是图片类型
     if (contentType.startsWith("image/")) {

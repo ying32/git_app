@@ -10,7 +10,11 @@ import 'package:re_highlight/styles/github-dark.dart';
 
 const _lineNumberOffset = 5.0;
 
-enum _DiffState { start, add, sub, normal }
+enum _DiffState { start, add, del, normal }
+
+extension _RegExpMatchHelper on RegExpMatch {
+  int? getGroupIntValue(int index) => int.tryParse(group(index) ?? '');
+}
 
 TextPainter _createPainter(BuildContext context, InlineSpan span) =>
     TextPainter(
@@ -99,7 +103,7 @@ class _LineNumberPainter extends CustomPainter {
           var r = ui.Rect.fromLTRB(0, pp.dy, size.width, npp.dy);
           if (e.state == _DiffState.add) {
             _paint.color = Colors.green.withAlpha(128);
-          } else if (e.state == _DiffState.sub) {
+          } else if (e.state == _DiffState.del) {
             _paint.color = Colors.red.withAlpha(128);
           } else if (e.state == _DiffState.start) {
             _paint.color = Colors.blue.withAlpha(128);
@@ -203,14 +207,16 @@ class HighlightViewPlus extends StatelessWidget {
     _DiffState? getState(int i) {
       return switch (text.codeUnitAt(i)) {
         0x2B => _DiffState.add, // +
-        0x2D => _DiffState.sub, // -
+        0x2D => _DiffState.del, // -
         0x40 => _DiffState.start, // @
         _ => _DiffState.normal,
       };
     }
 
     int last = 0;
-    int? diffStart;
+    int? diffAddStart;
+    // 未完成
+    int? diffDelStart;
     int normal = 0;
     int sub = 0;
     for (var i = 0; i < text.length; i++) {
@@ -219,9 +225,10 @@ class HighlightViewPlus extends StatelessWidget {
           final state = isDiff ? getState(0) : null;
 
           if (state == _DiffState.start) {
-            diffStart =
-                int.tryParse(_lineInfo.firstMatch(text)?.group(3) ?? '');
-            normal = diffStart ?? 1;
+            final re = _lineInfo.firstMatch(text);
+            diffAddStart = re?.getGroupIntValue(3);
+            normal = diffAddStart ?? 1;
+            diffDelStart = re?.getGroupIntValue(1);
             sub = 0;
           }
           // 如果是diff的，则首行不显示行号
@@ -231,18 +238,17 @@ class HighlightViewPlus extends StatelessWidget {
           final state = isDiff ? getState(pos) : null;
 
           if (state == _DiffState.start) {
-            diffStart = int.tryParse(_lineInfo
-                    .firstMatch(
-                        text.substring(pos, text.indexOf("\n", pos + 1)))
-                    ?.group(3) ??
-                '');
-            normal = diffStart ?? 1;
+            final re = _lineInfo
+                .firstMatch(text.substring(pos, text.indexOf("\n", pos + 1)));
+            diffAddStart = re?.getGroupIntValue(3);
+            diffDelStart = re?.getGroupIntValue(1);
+            normal = diffAddStart ?? 1;
             sub = 0;
           }
           int? number;
           if (state != null) {
             number = switch (state) {
-              _DiffState.sub => normal + sub,
+              _DiffState.del => normal + sub,
               _DiffState.add => normal,
               _DiffState.normal => normal,
               _ => null,
@@ -253,7 +259,7 @@ class HighlightViewPlus extends StatelessWidget {
           if (isDiff) {
             if (state == _DiffState.normal || state == _DiffState.add) {
               normal++;
-            } else if (state == _DiffState.sub) {
+            } else if (state == _DiffState.del) {
               sub++;
             }
           }
@@ -295,15 +301,7 @@ class HighlightViewPlus extends StatelessWidget {
         ext = "xml";
       }
     }
-
     return ext;
-
-    ///todo: 选择功能windows没反应，android上倒是可以用
-    // return HighlightViewPlus(
-    //   data,
-    //   language: ext,
-    //   theme: AppGlobal.context?.isDark == true ? a11yDarkTheme : githubTheme,
-    // );
   }
 
   @override

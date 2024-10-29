@@ -27,18 +27,26 @@ class GogsRepoContent extends GogsClientBase {
   /// GET /repos/:username/:reponame/raw/:ref/README.md
   ///
   /// 读一个readme文件
-  FutureRESTResult<List<int>?> readMeFile(Repository repo, String ref,
-          {bool? force}) => // 先固定个README吧
-      client.get<List<int>>(_baseRepoPath(repo, "/raw/$ref/README.md"),
-          force: force, options: Options(responseType: ResponseType.bytes));
+  Future<String?> readMeFile(Repository repo, String ref, {bool? force}) async {
+    // 先固定个README吧
+    final res = await raw(repo, ref, 'README.md', force: force);
+    if (res.succeed && res.data != null) {
+      return decodeResponseText(res.data!, res.contentType);
+    }
+    return null;
+  }
 
   /// GET /repos/:username/:reponame/raw/:ref/LICENSE
   ///
   /// 读一个LICENSE文件
-  FutureRESTResult<List<int>?> licenseFile(Repository repo, String ref,
-          {bool? force}) =>
-      client.get<List<int>>(_baseRepoPath(repo, "/raw/$ref/LICENSE"),
-          force: force, options: Options(responseType: ResponseType.bytes));
+  Future<String?> licenseFile(Repository repo, String ref,
+      {bool? force}) async {
+    final res = await raw(repo, ref, 'LICENSE', force: force);
+    if (res.succeed && res.data != null) {
+      return decodeResponseText(res.data!, res.contentType);
+    }
+    return null;
+  }
 }
 
 /// 仓库分支

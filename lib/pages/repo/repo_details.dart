@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,6 @@ import 'package:git_app/routes.dart';
 import 'package:git_app/utils/build_context_helper.dart';
 import 'package:git_app/utils/message_box.dart';
 import 'package:git_app/utils/page_data.dart';
-import 'package:git_app/utils/utils.dart';
 
 import 'package:git_app/widgets/cached_image.dart';
 import 'package:git_app/widgets/branches_list.dart';
@@ -35,12 +33,8 @@ import 'package:git_app/widgets/list_section.dart';
 /// 将这些拆出来是因为防止写多了自己眼晕
 ///
 Future<void> _readReadMeFile(RepositoryModel model, [bool? force]) async {
-  final readMe = await AppGlobal.cli.repos.content
+  model.readMeContent = await AppGlobal.cli.repos.content
       .readMeFile(model.repo, model.selectedBranch, force: force);
-  if (readMe.succeed && readMe.data != null) {
-    model.readMeContent =
-        tryDecodeText(Uint8List.fromList(readMe.data!), readMe.contentType);
-  }
 }
 
 /// 仓库issue按钮
