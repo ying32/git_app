@@ -56,8 +56,8 @@ class _ExplorePageState extends State<ExplorePage> {
       ),
       emptyItemHint: const Center(child: Text('没有数据')),
       //todo: 还没做呢，他这结果搜索回来是空的
-      itemBuilder: (_, index) =>
-          RepositoryItem(repo: _repos![index], previousPageTitle: '发现'),
+      itemBuilder: (_, index) => RepositoryItem(
+          repo: _repos![index], previousPageTitle: '发现', rootNavigator: true),
       itemCount: _repos?.length ?? 0,
     );
   }

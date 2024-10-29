@@ -11,10 +11,12 @@ class RepositoryItem extends StatelessWidget {
     super.key,
     required this.repo,
     required this.previousPageTitle,
+    this.rootNavigator = false,
   });
 
   final Repository repo;
   final String? previousPageTitle;
+  final bool rootNavigator;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class RepositoryItem extends StatelessWidget {
       onTap: () {
         routes.pushRepositoryDetailsPage(
           repo,
-          context: context,
+          context: rootNavigator ? null : context,
           data: PageData(previousPageTitle: previousPageTitle),
         );
       },
