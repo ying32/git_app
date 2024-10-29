@@ -1,14 +1,17 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/pages/content/contents.dart';
+import 'package:git_app/pages/repo/commit_details.dart';
 import 'package:git_app/routes.dart';
 import 'package:git_app/utils/build_context_helper.dart';
-import 'package:git_app/utils/message_box.dart';
+import 'package:git_app/utils/page_data.dart';
 import 'package:remixicon/remixicon.dart';
 
 import 'package:git_app/app_globals.dart';
 import 'package:git_app/utils/utils.dart';
 import 'cached_image.dart';
+import 'content_title.dart';
 import 'markdown.dart';
 
 ///note: 本为偷下懒用int的，现在为了与gitea统一，所以改为string类型了
@@ -125,9 +128,7 @@ class ActivityItem extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(top: 2, bottom: 2, left: 15),
             child: GestureDetector(
-              onTap: () {
-                showToast('没弄呢');
-              },
+              onTap: () => _pushCommit(commit),
               child: Builder(builder: (context) {
                 return Container(
                   constraints: const BoxConstraints(minWidth: 80),
@@ -168,9 +169,18 @@ class ActivityItem extends StatelessWidget {
     );
   }
 
-  void _pushUser(BuildContext context, User user) {
+  void _pushCommit(ContentCommit commit) {
+    routes.pushPage(
+        CommitDetailsPage(
+          repo: item.repo,
+          sha: commit.sha1,
+          message: commit.message,
+        ),
+        data: PageData(previousPageTitle: item.repo.name));
+  }
+
+  void _pushUser(User user) {
     routes.pushUserDetailsPage(
-      context,
       AppGlobal.instance.userInfo?.id == user.id
           ? AppGlobal.instance.userInfo!
           : user,
@@ -179,7 +189,7 @@ class ActivityItem extends StatelessWidget {
     );
   }
 
-  void _pushRepo(BuildContext context) {
+  void _pushRepo() {
     if (item.issueId > 0) {
       //todo: 这里压入的issue最后评论时结果不对哈，待之后找原因
       // routes.pushPage(
@@ -189,11 +199,25 @@ class ActivityItem extends StatelessWidget {
       //         updateIssues: true),
       //     data: null);
       routes.pushIssuesCommentsViewPage(
-          context, item.repo, Issue.newEmptyFromId(item.issueId),
+          item.repo, Issue.newEmptyFromId(item.issueId),
           data: null);
     } else {
-      routes.pushRepositoryDetailsPage(context, item.repo, data: null);
+      routes.pushRepositoryDetailsPage(item.repo, data: null);
     }
+  }
+
+  void _pushContent(String branchName) {
+    routes.pushPage(
+        ContentsPage(
+          // todo: 这里先用默认的吧，后面再说
+          ref: branchName,
+          repo: item.repo,
+          title: item.repo.name,
+          path: "",
+          prevPath: "",
+        ),
+        data: PageData(previousPageTitle: item.repo.name),
+        routeSettings: const RouteSettings(name: routeContentName));
   }
 
   List<Widget>? _buildActionCommitContents(ActionContent? content) =>
@@ -211,17 +235,16 @@ class ActivityItem extends StatelessWidget {
           text: item.actUser.username,
           style: const TextStyle(color: Colors.blue),
           recognizer: TapGestureRecognizer()
-            ..onTap = () => _pushUser(context, item.actUser),
+            ..onTap = () => _pushUser(item.actUser),
         ),
         TextSpan(text: ' ${_opTypeToStr(item.opType)} '),
         if (item.opType == _actionCommitRepo) ...[
+          // todo:待优化
           TextSpan(
             text: item.refName.split("/").last,
             style: const TextStyle(color: Colors.blue),
             recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                showToast('没弄啊');
-              },
+              ..onTap = () => _pushContent(item.refName.split("/").last),
           ),
           const TextSpan(text: ' 分支的代码到 '),
         ],
@@ -231,7 +254,7 @@ class ActivityItem extends StatelessWidget {
           children: [
             if (item.issueId > 0) TextSpan(text: '#${item.issueId}'),
           ],
-          recognizer: TapGestureRecognizer()..onTap = () => _pushRepo(context),
+          recognizer: TapGestureRecognizer()..onTap = () => _pushRepo(),
         ),
       ]);
 

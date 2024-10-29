@@ -181,7 +181,8 @@ class _RepoInfo extends StatelessWidget {
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
                   if (repo.parent != null) {
-                    routes.pushRepositoryDetailsPage(context, repo.parent!,
+                    routes.pushRepositoryDetailsPage(repo.parent!,
+                        context: context,
                         data: PageData(previousPageTitle: repo.name));
                   }
                 },

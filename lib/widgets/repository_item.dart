@@ -28,8 +28,8 @@ class RepositoryItem extends StatelessWidget {
     return ListTileNav(
       onTap: () {
         routes.pushRepositoryDetailsPage(
-          context,
           repo,
+          context: context,
           data: PageData(previousPageTitle: previousPageTitle),
         );
       },

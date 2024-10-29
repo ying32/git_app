@@ -96,8 +96,8 @@ class _HomePageState extends State<HomePage> {
             title: repo.fullName,
             onTap: () {
               routes.pushRepositoryDetailsPage(
-                context,
                 repo,
+                context: context,
                 data: const PageData(previousPageTitle: _title),
               );
             },

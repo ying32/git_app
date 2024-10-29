@@ -61,8 +61,8 @@ class Routes {
   }
 
   /// 压入仓库详情页
-  Future<T?> pushRepositoryDetailsPage<T>(BuildContext context, Repository repo,
-      {required PageData? data, bool useModal = true}) {
+  Future<T?> pushRepositoryDetailsPage<T>(Repository repo,
+      {BuildContext? context, required PageData? data, bool useModal = true}) {
     return routes.pushPage(
         context: context,
         //RepositoryDetailsPage(repo: repo),
@@ -76,8 +76,8 @@ class Routes {
   }
 
   /// 压入用户详情页
-  Future<T?> pushUserDetailsPage<T>(BuildContext context, User user,
-      {required PageData? data, bool useModal = true}) {
+  Future<T?> pushUserDetailsPage<T>(User user,
+      {BuildContext? context, required PageData? data, bool useModal = true}) {
     return routes.pushPage(
         context: context,
         ChangeNotifierProvider<UserModel>(
@@ -89,9 +89,8 @@ class Routes {
   }
 
   /// 压入评论详情页
-  Future<T?> pushIssuesCommentsViewPage<T>(
-      BuildContext context, Repository repo, Issue issue,
-      {required PageData? data, bool useModal = true}) {
+  Future<T?> pushIssuesCommentsViewPage<T>(Repository repo, Issue issue,
+      {BuildContext? context, required PageData? data, bool useModal = true}) {
     return routes.pushPage(
         context: context,
         rootNavigator: true,

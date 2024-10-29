@@ -100,8 +100,8 @@ class UserHeadImage extends StatelessWidget {
       u = AppGlobal.instance.userInfo!;
     }
     routes.pushUserDetailsPage(
-      context,
       u,
+      context: context,
       data: PageData(previousPageTitle: previousPageTitle),
     );
   }

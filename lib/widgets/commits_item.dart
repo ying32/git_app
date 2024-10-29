@@ -22,7 +22,8 @@ class CommitsItem extends StatelessWidget {
     routes.pushPage(
         CommitDetailsPage(
           repo: repo,
-          commit: item,
+          sha: item.sha,
+          message: item.commit.message,
         ),
         data: PageData(previousPageTitle: repo.name));
   }

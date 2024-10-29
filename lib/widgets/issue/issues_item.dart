@@ -80,7 +80,8 @@ class IssuesItem extends StatelessWidget {
           showToast('没有仓库信息，无法跳转');
           return;
         }
-        routes.pushIssuesCommentsViewPage(context, repo!, item, data: null);
+        routes.pushIssuesCommentsViewPage(repo!, item,
+            context: context, data: null);
       },
     );
   }

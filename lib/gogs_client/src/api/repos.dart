@@ -89,6 +89,7 @@ class GogsRepoCommit extends GogsClientBase {
           bool? force}) =>
       client.get<CommitList>(_baseRepoPath(repo, "/commits"),
           queryParameters: {
+            // gitea的字段
             if (sha != null) 'sha': sha,
             if (path != null) 'path': path,
             if (stat != null) 'stat': stat,
@@ -96,8 +97,6 @@ class GogsRepoCommit extends GogsClientBase {
             if (files != null) 'files': files,
             if (limit != null) 'limit': limit,
             if (not != null) 'not': not,
-
-            // gitea的字段
             if (page != null) 'page': page,
             // gogs的字段，
             if (page != null) 'pagesize': page,
@@ -116,11 +115,11 @@ class GogsRepoCommit extends GogsClientBase {
   /// GET /repos/{owner}/{repo}/git/commits/{sha}.{diffType}
   ///
   /// gitea才有的
-  ///  [diffType]分为 "patch"和"diff"两种
-  FutureRESTResult<String?> diff(Repository repo, Commit commit,
-          {String diffType = "diff", bool? force}) =>
+  ///  [isDiff] 分为 "patch"和"diff"两种，默认为true
+  FutureRESTResult<String?> diff(Repository repo, String sha,
+          {bool isDiff = true, bool? force}) =>
       client.get<String>(
-          _baseRepoPath(repo, "/git/commits/${commit.sha}.$diffType"),
+          _baseRepoPath(repo, "/git/commits/$sha.${isDiff ? 'diff' : 'patch'}"),
           options: Options(responseType: ResponseType.plain),
           force: force);
 

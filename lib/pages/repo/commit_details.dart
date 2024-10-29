@@ -23,11 +23,13 @@ class _FileItem {
 class CommitDetailsPage extends StatefulWidget {
   const CommitDetailsPage({
     super.key,
-    required this.commit,
+    required this.sha,
+    required this.message,
     required this.repo,
   });
 
-  final Commit commit;
+  final String sha;
+  final String message;
   final Repository repo;
 
   @override
@@ -46,7 +48,7 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
   Future _init(_, bool? force) async {
     _list.clear();
     final res = await AppGlobal.cli.repos.commit
-        .diff(widget.repo, widget.commit, force: force);
+        .diff(widget.repo, widget.sha, force: force);
     additions = 0;
     deletions = 0;
     if (res.succeed && res.data != null) {
@@ -116,7 +118,7 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
       reqRefreshCallback: _init,
       canPullDownRefresh: false,
       appBar: PlatformPageAppBar(
-        title: Text(widget.commit.sha.substring(0, 10)),
+        title: Text(widget.sha.substring(0, 10)),
         previousPageTitle: context.previousPageTitle,
       ),
       itemCount: _list.length + 3,
@@ -126,7 +128,7 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
           return BackgroundContainer(
             padding:
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-            child: Text(widget.commit.commit.message.trimRight()),
+            child: Text(widget.message.trimRight()),
           );
         } else if (index == 1) {
           return const SizedBox(height: 15);

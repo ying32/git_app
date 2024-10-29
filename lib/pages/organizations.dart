@@ -70,8 +70,8 @@ class _OrganizationsPageState
         return ListTileNav(
           onTap: () {
             routes.pushUserDetailsPage(
-              context,
               item,
+              context: context,
               data: PageData(
                   previousPageTitle:
                       AppGlobal.isMe(widget.user) ? null : widget.title),
