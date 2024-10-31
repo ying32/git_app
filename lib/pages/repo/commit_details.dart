@@ -20,6 +20,35 @@ class _FileItem {
   bool isBinFile;
 }
 
+class _MyPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
+  _MyPersistentHeaderDelegate({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return BottomDivider(
+        child: BackgroundContainer(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            height: 35.0,
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(title,
+                    maxLines: 1, overflow: TextOverflow.ellipsis))));
+  }
+
+  @override
+  double get minExtent => 44;
+
+  @override
+  double get maxExtent => 44;
+
+  @override
+  bool shouldRebuild(covariant _MyPersistentHeaderDelegate oldDelegate) =>
+      oldDelegate.title != title;
+}
+
 class CommitDetailsPage extends StatefulWidget {
   const CommitDetailsPage({
     super.key,
@@ -112,76 +141,78 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
     }
   }
 
+  Widget _buildItem(_FileItem item) {
+    return SliverMainAxisGroup(
+      slivers: [
+        SliverPersistentHeader(
+          // floating: true,
+          pinned: true,
+          delegate: _MyPersistentHeaderDelegate(
+            title: item.fileName,
+          ),
+        ),
+        const SliverPadding(padding: EdgeInsets.symmetric(vertical: 0.5)),
+        SliverToBoxAdapter(
+          child: SizedBox(
+            width: double.infinity,
+            child: item.isBinFile
+                ? const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text('二进制文件未显示。'),
+                  )
+                : HighlightViewPlus(
+                    isDiff: true,
+                    item.content,
+                    fileName: item.fileName,
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PlatformPageScaffold(
       reqRefreshCallback: _init,
-      canPullDownRefresh: false,
+      canPullDownRefresh: true,
       appBar: PlatformPageAppBar(
         title: Text(widget.sha.substring(0, 10)),
         previousPageTitle: context.previousPageTitle,
       ),
-      itemCount: _list.length + 3,
-      useSeparator: true,
-      itemBuilder: (BuildContext context, int index) {
-        if (index == 0) {
-          return BackgroundContainer(
-            padding:
-                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-            child: Text(widget.message.trimRight()),
-          );
-        } else if (index == 1) {
-          return const SizedBox(height: 15);
-        } else if (index == 2) {
-          return BackgroundContainer(
-            padding:
-                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-            child: Text.rich(TextSpan(
-              children: [
-                TextSpan(
-                    text: '${_list.length}个文件已改变\n',
-                    style: const TextStyle(color: Colors.orange)),
-                TextSpan(
-                    text: '$additions 次插入',
-                    style: const TextStyle(color: Colors.green)),
-                const TextSpan(text: ' 和 '),
-                TextSpan(
-                    text: '$deletions 次删除',
-                    style: const TextStyle(color: Colors.red)),
-              ],
-            )),
-          );
-        }
-        final item = _list[index - 3];
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 这里的标题还要做一个可以浮动的大概就是到顶部就浮动，得用sliver来做
-            BottomDivider(
-                child: BackgroundContainer(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    height: 35.0,
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(item.fileName,
-                            maxLines: 1, overflow: TextOverflow.ellipsis)))),
-            const SizedBox(height: 1),
-            SizedBox(
-              width: double.infinity,
-              child: item.isBinFile
-                  ? const Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text('二进制文件未显示。'),
-                    )
-                  : HighlightViewPlus(
-                      isDiff: true,
-                      item.content,
-                      fileName: item.fileName,
-                    ),
+      child: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: BackgroundContainer(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+              child: Text(widget.message.trimRight()),
             ),
-          ],
-        );
-      },
+          ),
+          const SliverPadding(padding: EdgeInsets.only(top: 15)),
+          SliverToBoxAdapter(
+            child: BackgroundContainer(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+              child: Text.rich(TextSpan(
+                children: [
+                  TextSpan(
+                      text: '${_list.length}个文件已改变\n',
+                      style: const TextStyle(color: Colors.orange)),
+                  TextSpan(
+                      text: '$additions 次插入',
+                      style: const TextStyle(color: Colors.green)),
+                  const TextSpan(text: ' 和 '),
+                  TextSpan(
+                      text: '$deletions 次删除',
+                      style: const TextStyle(color: Colors.red)),
+                ],
+              )),
+            ),
+          ),
+          ..._list.map((e) => _buildItem(e)).toList()
+        ],
+      ),
     );
   }
 }

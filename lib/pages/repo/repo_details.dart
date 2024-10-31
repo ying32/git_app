@@ -222,7 +222,7 @@ class _RepoInfo extends StatelessWidget {
             if (repo.description.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(bottom: 15),
-                child: Text(repo.description),
+                child: SelectableText(repo.description),
               ),
 
             /// 是否私有
