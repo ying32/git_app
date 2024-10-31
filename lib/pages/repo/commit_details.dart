@@ -104,7 +104,7 @@ class _CommitDetailsPageState extends State<CommitDetailsPage> {
         }
         i++;
       }
-      print("增加行=$additions, 删除行=$deletions,总计行=${additions + deletions}");
+      //print("增加行=$additions, 删除行=$deletions,总计行=${additions + deletions}");
       if (item != null && buff.isNotEmpty) {
         item.content = buff.toString();
       }

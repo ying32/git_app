@@ -145,7 +145,7 @@ class IssuesCommentsViewPage extends StatelessWidget {
     showCupertinoModalBottomSheet(
       expand: true,
       useRootNavigator: true,
-      backgroundColor: context.theme.scaffoldBackgroundColor,
+      //backgroundColor: context.theme.scaffoldBackgroundColor,
       context: context,
       builder: (context) => ChangeNotifierProvider<IssueCommentModel>.value(
         value: model,

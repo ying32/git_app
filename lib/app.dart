@@ -57,6 +57,19 @@ class GogsApp extends StatelessWidget {
   static const _platform = TargetPlatform.iOS;
   // static const _platform = TargetPlatform.android;
 
+  static const pageTransitionsTheme =
+      PageTransitionsTheme(builders: <TargetPlatform, PageTransitionsBuilder>{
+    // 老版本他默认用的这个效果，但新版本他改为了ZoomPageTransitionsBuilder，感觉还是Fade的效果好
+    // OpenUpwardsPageTransitionsBuilder
+    // FadeUpwardsPageTransitionsBuilder
+    // ZoomPageTransitionsBuilder
+    // CupertinoPageTransitionsBuilder
+    TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+    TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
+    TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(),
+    TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+  });
+
   static const cupertinoLightTheme = CupertinoThemeData(
     brightness: Brightness.light,
     primaryColor: _themeColor,
@@ -82,7 +95,8 @@ class GogsApp extends StatelessWidget {
                   primary: _themeColor,
                   brightness: Brightness.light),
               platform: _platform,
-              useMaterial3: false,
+              useMaterial3: true,
+              pageTransitionsTheme: pageTransitionsTheme,
             ),
             darkTheme: ThemeData(
               fontFamily: _fontFamily,
@@ -91,7 +105,8 @@ class GogsApp extends StatelessWidget {
                   primary: _themeColor,
                   brightness: Brightness.dark),
               platform: _platform,
-              useMaterial3: false,
+              useMaterial3: true,
+              pageTransitionsTheme: pageTransitionsTheme,
             ),
             scrollBehavior: isDesktop ? CustomMaterialScrollBehavior() : null,
             localizationsDelegates: const [

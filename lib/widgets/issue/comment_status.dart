@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:git_app/app_globals.dart';
 import 'package:git_app/gogs_client/gogs_client.dart';
+import 'package:git_app/pages/repo/commit_details.dart';
+import 'package:git_app/routes.dart';
+import 'package:git_app/utils/page_data.dart';
 import 'package:git_app/utils/utils.dart';
+import 'package:git_app/widgets/cached_image.dart';
 import 'package:git_app/widgets/issue/labels.dart';
-import 'package:html/dom.dart' as dom;
+// import 'package:html/dom.dart' as dom;
 import 'package:remixicon/remixicon.dart';
 
 /// 评论的类型
@@ -56,13 +60,13 @@ class CommentStatus extends StatelessWidget {
 
   static const _defaultTextStyle = TextStyle(fontSize: 13);
 
-  // static final _regEx =
-  //     RegExp(r'<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>', caseSensitive: false);
-
+  static final _regEx =
+      RegExp(r'<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>', caseSensitive: false);
+  //
   // Widget _buildALabel() {
   //   final match = _regEx.firstMatch(comment.body);
   //   return Padding(
-  //     padding: const EdgeInsets.only(right: 15),
+  //     padding: const EdgeInsets.only(left: 25, right: 15),
   //     child: Text(
   //       match?.group(2) ?? '',
   //       maxLines: 1,
@@ -75,17 +79,62 @@ class CommentStatus extends StatelessWidget {
   //   );
   // }
 
+  void _doTap(String url) {
+    final arr = url.split("/");
+    if (arr.length != 5) return;
+    final repo = Repository.fromNameAndOwner(arr[2], arr[1], '');
+    routes.pushPage(
+        CommitDetailsPage(
+          repo: repo,
+          sha: arr.last,
+          // 这个提交内容不完整，还得压入后刷新才能得到完整的。。。
+          message: _regEx.firstMatch(comment.body)?.group(2) ?? '',
+        ),
+        data: PageData(previousPageTitle: repo.name));
+  }
+
   Widget _buildTextBody(InlineSpan afterText) {
     Widget child = Text.rich(
       TextSpan(
         children: [
           const WidgetSpan(child: SizedBox(width: 10)),
+          WidgetSpan(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 5.0),
+              child: UserHeadImage(
+                  size: 16, user: comment.user, padding: EdgeInsets.zero),
+            ),
+          ),
           TextSpan(text: comment.user.username),
           const TextSpan(text: ' 于 ', style: TextStyle(color: Colors.grey)),
           TextSpan(text: timeToLabel(comment.updatedAt)),
           const TextSpan(text: ' '),
           afterText,
-          if (_bodyIsHtml) const TextSpan(text: " 并引用了该问题"),
+          if (_bodyIsHtml) ...[
+            const TextSpan(text: " 并引用了该问题\n"),
+            WidgetSpan(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 30, right: 15, bottom: 3, top: 3),
+                // child: _buildALabel(),
+                child: HtmlWidget(
+                  // buildAsync: true,
+                  comment.body,
+                  //customStylesBuilder: (dom.Element element) {
+                  //  // 要怎么才能生效？
+                  //  return {"text-overflow": "ellipsis", "white-space": "pre"};
+                  //},
+                  onTapUrl: (u) {
+                    _doTap(u);
+                    return true;
+                  },
+                  textStyle: _defaultTextStyle.copyWith(
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
         style: _defaultTextStyle,
       ),
@@ -94,28 +143,6 @@ class CommentStatus extends StatelessWidget {
       style: _defaultTextStyle,
       textAlign: TextAlign.start,
     );
-    if (_bodyIsHtml) {
-      child = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          child,
-          const SizedBox(height: 5),
-          // _buildALabel(),
-          // 这里用个htmlWidget其实是比较方便的，但没找着不让他换行的问题
-          HtmlWidget(
-            // buildAsync: true,
-            comment.body,
-            customStylesBuilder: (dom.Element element) {
-              // 要怎么才能生效？
-              return {"text-overflow": "ellipsis", "white-space": "pre"};
-            },
-            onTapUrl: (u) => true,
-            textStyle: _defaultTextStyle.copyWith(
-                color: Colors.grey, overflow: TextOverflow.ellipsis),
-          ),
-        ],
-      );
-    }
 
     return child;
   }

@@ -354,7 +354,7 @@ class _RepoBranchOperate extends StatelessWidget {
         useRootNavigator: true,
         builder: (_) => BranchesList(
             repo: model.repo, selectedBranch: model.selectedBranch));
-    if (res != null) {
+    if (res != null && model.selectedBranch != res) {
       model.selectedBranch = res;
       // 分支切换了，重新拉取README。
       _readReadMeFile(model);

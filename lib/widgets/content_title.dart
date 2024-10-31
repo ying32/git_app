@@ -77,9 +77,7 @@ class ContentTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (path.isEmpty && title.isEmpty) return const SizedBox();
-    final color = (context.platformIsIOS ? context.isDark : context.isLight)
-        ? Colors.white
-        : Colors.black;
+    final color = context.isDark ? Colors.white : Colors.black;
     Widget child = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
