@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
         },
         child: UserHeadImage(
           size: _headImageSize,
-          user: AppGlobal.instance.userInfo!,
+          user: AppGlobal.instance.userInfo,
           previousPageTitle: _title,
         ),
       );

@@ -14,9 +14,11 @@ Future main() async {
   await AppGlobal.instance.init();
   try {
     await CollectionMgr.instance.load(AppGlobal.cli.token);
-    if (!(await AppGlobal.instance.updateMyInfo(true)).succeed) {
-      await AppGlobal.cli.unAuthorize();
-    }
+    AppGlobal.instance.updateMyInfo(true);
+    // 这里不再强制了，只要设置了token就能直接进入
+    // if (!(await AppGlobal.instance.updateMyInfo(true)).succeed) {
+    //   await AppGlobal.cli.unAuthorize();
+    // }
     AppGlobal.setLoginState(AppGlobal.cli.isAuthorized);
   } catch (e) {
     await AppGlobal.cli.unAuthorize();
