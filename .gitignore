@@ -48,3 +48,7 @@ github.app
 /test/widget_test.dart
 /lib/app_test2.dart
 /devtools_options.yaml
+/ios/Flutter/*.xcconfig
+/macos/Flutter/*.xcconfig
+/macos/Flutter/GeneratedPluginRegistrant.swift
+/macos/Runner/Configs/*.xcconfig
