@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:git_app/utils/build_context_helper.dart';
 import 'package:git_app/utils/collection_mgr.dart';
 import 'package:git_app/utils/message_box.dart';
+//import 'package:permission_handler/permission_handler.dart';
 
 import 'package:remixicon/remixicon.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:git_app/app_globals.dart';
 import 'package:git_app/widgets/adaptive_widgets.dart';
 import 'package:git_app/widgets/platform_page_scaffold.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -231,6 +233,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future _doLogin() async {
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+    if (connectivityResult.isEmpty) {
+      showToast('没有网络连接');
+      return;
+    }
+
     final host = _hostController.text.trim();
     if (host.isEmpty) {
       showToast('主机地址未设置');

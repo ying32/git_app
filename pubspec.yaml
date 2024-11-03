@@ -75,6 +75,11 @@ dependencies:
   charset: ^2.0.1
   highlight: any
 
+  # 权限请求的
+  #permission_handler: ^10.4.5
+  # 网络状态检查
+  connectivity_plus: ^6.1.0 
+
   # 比如编辑框的 粘贴，复制，等
   flutter_localizations:
     sdk: flutter

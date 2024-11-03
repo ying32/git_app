@@ -52,5 +52,15 @@
         <key>NSAllowsArbitraryLoads</key>
         <true/>
     </dict>
+	<key>NSNetworkingUsageDescription</key>
+    <string>此应用需要访问网络以获取数据</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>我们需要访问您的本地网络，以便可以连接局域网中的git服务器</string>
+	<!-- 如果你需要指定Bonjour服务，可以添加如下key -->
+	<!-- <key>NSBonjourServices</key>
+	<array>
+		<string>_http._tcp.</string>
+		<string>_https._tcp.</string>
+	</array> -->
 </dict>
 </plist>
